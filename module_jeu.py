@@ -35,8 +35,8 @@ class Jeu() :
         self.attributs_jeu = module_attributs_jeu.Attributs_Jeu()
         self.partie_commence_console() #Console de départ
         self.sauvegarde = module_sauvegarde.Sauvegarde(self.attributs_jeu)
-        self.clavier_souris = module_clavier_souris.Clavier_Souris(self.attributs_jeu)
-        self.terrain = module_terrain.Terrain(self.attributs_jeu, self.clavier_souris)
+        self.terrain = module_terrain.Terrain(self.attributs_jeu)
+        self.clavier_souris = module_clavier_souris.Clavier_Souris(self, self.attributs_jeu, self.terrain)
         self.affichage = module_afficher.Affichage(self.attributs_jeu, self.terrain, self.ecran, self.clavier_souris)
         
         ###Pose des personnages (par défaut)
@@ -329,163 +329,20 @@ class Jeu() :
         self.affichage.fini_transition = False
         
     ######################################################
-    ### Fonctions console :
-    ######################################################
-    
-    def partie_commence_console(self) :
-        '''
-        Ajoute dans la console que l'équipe a changé.
-        '''
-        self.attributs_jeu.ajouter_console(['La partie commence !', 'noir'])
-    
-    def equipe_console(self, equipe) :
-        '''
-        Ajoute dans la console que l'équipe a changé.
-        '''
-        self.attributs_jeu.ajouter_console(['À l\'équipe ' + str(equipe) + ' de jouer !', 'noir'])
-    
-    def deplacement_console(self, perso) :
-        '''
-        Ajoute dans la console que le personnage (passé en paramètre) s'est déplacé.
-        '''
-        self.attributs_jeu.ajouter_console([str(perso.acc_personnage()) + ' s\'est déplacé.', perso.acc_equipe()])
-        
-    def attaque_console(self, perso_qui_attaque, perso_qui_subit) :
-        '''
-        Ajoute dans la console que le personnage attaque un personnage de l'équipe adverse.
-        '''
-        self.attributs_jeu.ajouter_console([str(perso_qui_attaque.acc_personnage()) + ' a attaqué ' + str(perso_qui_subit.acc_personnage()) + '.', perso_qui_attaque.acc_equipe()])
-    
-    ######################################################
-    ### Événements pendant une partie :
-    ######################################################
-    
-    def effacer_actions(self) :
-        '''
-        Efface les indications d'attaques ou de déplacements
-        '''
-        self.attributs_jeu.mut_deplacements([]) # enlève les déplacements
-        self.attributs_jeu.mut_deplacements_cavalier([])
-        self.attributs_jeu.mut_attaques([]) # enlève les attaques
-    
-    def changer_personnage(self, selection) :
-        '''
-        Enlève le personnage sélectionné et donc le change.
-        '''
-        if isinstance(selection, module_objets.Coffre):# si c'est un coffre
-            self.attributs_jeu.mut_coffre_selection(selection)
-        else: #sinon
-            self.attributs_jeu.mut_selection(selection)
-        
-        #Si clique un personnage ou déplacement/attaque de l'équipe qui joue :
-        if selection != ' ' and isinstance(selection, module_personnage.Personnage) and selection.acc_personnage() != 'monstre' :
-            selection.cases_valides_deplacement(self.terrain) #déplacements
-            selection.cases_valides_attaques(self.terrain) #attaques
-        
-        #Sinon (si clique sur autre chose) :
-        else :
-            self.effacer_actions()
-    
-    def changer_equipe(self):
-        '''
-        Change l'équipe en cours
-        '''
-        dic_equipes = {'bleu' : 'rouge', 'rouge' : 'bleu'}
-        self.attributs_jeu.mut_equipe_en_cours(dic_equipes[self.attributs_jeu.acc_equipe_en_cours()])
-        self.effacer_actions()
-        self.changer_personnage(' ') #rien en selection
-        self.attributs_jeu.mut_nombre_action(0)
-        self.attributs_jeu.mut_nombre_tour(1)
-        self.equipe_console(self.attributs_jeu.acc_equipe_en_cours())
-        
-    def personnages_sont_mort(self):
-        '''
-        Vérifie si un personnage est mort. Si c'est le cas, supprime le
-        '''
-        for personnage in self.attributs_jeu.acc_tab_personnages() + self.attributs_jeu.acc_tab_monstres()  :
-            
-            if isinstance(personnage, module_personnage.Personnage) and personnage.est_mort():
-                if personnage.personnage != 'monstre' :
-                    if personnage.personnage == 'geant':
-                        if personnage.numero_geant == 0:
-                            self.attributs_jeu.mut_positions_tombes((personnage.acc_x() * 38 + 269, personnage.acc_y() * 38 + 19))
-                    else :
-                        self.attributs_jeu.mut_positions_tombes((personnage.acc_x() * 38 + 250, personnage.acc_y() * 38))
-                try :
-                    self.attributs_jeu.supprimer_personnage(personnage)
-                    #pour ressusciter
-                    if personnage.acc_equipe() == 'bleu':
-                        self.attributs_jeu.mut_dernier_personnage_mort_bleu(personnage)
-                    else:
-                        self.attributs_jeu.mut_dernier_personnage_mort_rouge(personnage)
-                except :
-                    self.attributs_jeu.supprimer_monstre(personnage)
-                self.terrain.mut_terrain(personnage.acc_x(), personnage.acc_y(), ' ')
-                    
-    def est_fini(self):
-        '''
-        Renvoie True s'il reste que des personnages d'une même équipe, False sinon
-        return boolean
-        '''
-        bleu_present = False
-        rouge_present = False
-        y = 0
-        while not (bleu_present and rouge_present) and y < len(self.terrain.acc_grille()):
-            x = 0
-            while not (bleu_present and rouge_present) and x < len(self.terrain.acc_grille()[y]):    
-                perso = self.terrain.acc_terrain(x, y)
-                if isinstance(perso, module_personnage.Personnage):      
-                    if perso.acc_equipe() == 'bleu' :
-                        bleu_present = True
-                    else :
-                        rouge_present = True
-                x += 1
-            y += 1
-                 
-        self.attributs_jeu.mut_partie_terminee(not (bleu_present and rouge_present)) 
-        equipe_qui_gagne = self.qui_gagne(bleu_present, rouge_present)    
-        try :
-            self.attributs_jeu.mut_equipe_gagnante(equipe_qui_gagne)
-        except :
-            pass
-        return self.attributs_jeu.acc_partie_terminee() 
-    
-    def qui_gagne(self, bleu_present, rouge_present) :
-        '''
-        Renvoie l'équipe qui a gagné 
-        : params
-            bleu_present (bool)
-            rouge_present (bool)
-        : return (str)
-        '''
-        gagnant = None
-        if bleu_present and not rouge_present :
-            gagnant = 'bleu'
-        elif not bleu_present and rouge_present :
-            gagnant = 'rouge'
-        return gagnant
-        
-    ######################################################
     ### Fonctions Clique :
     ###################################################### 
-    
-    def est_clique(self):
-        '''
-        Déroule les fonctions deplacement_est_clique et attaque_est_clique correctement
-        '''
-        if not (self.deplacement_est_clique() or self.attaque_est_clique()) : #Si aucun déplacement ou attaque a été effectué, alors :
-            self.personnage_est_selectionne() #Change de personnage par celui au coordonnées de la souris (si c'est un personnage !).
         
-    def deplacement_est_clique(self):
+    def deplacement_est_clique(self) :
         '''
-        déplace le personnage en question sur ce cercle selon si il est "normal" ou si il est un geant.
+        Déplace le personnage en question sur le cercle selon s'il est un personnage "classique" ou s'il est un Géant.
         : return (bool) True si un deplacement a été effectué, False sinon
         '''
         position_case = self.clavier_souris.acc_position_case()
-        #Si la souris est dans un cercle de déplacement :
+        
+        #Si le joueur a cliqué sur un personnage de l'équipe en cours et s'il a cliqué sur un cercle de déplacement :
         if self.attributs_jeu.est_meme_equipe() and position_case in self.attributs_jeu.acc_deplacements():
             
-            #Si le personnage est un Géant :
+            #Si le personnage est un Géant, alors déplace le Géant :
             if self.attributs_jeu.acc_selection().acc_personnage() == 'geant':
                 self.deplacer_geant(position_case[0], position_case[1])
             
@@ -543,17 +400,6 @@ class Jeu() :
                 rep = False
             return rep
 
-    def personnage_est_selectionne(self):
-        '''
-        Si un personnage est cliqué et qu'il est dans l'équipe qui joue, 
-        alors calculs ces déplacements et ces attaques qui sont possibles.
-        Sinon, on fait rien.
-        '''
-        position_case = self.clavier_souris.acc_position_case()
-        if 0 <= position_case[0] <= 20 and 0 <= position_case[1] <= 20:
-            selection = self.terrain.acc_terrain(position_case[0], position_case[1])
-            self.changer_personnage(selection)
-            
     def coffre_est_clique(self):
         '''
         si un coffre est cliqué et qu'il y a un joueur de l'équipe en cours autour du coffre, celui-ci s'ouvre
@@ -574,6 +420,166 @@ class Jeu() :
             if present :
                 coffre.ouverture()
                 self.ouverture_coffre(coffre)
+        print('coffre cliqué !')
+        
+    ######################################################
+    ### Fonctions console :
+    ######################################################
+    
+    def partie_commence_console(self) :
+        '''
+        Ajoute dans la console que l'équipe a changé.
+        '''
+        self.attributs_jeu.ajouter_console(['La partie commence !', 'noir'])
+    
+    def equipe_console(self, equipe) :
+        '''
+        Ajoute dans la console que l'équipe a changé.
+        '''
+        self.attributs_jeu.ajouter_console(['À l\'équipe ' + str(equipe) + ' de jouer !', 'noir'])
+    
+    def deplacement_console(self, perso) :
+        '''
+        Ajoute dans la console que le personnage (passé en paramètre) s'est déplacé.
+        '''
+        self.attributs_jeu.ajouter_console([str(perso.acc_personnage()) + ' s\'est déplacé.', perso.acc_equipe()])
+        
+    def attaque_console(self, perso_qui_attaque, perso_qui_subit) :
+        '''
+        Ajoute dans la console que le personnage attaque un personnage de l'équipe adverse.
+        '''
+        self.attributs_jeu.ajouter_console([str(perso_qui_attaque.acc_personnage()) + ' a attaqué ' + str(perso_qui_subit.acc_personnage()) + '.', perso_qui_attaque.acc_equipe()])
+    
+    ######################################################
+    ### Événements pendant une partie :
+    ######################################################
+    
+    def effacer_actions(self) :
+        '''
+        Efface les indications de déplacement et d'attaques du personnage sélectionné
+        '''
+        self.attributs_jeu.mut_deplacements([]) #Enlève les déplacements
+        self.attributs_jeu.mut_deplacements_cavalier([]) #Enlève les déplacements (du cavalier)
+        self.attributs_jeu.mut_attaques([]) #Enlève les attaques
+    
+    def changer_personnage(self, selection) :
+        '''
+        Enlève le personnage sélectionné et donc le change.
+        '''
+        if isinstance(selection, module_objets.Coffre):# si c'est un coffre
+            self.attributs_jeu.mut_coffre_selection(selection)
+        else: #sinon
+            self.attributs_jeu.mut_selection(selection)
+        
+        #Si clique un personnage ou déplacement/attaque de l'équipe qui joue :
+        if selection != ' ' and isinstance(selection, module_personnage.Personnage) and selection.acc_personnage() != 'monstre' :
+            selection.cases_valides_deplacement(self.terrain) #déplacements
+            selection.cases_valides_attaques(self.terrain) #attaques
+        
+        #Sinon (si clique sur autre chose) :
+        else :
+            self.effacer_actions()
+    
+    def changer_equipe(self):
+        '''
+        Change l'équipe en cours et enlève le personnage sélectionné.
+        '''
+        dic_equipes = {'bleu' : 'rouge', 'rouge' : 'bleu'}
+        self.attributs_jeu.mut_equipe_en_cours(dic_equipes[self.attributs_jeu.acc_equipe_en_cours()]) #Change l'équipe en cours.
+        self.effacer_actions()
+        self.changer_personnage(' ') #Enlève le personnage sélectionné
+        self.attributs_jeu.mut_nombre_action(0) #Met le nombre d'action à 0
+        self.attributs_jeu.augmente_nombre_tour() #Augmente le nombre de tour de 1
+        self.equipe_console(self.attributs_jeu.acc_equipe_en_cours()) #Indique dans la console (du jeu) qu'il y a eu un changement d'équipe
+        
+    def personnages_sont_mort(self):
+        '''
+        Vérifie si des personnages ou monstres sont mort (pv <= 0). 
+        Si c'est le cas, on les supprime du tableau correspondant et on les enlève du terrain.
+        '''
+        #Pour chaque personnage et monstre dans leur tableau respectif :
+        for personnage in self.attributs_jeu.acc_tab_personnages() + self.attributs_jeu.acc_tab_monstres() :
+            
+            #S'il est mort :
+            if personnage.est_mort() :
+                
+                #Si le personnage n'est pas un monstre :
+                if not isinstance(personnage, module_personnage.Monstre) :
+                    
+                    #Si le personnage est un geant :
+                    if isinstance(personnage, module_personnage.Geant) :
+                        
+                        #Si son numero est 0, place une tombe à sa position :
+                        if personnage.numero_geant == 0:
+                            self.attributs_jeu.mut_positions_tombes((personnage.acc_x() * 38 + 269, personnage.acc_y() * 38 + 19))
+                            
+                    #Sinon, le personnage est un personnage "classique", place une tombe à sa position :
+                    else :
+                        self.attributs_jeu.mut_positions_tombes((personnage.acc_x() * 38 + 250, personnage.acc_y() * 38))
+
+                    #Si le personnage est de l'équipe bleu, alors on change le dernier personnage mort de l'équipe bleu par ce personnage :
+                    if personnage.acc_equipe() == 'bleu':
+                        self.attributs_jeu.mut_dernier_personnage_mort_bleu(personnage)
+                    
+                    #Sinon, le personnage est de l'équipe rouge, alors on change le dernier personnage mort de l'équipe rouge par ce personnage :
+                    else:
+                        self.attributs_jeu.mut_dernier_personnage_mort_rouge(personnage)
+                    
+                    self.attributs_jeu.supprimer_personnage(personnage) #Supprime le personnage du tableau des personnages
+                    
+                #Sinon, le personnage est un monstre, alors on le supprime du tableau des monstres
+                else :
+                    self.attributs_jeu.supprimer_monstre(personnage)
+                
+                self.terrain.mut_terrain(personnage.acc_x(), personnage.acc_y(), ' ') #Place une case vide sur la case où le personnage est mort.
+                    
+    def qui_gagne(self, bleu_present, rouge_present) :
+        '''
+        Renvoie l'équipe qui a gagné 
+        : params
+            bleu_present (bool)
+            rouge_present (bool)
+        : return (str)
+        '''
+        gagnant = None
+        if bleu_present and not rouge_present :
+            gagnant = 'bleu'
+        elif not bleu_present and rouge_present :
+            gagnant = 'rouge'
+        return gagnant            
+    
+    def est_fini(self):
+        '''
+        Renvoie True s'il reste que des personnages d'une même équipe, False sinon
+        :return (bool)
+        '''
+        tab = self.attributs_jeu.acc_tab_personnages()
+        indice = 0
+        bleu_present = False
+        rouge_present = False
+        
+        #Tant qu'un personnage de chaque équipe est vivant dans le tableau des personnages :
+        while not (bleu_present and rouge_present) and indice < len(tab):
+            personnage = tab[indice]
+            
+            #Si le personnage est de l'équipe bleu, alors il y a au moins un personnage de l'équipe bleu qui est présent :
+            if personnage.acc_equipe() == 'bleu' :
+                bleu_present = True
+            #Sinon, le personnage est de l'équipe rouge, alors il y a au moins un personnage de l'équipe rouge qui est présent :
+            else :
+                rouge_present = True
+                
+            indice += 1
+                 
+        #Si il reste une seule équipe en jeu, alors change la partie terminée en True et change l'équipe qui a gagné :
+        if not (bleu_present and rouge_present) :
+            self.attributs_jeu.mut_partie_terminee(not (bleu_present and rouge_present)) 
+            equipe_qui_gagne = self.qui_gagne(bleu_present, rouge_present)
+            self.attributs_jeu.mut_equipe_gagnante(equipe_qui_gagne)
+        
+        return self.attributs_jeu.acc_partie_terminee()
+        
+    
                 
     ########################################################
     #### Fonction Coffre :
@@ -666,8 +672,8 @@ class Jeu() :
                 phrase = self.sauvegarde.charger()
 
                 if phrase != "Erreur de Chargement !" :
-                    self.clavier_souris = module_clavier_souris.Clavier_Souris(self.attributs_jeu)
-                    self.terrain = module_terrain.Terrain(self.attributs_jeu, self.clavier_souris)
+                    self.terrain = module_terrain.Terrain(self.attributs_jeu)
+                    self.clavier_souris = module_clavier_souris.Clavier_Souris(self, self.attributs_jeu, self.terrain)
                     self.affichage = module_afficher.Affichage(self.attributs_jeu, self.terrain, self.ecran, self.clavier_souris)
                     self.attributs_jeu.console = module_lineaire.Pile()
                     self.placer()
@@ -719,8 +725,9 @@ class Jeu() :
                 ### Clavier / Souris :
                 ######################################################
                 
+                #Pour chaque entrées :
                 for evenement in pygame.event.get() :
-                    self.clavier_souris.entrees_menu(evenement)
+                    self.clavier_souris.entrees_menu(evenement) #Vérifie s'il y a eu une interaction dans le menu
 
                 ######################################################
                 ### Calculs :
@@ -732,20 +739,21 @@ class Jeu() :
                 ### Affichage :
                 ######################################################
 
-                self.affichage.afficher_menu()
+                self.affichage.afficher_menu() #Affiche le menu
             
             ######################################################
             ### Jeu :
             ######################################################
             
-            if self.attributs_jeu.acc_menu() == False :
+            #Si l'attribut menu est False, alors le joueur se trouve dans le jeu (dans une partie) :
+            if not self.attributs_jeu.acc_menu() :
                 
-                #Si pas de déplacement de personnage :
+                #Si il n'y a pas de déplacement et/ou d'attaque de personnage en cours :
                 if not self.attributs_jeu.acc_deplacement_en_cours() and not self.attributs_jeu.acc_attaque_en_cours() :
-                    self.personnages_sont_mort()
-                    self.est_fini()
+                    self.personnages_sont_mort() #Vérifie s'il y a des morts (personnages et monstres)
+                    self.est_fini() #Vérifie si la partie est fini
                     
-                    #Change d'équipe au bout de 3 actions
+                    #Change d'équipe au bout de 3 actions :
                     if self.attributs_jeu.acc_nombre_action() == 3 :
                         self.changer_equipe()
                 
@@ -753,57 +761,52 @@ class Jeu() :
                 ### Clavier / Souris :
                 ######################################################
                 
+                #Pour chaque entrées :
                 for evenement in pygame.event.get() :
-                    self.clavier_souris.entrees_jeu(evenement)
+                    self.clavier_souris.entrees_jeu(evenement) #Vérifie s'il y a eu une interaction dans le jeu
                     
-                    if self.clavier_souris.acc_appuye() and not self.attributs_jeu.acc_partie_terminee() and not self.attributs_jeu.acc_deplacement_en_cours() and not self.attributs_jeu.acc_attaque_en_cours():
-                        
                 ######################################################
-                ### Déroulement du jeu :
+                ### Monstres :
                 ######################################################
-                        
-                        #Si un personnage est déjà sélectionné :
-                        if isinstance(self.attributs_jeu.acc_selection(), module_personnage.Personnage) :
-                            self.est_clique()
-                            #Si un coffre est sélectionné
-                            if self.attributs_jeu.acc_coffre_selection() is not None :
-                                print('coffre cliqué !')
-                                self.coffre_est_clique()
-                                self.attributs_jeu.mut_coffre_selection(None) #plus de coffre sélectionné
-                                
-                        #Sinon sélection un personnage :
-                        else :
-                            self.personnage_est_selectionne()
-                            
-                        
                 
-                self.attributs_jeu.enlever_console()
-                ##ajout de monstre
-                if self.attributs_jeu.acc_temps() == 'Jour' and self.attributs_jeu.acc_monstres_active() :
+                #S'il fait nuit et que l'ajout de monstres est "activé", alors on ajoute des monstres
+                if self.attributs_jeu.acc_temps() == 'Nuit' and self.attributs_jeu.acc_monstres_active() :
                     self.ajouter_tab_monstres()
+                
+                ######################################################
+                ### Console :
+                ######################################################
+                            
+                self.attributs_jeu.enlever_console()
+                
+                ######################################################
+                ### Temps :
+                ######################################################
+                
+                self.attributs_jeu.mut_temps_jeu() #Modifie l'atmosphère quand le temps est venu
                 
                 ######################################################
                 ### Affichage :
                 ######################################################
-                self.attributs_jeu.mut_temps_jeu() #modifie le jour quand le temps est venu
-                #self.attributs_jeu.crépuscule() #pour l'ajout de monstre avant la nuit
+                
                 self.affichage.afficher_jeu()
 
-            ### désélectionne le bouton après 0.3 secondes
-            self.deselectionner_bouton()
-            
-            ###### gère le temps d'animation des attaques
-            self.gerer_animations_attaques()
-            
+            ######################################################
+            ### Boutons :
+            ######################################################
+
+            self.deselectionner_bouton() #Désélectionne le bouton après 0.3 secondes
+            self.gerer_animations_attaques() #Gère le temps d'animation des attaques
             
             ######################################################
             ### Fréquence de 60 images par seconde :
             ###################################################### 
+            
             pygame.display.flip()
             self.acc_horloge().tick(30)
         
-        #Ferme la fenêtre Pygame :
-        pygame.quit()
+        
+        pygame.quit() #Ferme la fenêtre Pygame si la boucle s'arrête
         
     ######################################################
     ### Initialisation du Jeu et de la fenêtre :

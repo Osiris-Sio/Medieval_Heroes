@@ -18,7 +18,7 @@ class Terrain():
     '''
     Une Classe pour le terrain.
     '''
-    def __init__(self, attributs_jeu, clavier_souris, niveau = 1):
+    def __init__(self, attributs_jeu, niveau = 1):
         '''
         initialise le terrain
         : params 
@@ -27,7 +27,6 @@ class Terrain():
             niveau (int) valant par défaut 1
         '''
         self.attributs_jeu = attributs_jeu
-        self.clavier_souris = clavier_souris
         self.niveau = niveau
         self.grille = Terrain.attribuer_grille(self)
         

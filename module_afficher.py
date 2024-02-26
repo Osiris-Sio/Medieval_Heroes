@@ -585,21 +585,18 @@ class Affichage():
         affiche le fond d'ecran
         '''
         self.ecran.blit(self.image_fond, (0, 0))
+        
+    def afficher_option(self) :
+        '''
+        Affiche le menu option
+        '''
+        police = pygame.font.Font("medias/pixelec.ttf", 21)
+        texte = police.render("Options" , 1, (152, 82, 51))
+        self.ecran.blit(self.fond_options, (455, 290)) 
+        self.ecran.blit(texte, (580, 310))
+        self.afficher_boutons_option()
 
-    def afficher_menu(self) :
-        '''
-        Affiche tous les objets du menu sur la fenêtre pygame.
-        '''
-        self.afficher_fond()
-        if not self.attributs_jeu.acc_option() :  
-            self.afficher_boutons_menu()
-        else :
-            police = pygame.font.Font("medias/pixelec.ttf", 21)
-            texte = police.render("Options" , 1, (152, 82, 51))
-            self.ecran.blit(self.fond_options, (455, 290)) 
-            self.ecran.blit(texte, (580, 310))
-            self.afficher_boutons_option()
-        self.afficher_curseur()
+    
         
         
     def afficher_personnage_en_deplacement(self):
@@ -741,7 +738,25 @@ class Affichage():
             position_texte = (300, 300)
             self.ecran.blit(texte_surface, position_texte)
             
+    ######################################################
+    ### Affichages Globales :
+    ######################################################
+    
+    def afficher_menu(self) :
+        '''
+        Affiche tous les objets du menu sur la fenêtre pygame.
+        '''
+        self.afficher_fond()
         
+        #Si le menu option n'est pas "ouvert/activé" :
+        if not self.attributs_jeu.acc_option() :  
+            self.afficher_boutons_menu()
+        
+        #Sinon, le menu option est "ouvert/activé" :
+        else :
+            self.afficher_option()
+        
+        self.afficher_curseur()
             
     def afficher_jeu(self):
         '''

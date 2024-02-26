@@ -590,13 +590,13 @@ class Attributs_Jeu() :
     
     def mut_nombre_tour(self, valeur) :
         '''
-        Modifie l'attribut nombre_action (addition !)
+        Modifie l'attribut nombre_action
         : param valeur (int)
         '''
         #Précondition :
         assert isinstance(valeur, int), 'Le paramètre doit être un entier (int) !'
         #Code :
-        self.nombre_tour += valeur
+        self.nombre_tour = valeur
         
     def mut_chemin(self, tab) :
         '''
@@ -914,3 +914,10 @@ class Attributs_Jeu() :
                 compteur -= 1
             else :
                 pile.empiler(stock.depiler())
+                
+    def augmente_nombre_tour(self) :
+        '''
+        Ajoute 1 à l'attribut nombre_tour
+        : param valeur (int)
+        '''
+        self.nombre_tour += 1
