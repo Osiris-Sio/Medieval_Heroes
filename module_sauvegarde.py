@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 '''
--> Medieval Heroes : Module pour les Sauvegardes et les Chargements de partie.
+-> Medieval Fight : Module pour les Sauvegardes et les Chargements de partie.
 
 Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul 
 ''' 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 '''
--> Medieval Heroes : Module pour la classe Personnage.
+-> Medieval Fight : Module pour la classe Personnage.
 
 Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul 
 ''' 
@@ -651,6 +651,20 @@ class Monstre(Personnage):
         '''
         return self.etat
     
+    ####################################
+    ####### Mutateurs
+    ####################################
+    def mut_etat(self, nouvel_etat):
+        '''
+        modifie l'attribut etat du monstre
+        : param nouvel_etat (int) 1 ou 2
+        : pas de return
+        '''
+        #assertion
+        assert isinstance(nouvel_etat, int) and nouvel_etat in [1, 2], "le nouvel état doit être un entier ! (1 ou 2)"
+        #code
+        self.etat = nouvel_etat
+        
     ####################################
     ####### Méthodes
     ####################################

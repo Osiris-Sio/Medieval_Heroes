@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 '''
--> Medieval Heroes : Module pour la classe Terrain.
+-> Medieval Fight : Module pour la classe Terrain.
 
 Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul 
 '''

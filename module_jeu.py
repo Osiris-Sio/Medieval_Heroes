@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 '''
--> Medieval Heroes : Module pour la classe Jeu.
+-> Medieval Fight : Module pour la classe Jeu.
 
 Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul 
 ''' 
@@ -280,23 +280,23 @@ class Jeu() :
         '''
         Ajoute des monstres avec des coordonnées aléatoires dans le tableau en fonction de combien de Nuit sont passées.
         '''
-        if self.attributs_jeu.acc_temps() == 'Nuit' and self.attributs_jeu.acc_monstre_active() :
-            for _ in range(self.attributs_jeu.acc_nombre_tour() // 2) :
-                #coordonnées au hasard
+        for _ in range(self.attributs_jeu.acc_nombre_tour() // 2) :
+            #coordonnées au hasard
+            x = random.randint(1, 20)
+            y = random.randint(1, 20)
+            #tant que la future case n'est pas libre, on rechoisit une case au hasard
+            while self.terrain.acc_terrain(x, y) != ' ' :
                 x = random.randint(1, 20)
                 y = random.randint(1, 20)
-                #tant que la future case n'est pas libre, on rechoisit une case au hasard
-                while self.terrain.acc_terrain(x, y) != ' ' :
-                    x = random.randint(1, 20)
-                    y = random.randint(1, 20)
-                self.attributs_jeu.ajouter_monstre(module_personnage.Monstre(x, y, 2, 1))
-            
-            ##déplacements de chaque monstre du terrain
-           # print('oui')
-           # print('monstres : ', self.attributs_jeu.acc_tab_monstres())
-            for monstre in self.attributs_jeu.acc_tab_monstres() :
-                self.terrain.mut_terrain(monstre.acc_x(), monstre.acc_y(), monstre)
-            self.attributs_jeu.mut_monstre_active(False)
+            self.attributs_jeu.ajouter_monstre(module_personnage.Monstre(x, y, 2, 1))
+        
+        ##déplacements de chaque monstre du terrain
+       # print('oui')
+       # print('monstres : ', self.attributs_jeu.acc_tab_monstres())
+        for monstre in self.attributs_jeu.acc_tab_monstres() :
+            self.terrain.mut_terrain(monstre.acc_x(), monstre.acc_y(), monstre)
+        self.attributs_jeu.mut_monstre_active(False)
+        self.attributs_jeu.monstres_deja_deplaces = True
     
     def deplacer_monstre(self, monstre):
         '''
@@ -316,7 +316,10 @@ class Jeu() :
         for monstre in self.attributs_jeu.acc_tab_monstres(): # pour chaque monstre sur le plateau
             # Attaque des monstres
             monstre.attaquer(self.terrain) # cherche un ennemi à attaquer à proximité
-            if not monstre.attaquer_ennemi_proche() == None: # si une victime est trouvée
+            if monstre.acc_etat() == 1 : #si c'est un bébé
+                if (self.attributs_jeu.acc_temps() == 'Jour' and self.attributs_jeu.nombre_tour % 4 == 3 and self.attributs_jeu.nombre_action == 3):
+                    monstre.mut_etat(2) #on le fait grandir
+            elif not monstre.attaquer_ennemi_proche() == None: # si une victime est trouvée
                 victime = monstre.attaquer_ennemi_proche() #la victime qui est attaquée
                 victime.est_attaque('monstre') #la victime perd des pv
                 victime.mut_endommage() # blesse la victime
@@ -324,11 +327,7 @@ class Jeu() :
                 self.attributs_jeu.mut_attaque_temps(0)
             else : # sinon on déplace le monstre
                 self.deplacer_monstre(monstre)
-                '''
-                x, y = monstre.acc_x(), monstre.acc_y() #les coordonnées du monstre
-                self.terrain.mut_terrain(x, y, ' ') # remplace l'ancienne position du monstre par une case vide
-                self.attributs_jeu.monstres_a_deplacer.append(monstre)
-                '''
+        self.affichage.fini_transition = False
         
     ######################################################
     ### Fonctions console :
@@ -775,13 +774,15 @@ class Jeu() :
                         
                 
                 self.attributs_jeu.enlever_console()
-                self.ajouter_tab_monstres()
+                ##ajout de monstre
+                if self.attributs_jeu.acc_temps() == 'Jour' and self.attributs_jeu.acc_monstre_active() :
+                    self.ajouter_tab_monstres()
                 
                 ######################################################
                 ### Affichage :
                 ######################################################
-                
                 self.attributs_jeu.mut_temps_jeu() #modifie le jour quand le temps est venu
+                #self.attributs_jeu.crepuscule() #pour l'ajout de monstre avant la nuit
                 self.affichage.afficher_jeu()
 
             ### désélectionne le bouton après 0.3 secondes

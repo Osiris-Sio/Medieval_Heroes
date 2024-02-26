@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 '''
--> Medieval Heroes : Module pour la classe Attributs_Jeu.
+-> Medieval Fight : Module pour la classe Attributs_Jeu.
 
 Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul 
 ''' 
@@ -72,7 +72,7 @@ class Attributs_Jeu() :
         self.monstre_en_deplacement = None
         self.deplacement_en_cours_monstre = False
         self.nouvelles_coord = None
-         
+        self.monstres_deja_deplaces = False
         self.monstres_a_deplacer = []
         
         #Attributs pour les attaques :
@@ -817,22 +817,32 @@ class Attributs_Jeu() :
     
     def mut_temps_jeu(self):
         '''
-        modifie le temps de la journee si un certain nombre de déplacements/attaques a été effectué
+        modifie le temps de la journée si un certain nombre de déplacements/attaques a été effectué
+        : pas de return
         '''
         if self.acc_nombre_tour() % 4 == 0 and self.acc_nombre_tour() != 0:
             if not self.acc_temps_active() :
-                temps = {'Jour': 'Nuit', 'Nuit': 'Jour'}
+                dic = {'Jour': 'Nuit', 'Nuit': 'Jour'}
                 phrase = {
                     'Jour' : 'Le soleil se lève !',
                     'Nuit' : 'Le soleil se couche !'
                 }
-                print(self.temps)
-                self.mut_temps(temps[self.temps])
+                self.mut_temps(dic[self.temps])
                 self.ajouter_console([phrase[self.acc_temps()], 'noir'])
                 self.mut_temps_active(True)
+                self.monstres_deja_deplaces = False
+                print('#########################', self.temps)
+                
+        elif self.acc_nombre_tour() % 4 == 3 and self.acc_nombre_tour() != 0:
+            if not self.acc_monstre_active() and not self.monstres_deja_deplaces :
                 self.mut_monstre_active(True)
+            else:
+                self.mut_monstre_active(False)
+        
         else :
             self.mut_temps_active(False)
+            
+            
             
     def ajouter_console(self, tab) :
         '''

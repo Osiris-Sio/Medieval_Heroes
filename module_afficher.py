@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 '''
--> Medieval Heroes : Module pour la classe Affichage.
+-> Medieval Fight : Module pour la classe Affichage.
 
 Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul 
 '''
@@ -63,7 +63,6 @@ class Affichage():
         self.terrain = terrain
         self.ecran = ecran
         self.clavier_souris = clavier_souris
-        
         
         # Attributs Ressources (pour charger les ressources):
         # Menu :
@@ -264,8 +263,6 @@ class Affichage():
         self.ecran.blit(self.image_terrain, (250, 0))
         self.ecran.blit(self.menu, (1050, 0))
 
-
-
     def afficher_personnages_plateau(self):
         '''
         Affiche les personnages (+ contour de couleur pour chaque perso de l'équipe en cours)
@@ -313,10 +310,10 @@ class Affichage():
                             else:
                                 images_personnage = perso[1][index_image]
                             image_personnage = images_personnage[elt.numero_geant]
-                        elif elt.personnage == 'monstre':
-                            if elt.etat == 'bebe':
+                        elif elt.acc_personnage() == 'monstre':
+                            if elt.acc_etat() == 1: #état de bébé
                                 image_personnage = perso[0][index_image]
-                            else:
+                            else: #état adulte
                                 image_personnage = perso[1][index_image]
                         else:
                             if elt.equipe == 'rouge' :
@@ -373,8 +370,6 @@ class Affichage():
         while not stock.est_vide() :
             pile.empiler(stock.depiler())
                 
-       
-    
     def afficher_personnage_selection(self):
         '''
         Affiche les personnages
