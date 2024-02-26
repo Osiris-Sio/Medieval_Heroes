@@ -30,7 +30,7 @@ class Attributs_Jeu() :
         self.continuer = True #Si la boucle du jeu continue
         self.menu = True #True si on est dans le menu, False sinon
         self.option = False #True si on est dans le menu option, False sinon
-        self.compteur = 0 #Compte le nombre de boucle
+        self.compteur = 0 #Compte le nombre de boucle (de 0 à 70) (principalement pour les animations)
         self.tab_personnages = [] #Un tableau avec tous les personnages (qui sont leur pv strictement au dessus de 0)
         self.tab_monstres = [] #Un tableau avec tous les monstres (qui sont leur pv strictement au dessus de 0)
         self.tab_coffres = [] #Un tableau avec tous les coffres (non ouvert)
@@ -47,8 +47,8 @@ class Attributs_Jeu() :
         
         #Jour/Nuit :
         self.temps = 'Jour' #Le temps du jeu
-        self.temps_active = False #Booleen qui permet de bloquer le Jour/Nuit pendant une condition vrai. C'est le cas dans la fonction mut_temps_jeu()
-        self.monstre_active = False #True si des monstres doivent apparaître et False sinon
+        self.temps_active = True #Booléen qui permet de bloquer le Jour/Nuit pendant une condition vrai. C'est le cas dans la fonction mut_temps_jeu()
+        self.monstres_active = False #True si des monstres doivent apparaître et False sinon
         
         #Action/Tour :
         self.nombre_action = 0 #Le nombre d'action qu'une équipe a faite pendant son tour
@@ -72,7 +72,7 @@ class Attributs_Jeu() :
         self.monstre_en_deplacement = None
         self.deplacement_en_cours_monstre = False
         self.nouvelles_coord = None
-        self.monstres_deja_deplaces = False
+        self.monstres_deja_deplaces = False # ???
         self.monstres_a_deplacer = []
         
         #Attributs pour les attaques :
@@ -85,12 +85,12 @@ class Attributs_Jeu() :
         self.annonce_coffre = False
         self.event_coffre = 0
         
-        #Eléments du décor
+        #Éléments du décor
         self.positions_tombes = [] #Tableau de tuples (x, y) des coordonnées de chaque tombe 
         
         #Fin du jeu
         self.partie_terminee = False #True si la partie est terminée, False sinon 
-        self.position_y_menu_fin = 0 #Permet de lier l'animation du fin de jeu et les intérations
+        self.position_y_menu_fin = 0 #Permet de lier l'animation du fin de jeu et les interactions
         self.equipe_gagnante = None #None si la partie n'est pas terminée, 'bleu' ou 'rouge' (str) pour savoir quelle équipe a gagné.
 
     ######################################################
@@ -99,7 +99,7 @@ class Attributs_Jeu() :
     
     def acc_annonce_coffre(self):
         '''
-        Renvoie l'attribut annoce_coffre
+        Renvoie l'attribut annonce_coffre
         '''
         return self.annonce_coffre
     
@@ -212,11 +212,11 @@ class Attributs_Jeu() :
         '''
         return self.temps_active
     
-    def acc_monstre_active(self):
+    def acc_monstres_active(self):
         '''
-        Renvoie l'attribut monstre_active
+        Renvoie l'attribut monstres_active
         '''
-        return self.monstre_active
+        return self.monstres_active
     
     def acc_nombre_action(self):
         '''
@@ -288,7 +288,7 @@ class Attributs_Jeu() :
         '''
         Renvoie l'attribut deplacement_en_cours_monstre
         '''
-        return self.deplacement_en_monstre
+        return self.deplacement_en_cours_monstre
     
     def acc_dernier_personnage_mort_rouge(self):
         '''
@@ -315,6 +315,12 @@ class Attributs_Jeu() :
         Renvoie l'attribut nb_actions
         '''
         return self.nb_actions
+    
+    def acc_monstres_deja_deplaces(self):
+        '''
+        Renvoie l'attribut monstres_deja_deplaces
+        '''
+        return self.monstres_deja_deplaces
     
     def acc_attaque_en_cours(self):
         '''
@@ -532,7 +538,7 @@ class Attributs_Jeu() :
         '''
         Modifie l'attribut bouton_clique
         : param valeur (float)
-        : pas de return, modifie l'attribut temps_appui_bonton
+        : pas de return, modifie l'attribut temps_appui_bouton
         '''
         #Assertion :
         assert isinstance(valeur, float), "Le paramètre doit être du type float !"
@@ -561,16 +567,16 @@ class Attributs_Jeu() :
         #Code :
         self.temps_active = valeur
         
-    def mut_monstre_active(self, valeur) :
+    def mut_monstres_active(self, valeur) :
         '''
-        Modifie l'attribut monstre_active
+        Modifie l'attribut monstres_active
         : param valeur (bool)
-        : pas de return, modifie l'attribut monstre_active
+        : pas de return, modifie l'attribut monstres_active
         '''
         #Assertion :
         assert isinstance(valeur, bool), "Le paramètre doit être un booléen (bool) !"
         #Code :
-        self.monstre_active = valeur
+        self.monstres_active = valeur
 
     def mut_nombre_action(self, valeur) :
         '''
@@ -615,7 +621,7 @@ class Attributs_Jeu() :
     def mut_coordonnees_personnage(self, coordonnees) :
         '''
         Modifie l'attribut coordonnees
-        : param coordonees (tuple or None)
+        : param coordonnees (tuple or None)
         '''
         #Précondition :
         assert isinstance(coordonnees, tuple) or coordonnees == None, 'Le paramètre doit être un tuple ou None !'
@@ -625,7 +631,7 @@ class Attributs_Jeu() :
     def mut_coordonnees_monstre(self, coordonnees) :
         '''
         Modifie l'attribut coordonnees
-        : param coordonees (tuple or None)
+        : param coordonnees (tuple or None)
         '''
         #Précondition :
         assert isinstance(coordonnees, tuple) or coordonnees == None, 'Le paramètre doit être un tuple ou None !'
@@ -690,9 +696,19 @@ class Attributs_Jeu() :
         : param valeur (int)
         '''
         #Précondition :
-        assert isinstance(valeur, int), 'Le paramètre doit être un entien (int) !'
+        assert isinstance(valeur, int), 'Le paramètre doit être un entier (int) !'
         #Code :
         self.nb_actions = valeur
+        
+    def mut_monstres_deja_deplaces(self, valeur) :
+        '''
+        Modifie l'attribut monstres_deja_deplaces
+        : param valeur (bool)
+        '''
+        #Précondition :
+        assert isinstance(valeur, bool), 'Le paramètre doit être un booléen (bool) !'
+        #Code :
+        self.monstres_deja_deplaces = valeur
        
     def mut_attaque_en_cours(self, valeur) :
         '''
@@ -842,27 +858,31 @@ class Attributs_Jeu() :
         modifie le temps de la journée si un certain nombre de déplacements/attaques a été effectué
         : pas de return
         '''
-        if self.acc_nombre_tour() % 4 == 0 and self.acc_nombre_tour() != 0:
-            if not self.acc_temps_active() :
+        #Si il y a eu plus de 3 tours passé et que le "changement" de temps est activé, alors :
+        if self.acc_nombre_tour() % 4 == 0 and self.acc_nombre_tour() != 0 and self.acc_temps_active() :
                 dic = {'Jour': 'Nuit', 'Nuit': 'Jour'}
                 phrase = {
                     'Jour' : 'Le soleil se lève !',
                     'Nuit' : 'Le soleil se couche !'
                 }
-                self.mut_temps(dic[self.temps])
-                self.ajouter_console([phrase[self.acc_temps()], 'noir'])
-                self.mut_temps_active(True)
-                self.monstres_deja_deplaces = False
-                print('#########################', self.temps)
-                
-        elif self.acc_nombre_tour() % 4 == 3 and self.acc_nombre_tour() != 0:
-            if not self.acc_monstre_active() and not self.monstres_deja_deplaces :
-                self.mut_monstre_active(True)
-            else:
-                self.mut_monstre_active(False)
+                self.mut_temps(dic[self.temps]) #Change le temps (par le contraire grâce au dictionnaire)
+                self.ajouter_console([phrase[self.acc_temps()], 'noir']) #Ajoute la phrase adapté dans la console.
+                self.mut_temps_active(False) #Le "changement" de temps est désactivé
+                self.mut_monstres_deja_deplaces(False) # ???
         
+        #Sinon si le nombre de tour est supérieur au reste de 4, alors :
+        elif self.acc_nombre_tour() % 4 == 3 and self.acc_nombre_tour() != 0:
+            
+            #Si les monstres sont activées et que ???
+            if not self.acc_monstres_active() and not self.acc_monstres_deja_deplaces() :
+                self.mut_monstres_active(True) #Le "placement" de monstres est activé
+            #Sinon :
+            else :
+                self.mut_monstres_active(False) #Le "placement" de monstres est désactivé
+        
+        #Sinon :
         else :
-            self.mut_temps_active(False)
+            self.mut_temps_active(True) #Le "changement" de temps est activé
             
     def ajouter_console(self, tab) :
         '''
@@ -871,13 +891,13 @@ class Attributs_Jeu() :
         : pas de return, effet de bord sur la pile !
         '''
         #Précondition :
-        assert isinstance(tab, list) and len(tab) == 2 and isinstance(tab[0], str) and tab[1] in ['rouge', 'bleu', 'noir', 'neutre'], 'Le paramètre doit être un tableau (list) comprenant deux chaines de caractères (str) comme éléments (phrase et equipe) !'
+        assert isinstance(tab, list) and len(tab) == 2 and isinstance(tab[0], str) and tab[1] in ['rouge', 'bleu', 'noir', 'neutre'], 'Le paramètre doit être un tableau (list) comprenant deux chaînes de caractères (str) comme éléments (phrase et equipe) !'
         #Code :
         self.console.empiler(tab)
         
     def enlever_console(self) :
         '''
-        Si la pile dépasse 24 chaines de caractère, enlève les premiers messages ajoutés da la pile.
+        Si la pile dépasse 24 chaînes de caractère, enlève les premiers messages ajoutés da la pile.
         '''
         pile = self.acc_console()
         stock = module_lineaire.Pile()

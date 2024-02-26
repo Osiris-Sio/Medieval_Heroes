@@ -18,7 +18,7 @@ import pygame, time
 
 class Clavier_Souris() :
     '''
-    Une classe Clavier_Souris qui gére les inputs du clavier et de la souris.
+    Une classe Clavier_Souris qui gère les inputs du clavier et de la souris.
     '''
     
     def __init__(self, attributs_jeu) :
@@ -90,7 +90,7 @@ class Clavier_Souris() :
                 self.attributs_jeu.mut_continuer(False)
                 
 
-    def inputs_menu(self, evenement) :
+    def entrees_menu(self, evenement) :
         '''
         Contrôle les inputs du clavier et de la souris et qui donne les actions demandées dans le menu.
         : param evenement (input)
@@ -135,10 +135,10 @@ class Clavier_Souris() :
                             self.attributs_jeu.mut_temps_appui_bouton(time.time())
                         
 
-        if evenement.type == pygame.MOUSEBUTTONUP : #Relaché
+        if evenement.type == pygame.MOUSEBUTTONUP : #Relâcher
             self.mut_appuye(False)
 
-    def inputs_jeu(self, evenement) :
+    def entrees_jeu(self, evenement) :
         '''
         Contrôle les inputs du clavier et de la souris et qui donne les actions demandées dans le jeu.
         : param evenement (input)
@@ -173,7 +173,7 @@ class Clavier_Souris() :
                             self.attributs_jeu.mut_bouton_clique('charger')
                             self.attributs_jeu.mut_temps_appui_bouton(time.time())
                         
-                        #si le joueur clique sur le bouton 'Sauvergarder' :
+                        #si le joueur clique sur le bouton 'Sauvegarder' :
                         if 585 < position_curseur[1] < 650 :
                             self.attributs_jeu.mut_bouton_clique('sauvegarder')
                             self.attributs_jeu.mut_temps_appui_bouton(time.time())
@@ -191,5 +191,5 @@ class Clavier_Souris() :
                 print(self.acc_position_case())
                 print(self.acc_position_curseur()[0], self.acc_position_curseur()[1])
 
-        if evenement.type == pygame.MOUSEBUTTONUP : #Relaché
+        if evenement.type == pygame.MOUSEBUTTONUP : #Relâché
             self.appuye = False

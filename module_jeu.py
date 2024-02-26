@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 '''
--> Medieval Fight : Module pour la classe Jeu.
+-> Medieval Heroes : Module pour la classe Jeu.
 
 Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul 
 ''' 
@@ -28,7 +28,7 @@ class Jeu() :
         Initialise le jeu
         '''
         #Attributs Fenêtre :
-        self.ecran = pygame.display.set_mode((1300, 800))
+        self.ecran = pygame.display.set_mode((1300, 800)) #Affiche l'écran du jeu de dimension 1300 x 800
         self.horloge = pygame.time.Clock()
         
         #Attributs des Importations :
@@ -41,7 +41,7 @@ class Jeu() :
         
         ###Pose des personnages (par défaut)
         
-        #Geant rouge:
+        #Géant rouge:
         geant1r = module_personnage.Geant('rouge', 10, 0, 8, 0)
         geant2r = module_personnage.Geant('rouge', 11, 0, 8, 1)
         geant3r = module_personnage.Geant('rouge', 10, 1, 8, 2)
@@ -125,7 +125,7 @@ class Jeu() :
     ### Mutateurs :
     ######################################################
     
-    def mut_famille_coordo(self, equipe):
+    def mut_famille_coordonnees(self, equipe):
         '''
         réactualise les coordonnées du géant appartenant à l'équipe passée en paramètre
         : param equipe (str), 'bleu' ou 'rouge':
@@ -162,13 +162,13 @@ class Jeu() :
         
         #Récupération du bon chemin :
         perso = self.attributs_jeu.acc_selection()
-        coordo = (self.attributs_jeu.acc_selection().acc_x(), self.attributs_jeu.acc_selection().acc_y())
+        coordonnees = (self.attributs_jeu.acc_selection().acc_x(), self.attributs_jeu.acc_selection().acc_y())
         if perso.acc_personnage() == 'cavalier' : #si c'est un cavalier
             dep = self.attributs_jeu.acc_deplacements_cavalier()
         else:
             dep = self.attributs_jeu.acc_deplacements()
-        graphe = perso.construire_graphe_perso(coordo, dep)
-        chemin = parcourir_graphe.depiler_chemin(graphe, coordo, (x, y))
+        graphe = perso.construire_graphe_perso(coordonnees, dep)
+        chemin = parcourir_graphe.depiler_chemin(graphe, coordonnees, (x, y))
         chemin2 = []
         for elt in chemin:
             chemin2.append((elt[0] * 38 + 250, elt[1] * 38))
@@ -178,9 +178,9 @@ class Jeu() :
         self.attributs_jeu.mut_deplacement_en_cours(True) # on déclare qu'un déplacement est en cours
         self.attributs_jeu.nb_actions += 1 # on augmente le nombre d'action effectuée du joueur de 1
         
-    def arreter_animation(self):
+    def arreter_animation_deplacement(self):
         '''
-        arrête l'animation une fois que l'image du personnage en déplacement est arrivée à destination
+        Arrête l'animation une fois que l'image du personnage en déplacement est arrivée à destination
         '''
         if self.attributs_jeu.acc_indice_courant() >= len(self.attributs_jeu.acc_chemin()) - 1 and self.attributs_jeu.acc_nb_actions() != 0:           
             self.attributs_jeu.mut_indice_courant(0)
@@ -218,7 +218,7 @@ class Jeu() :
         else: #le géant rouge
             famille = self.famille_geant_rouge
             equipe = 'rouge'
-        deplacement = self.coordo_geant(famille[0].acc_x(), famille[0].acc_y(), x, y)
+        deplacement = self.coordonnees_geant(famille[0].acc_x(), famille[0].acc_y(), x, y)
         ##vide l'ancien emplacement
         for geant in famille:
             self.terrain.mut_terrain(geant.acc_x(), geant.acc_y(), ' ') # vide à l'ancienne place
@@ -228,9 +228,9 @@ class Jeu() :
             n_y = geant.acc_y() + deplacement[1]
             geant.deplacer(n_x, n_y) # pour le personnage  
             self.terrain.mut_terrain(n_x, n_y, geant)
-        self.mut_famille_coordo(equipe)
+        self.mut_famille_coordonnees(equipe)
         
-    def coordo_geant(self, tete_x, tete_y, nouveau_x, nouveau_y):
+    def coordonnees_geant(self, tete_x, tete_y, nouveau_x, nouveau_y):
         '''
         : params
             tete_x (int)
@@ -259,7 +259,7 @@ class Jeu() :
     
     def gerer_animations_attaques(self):
         '''
-        gere le fonctionnement de l'affichage des attaques dans le jeu
+        Gère le fonctionnement de l'affichage des attaques dans le jeu
         '''
         if self.attributs_jeu.acc_attaque_temps() < 20 and self.attributs_jeu.acc_attaque_en_cours() :
             self.attributs_jeu.mut_attaque_temps(self.attributs_jeu.acc_attaque_temps() + 1)
@@ -281,21 +281,20 @@ class Jeu() :
         Ajoute des monstres avec des coordonnées aléatoires dans le tableau en fonction de combien de Nuit sont passées.
         '''
         for _ in range(self.attributs_jeu.acc_nombre_tour() // 2) :
-            #coordonnées au hasard
+            #Coordonnées au hasard
             x = random.randint(1, 20)
             y = random.randint(1, 20)
-            #tant que la future case n'est pas libre, on rechoisit une case au hasard
+            #Tant que la future case n'est pas libre, on choisit une nouvelle fois une case au hasard
             while self.terrain.acc_terrain(x, y) != ' ' :
+                #Coordonnées au hasard
                 x = random.randint(1, 20)
                 y = random.randint(1, 20)
-            self.attributs_jeu.ajouter_monstre(module_personnage.Monstre(x, y, 2, 1))
+            self.attributs_jeu.ajouter_monstre(module_personnage.Monstre(x, y, 2, 1)) #Ajoute le monstre dans le tableau des monstres
         
-        ##déplacements de chaque monstre du terrain
-       # print('oui')
-       # print('monstres : ', self.attributs_jeu.acc_tab_monstres())
+        #Ajoute de chaque monstre du tableau des monstres sur le terrain :
         for monstre in self.attributs_jeu.acc_tab_monstres() :
             self.terrain.mut_terrain(monstre.acc_x(), monstre.acc_y(), monstre)
-        self.attributs_jeu.mut_monstre_active(False)
+        self.attributs_jeu.mut_monstres_active(False) #Active la possibilité d’interactions
         self.attributs_jeu.monstres_deja_deplaces = True
     
     def deplacer_monstre(self, monstre):
@@ -304,9 +303,9 @@ class Jeu() :
         : param monstre (Monstre)
         : pas de return
         '''
-        prochaines_coordo = monstre.prochaines_coordonnees(self.terrain)
+        prochaines_coordonnees = monstre.prochaines_coordonnees(self.terrain)
         self.terrain.mut_terrain(monstre.acc_x(), monstre.acc_y(), ' ') #un vide à la place de l'ancienne case
-        monstre.deplacer(prochaines_coordo[0], prochaines_coordo[1])
+        monstre.deplacer(prochaines_coordonnees[0], prochaines_coordonnees[1])
         self.terrain.mut_terrain(monstre.acc_x(), monstre.acc_y(), monstre) #le monstre à sa nouvelle place
     
     def jouer_monstre(self):
@@ -358,20 +357,20 @@ class Jeu() :
         self.attributs_jeu.ajouter_console([str(perso_qui_attaque.acc_personnage()) + ' a attaqué ' + str(perso_qui_subit.acc_personnage()) + '.', perso_qui_attaque.acc_equipe()])
     
     ######################################################
-    ### Evenements pendant une partie :
+    ### Événements pendant une partie :
     ######################################################
     
     def effacer_actions(self) :
         '''
         Efface les indications d'attaques ou de déplacements
         '''
-        self.attributs_jeu.mut_deplacements([]) # enleve les déplacements
+        self.attributs_jeu.mut_deplacements([]) # enlève les déplacements
         self.attributs_jeu.mut_deplacements_cavalier([])
-        self.attributs_jeu.mut_attaques([]) # enleve les attaques
+        self.attributs_jeu.mut_attaques([]) # enlève les attaques
     
     def changer_personnage(self, selection) :
         '''
-        Enlève le personnage selectionné et donc le change.
+        Enlève le personnage sélectionné et donc le change.
         '''
         if isinstance(selection, module_objets.Coffre):# si c'est un coffre
             self.attributs_jeu.mut_coffre_selection(selection)
@@ -472,9 +471,9 @@ class Jeu() :
     
     def est_clique(self):
         '''
-        deroule les fonctions deplacement_est_clique et attaque_est_clique correctement
+        Déroule les fonctions deplacement_est_clique et attaque_est_clique correctement
         '''
-        if not (self.deplacement_est_clique() or self.attaque_est_clique()) : #Si aucun déplacement ou attaque a été éffectué, alors :
+        if not (self.deplacement_est_clique() or self.attaque_est_clique()) : #Si aucun déplacement ou attaque a été effectué, alors :
             self.personnage_est_selectionne() #Change de personnage par celui au coordonnées de la souris (si c'est un personnage !).
         
     def deplacement_est_clique(self):
@@ -607,7 +606,7 @@ class Jeu() :
             perso.mut_personnage(random.choice(personnages_plateau)) #on remplace au hasard le personnage
         
         ########################################################
-        #### AUGMENTATION DES DEGATS DU PERSONNAGE
+        #### AUGMENTATION DES DÉGÂTS DU PERSONNAGE
         ########################################################
         elif coffre.acc_contenu() == 5 :
             perso = self.attributs_jeu.acc_selection().acc_personnage() #le personnage sélectionné
@@ -615,7 +614,7 @@ class Jeu() :
             module_personnage.mut_dic_attaques(perso, nouvelle_attaque) #on change dans le dictionnaire
             
         ########################################################
-        #### RESSUSCITATION DU DERNIER PERSONNAGE MORT
+        #### RESUSCITATION DU DERNIER PERSONNAGE MORT
         ########################################################
         
         elif coffre.acc_contenu() == 8:
@@ -624,7 +623,7 @@ class Jeu() :
                 perso = self.attributs_jeu.acc_dernier_personnage_mort_bleu()
             else:
                 perso = self.attributs_jeu.acc_dernier_personnage_mort_rouge()
-            #ressuscitation du personnage
+            #resuscitation du personnage
             if not perso == None :
                 #si la case n'est pas libre
                 if not self.terrain.est_possible(perso.acc_x(), perso.acc_y()) :
@@ -644,7 +643,7 @@ class Jeu() :
           
     def deselectionner_bouton(self):
         '''
-        Déséléctionne un bouton après 0.3 secondes et lance l'action du bouton
+        Désélectionne un bouton après 0.3 secondes et lance l'action du bouton
         '''
         if self.attributs_jeu.acc_bouton_clique() != None and time.time() - self.attributs_jeu.acc_temps_appui_bouton() > 0.3:
             
@@ -700,15 +699,20 @@ class Jeu() :
         '''
         Ici on effectue tous les calculs et affichages nécessaires au jeu.
         '''
+        #Tant que l'attribut continuer est True, alors la boucle continue et le jeu aussi :
         while self.attributs_jeu.acc_continuer() :
             
-            self.attributs_jeu.mut_compteur((self.attributs_jeu.acc_compteur() + 1) % 70)  # Quand le compteur arrive à 70, il repart à 0 règle a vitesse d'animation des personnages
+            #Quand le compteur arrive à 70, il repart à 0. Règle à la vitesse d'animation des personnages.
+            self.attributs_jeu.mut_compteur((self.attributs_jeu.acc_compteur() + 1) % 70)  
+            
+            #Arrête toutes les animations de déplacement.
+            self.arreter_animation_deplacement() 
             
             ######################################################
             ### Menu :
             ######################################################
             
-            self.arreter_animation()
+            #Si l'attribut menu est True, alors le joueur se trouve dans le menu :
             if self.attributs_jeu.acc_menu() :
                 
                 ######################################################
@@ -716,7 +720,7 @@ class Jeu() :
                 ######################################################
                 
                 for evenement in pygame.event.get() :
-                    self.clavier_souris.inputs_menu(evenement)
+                    self.clavier_souris.entrees_menu(evenement)
 
                 ######################################################
                 ### Calculs :
@@ -750,7 +754,7 @@ class Jeu() :
                 ######################################################
                 
                 for evenement in pygame.event.get() :
-                    self.clavier_souris.inputs_jeu(evenement)
+                    self.clavier_souris.entrees_jeu(evenement)
                     
                     if self.clavier_souris.acc_appuye() and not self.attributs_jeu.acc_partie_terminee() and not self.attributs_jeu.acc_deplacement_en_cours() and not self.attributs_jeu.acc_attaque_en_cours():
                         
@@ -758,14 +762,14 @@ class Jeu() :
                 ### Déroulement du jeu :
                 ######################################################
                         
-                        #Si un personnage est déjà selectionné :
+                        #Si un personnage est déjà sélectionné :
                         if isinstance(self.attributs_jeu.acc_selection(), module_personnage.Personnage) :
                             self.est_clique()
                             #Si un coffre est sélectionné
                             if self.attributs_jeu.acc_coffre_selection() is not None :
                                 print('coffre cliqué !')
                                 self.coffre_est_clique()
-                                self.attributs_jeu.mut_coffre_selection(None) #plus de coffre séléctionné
+                                self.attributs_jeu.mut_coffre_selection(None) #plus de coffre sélectionné
                                 
                         #Sinon sélection un personnage :
                         else :
@@ -775,14 +779,14 @@ class Jeu() :
                 
                 self.attributs_jeu.enlever_console()
                 ##ajout de monstre
-                if self.attributs_jeu.acc_temps() == 'Jour' and self.attributs_jeu.acc_monstre_active() :
+                if self.attributs_jeu.acc_temps() == 'Jour' and self.attributs_jeu.acc_monstres_active() :
                     self.ajouter_tab_monstres()
                 
                 ######################################################
                 ### Affichage :
                 ######################################################
                 self.attributs_jeu.mut_temps_jeu() #modifie le jour quand le temps est venu
-                #self.attributs_jeu.crepuscule() #pour l'ajout de monstre avant la nuit
+                #self.attributs_jeu.crépuscule() #pour l'ajout de monstre avant la nuit
                 self.affichage.afficher_jeu()
 
             ### désélectionne le bouton après 0.3 secondes
@@ -810,6 +814,6 @@ class Jeu() :
         Initialise la fenêtre et lance le jeu avec un taux de 60 rafraîchissements/calculs par seconde.
         '''
         pygame.init() #Initialise Pygame 
-        pygame.display.set_caption('Medieval Heroes')
-        pygame.mouse.set_visible(False)
-        self.boucle()
+        pygame.display.set_caption('Medieval Heroes') #Le nom de la fenêtre sera "Medieval Heroes"
+        pygame.mouse.set_visible(False) #La souris n'est pas visible quand elle est sur la fenêtre Pygame
+        self.boucle() #Lance la boucle du jeu
