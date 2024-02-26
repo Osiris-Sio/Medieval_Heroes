@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 '''
--> Medieval Fight : Module pour la classe Attributs_Jeu.
+-> Medieval Heroes : Module pour la classe Attributs_Jeu.
 
 Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul 
 ''' 
@@ -29,15 +29,15 @@ class Attributs_Jeu() :
         #Attributs Jeu:
         self.continuer = True #Si la boucle du jeu continue
         self.menu = True #True si on est dans le menu, False sinon
-        self.option = False
+        self.option = False #True si on est dans le menu option, False sinon
         self.compteur = 0 #Compte le nombre de boucle
-        self.tab_personnages = []
-        self.tab_monstres = []
-        self.tab_coffres = []
+        self.tab_personnages = [] #Un tableau avec tous les personnages (qui sont leur pv strictement au dessus de 0)
+        self.tab_monstres = [] #Un tableau avec tous les monstres (qui sont leur pv strictement au dessus de 0)
+        self.tab_coffres = [] #Un tableau avec tous les coffres (non ouvert)
         self.deplacements = [] #Tableau de tuples (x, y) pour chaque coordonnées des cases de déplacement possible
-        self.deplacements_invisibles_cavalier = [] #Tableau de tuples (x, y) pour chaque coordonnées des cases de déplacement possible seulement pour les cavaliers
+        self.deplacements_invisibles_cavalier = [] #Tableau de tuples (x, y) pour chaque coordonnées des cases de déplacement possible (seulement pour les cavaliers)
         self.attaques = [] #Tableau de tuples (x, y) pour chaque coordonnées des cases d'attaque possible
-        self.selection = ' ' #' ' = Case vide sinon (autre caractère (str)) un personnage de la classe Personnage du module_personnage 
+        self.selection = ' ' #' ' = Case vide sinon si '#' = Obstacle sinon (autre caractère (str)) un personnage, monstre ou coffre
         self.equipe_en_cours = 'bleu' #Chaine de caractères de l'équipe qui joue
         self.coffre_selection = None #le coffre sélectionné
         
@@ -47,7 +47,7 @@ class Attributs_Jeu() :
         
         #Jour/Nuit :
         self.temps = 'Jour' #Le temps du jeu
-        self.temps_active = False
+        self.temps_active = False #Booleen qui permet de bloquer le Jour/Nuit pendant une condition vrai. C'est le cas dans la fonction mut_temps_jeu()
         self.monstre_active = False #True si des monstres doivent apparaître et False sinon
         
         #Action/Tour :
@@ -90,7 +90,7 @@ class Attributs_Jeu() :
         
         #Fin du jeu
         self.partie_terminee = False #True si la partie est terminée, False sinon 
-        self.position_y_menu_fin = 0
+        self.position_y_menu_fin = 0 #Permet de lier l'animation du fin de jeu et les intérations
         self.equipe_gagnante = None #None si la partie n'est pas terminée, 'bleu' ou 'rouge' (str) pour savoir quelle équipe a gagné.
 
     ######################################################
@@ -355,16 +355,6 @@ class Attributs_Jeu() :
     ######################################################
     ### Mutateurs :
     ######################################################
-    def mut_annonce_coffre(self, etat):
-        '''
-        Modifie l'attribut annonce_coffre
-        : param valeur (boolean)
-        : pas de return, modifie l'attribut menu
-        '''
-        #Assertion :
-        assert isinstance(etat, bool), 'Le paramètre doit être soit True, soit False !'
-        
-        self.annonce_coffre = etat
         
     def mut_continuer(self, valeur) :
         '''
@@ -413,6 +403,16 @@ class Attributs_Jeu() :
         '''
         self.dernier_personnage_mort_rouge = perso
         
+    def mut_annonce_coffre(self, etat):
+        '''
+        Modifie l'attribut annonce_coffre
+        : param valeur (boolean)
+        : pas de return, modifie l'attribut menu
+        '''
+        #Assertion :
+        assert isinstance(etat, bool), 'Le paramètre doit être soit True, soit False !'
+        self.annonce_coffre = etat
+        
     def mut_compteur(self, valeur) :
         '''
         Modifie l'attribut compteur
@@ -435,71 +435,27 @@ class Attributs_Jeu() :
         #Code :
         self.tab_personnages = tab
         
-    def ajouter_personnage(self, perso):
+    def mut_tab_monstres(self, tab) :
         '''
-        modifie l'attribut tab_personnage en y ajoutant le personnage passé en paramètre
-        : param perso (Personnage)
-        : pas de return, modifie l'attribut tab_personnages
-        '''
-        #assertion
-        assert isinstance(perso, module_personnage.Personnage), 'Le paramètre doit être un Personnage !'
-        #code
-        self.tab_personnages.append(perso)
-        
-    def supprimer_personnage(self, personnage) :
-        '''
-        Supprime le personnage passé en paramètre du tableau des personnages
-        : param personnage (module_personnage.Personnage)
-        : pas de return, modifie l'attribut tab_personnages
-        '''
-        #Assertion :
-        assert isinstance(personnage, module_personnage.Personnage), 'Le paramètre doit être un personnage (module_personnage.Personnage) !'
-        #Code :
-        self.tab_personnages.remove(personnage)
-
-    def ajouter_monstre(self, monstre) :
-        '''
-        Modifie l'attribut tab_monstres (ajoute !)
-        : param monstre (module_personnage.Monstre)
+        Modifie l'attribut tab_monstres
+        : param tab (list)
         : pas de return, modifie l'attribut tab_monstres
         '''
         #Assertion :
-        assert isinstance(monstre, module_personnage.Monstre), 'Le paramètre doit être un monstre (module_personnage.Monstre)'
+        assert isinstance(tab, list), 'Le paramètre doit être un tableau (list)'
         #Code :
-        self.tab_monstres.append(monstre)
+        self.tab_monstres = tab
         
-    def supprimer_monstre(self, monstre) :
+    def mut_tab_coffres(self, tab) :
         '''
-        Supprime le monstre passé en paramètre du tableau des monstres.
-        : param monstre (module_personnage.Monstre)
-        : pas de return, modifie l'attribut tab_monstres
-        '''
-        #Assertion :
-        assert isinstance(monstre, module_personnage.Monstre), 'Le paramètre doit être un monstre (module_personnage.Monstre) !'
-        #Code :
-        self.tab_monstres.remove(monstre)
-        
-    def ajouter_coffre(self, coffre) :
-        '''
-        Modifie l'attribut tab_coffres (ajoute !)
-        : param coffre (module_objets.Coffre)
+        Modifie l'attribut tab_coffres
+        : param tab (list)
         : pas de return, modifie l'attribut tab_coffres
         '''
         #Assertion :
-        assert isinstance(coffre, module_objets.Coffre), 'Le paramètre doit être un coffre (module_objets.Coffre) !'
+        assert isinstance(tab, list), 'Le paramètre doit être un tableau (list)'
         #Code :
-        self.tab_coffres.append(coffre)
-        
-    def supprimer_coffre(self, coffre) :
-        '''
-        Supprime le coffre passé en paramètre du tableau des coffres.
-        : param coffre (module_objets.Coffre)
-        : pas de return, modifie l'attribut tab_coffres
-        '''
-        #Assertion :
-        assert isinstance(coffre, module_objets.Coffre), 'Le paramètre doit être un coffre (module_objets.Coffre) !'
-        #Code :
-        self.tab_coffres.remove(coffre)
+        self.tab_coffres = tab
         
     def mut_deplacements(self, tab) :
         '''
@@ -813,7 +769,73 @@ class Attributs_Jeu() :
    
     ######################################################
     ### Autres Mutateurs :
-    ######################################################  
+    ######################################################
+    
+    def ajouter_personnage(self, perso):
+        '''
+        modifie l'attribut tab_personnage en y ajoutant le personnage passé en paramètre
+        : param perso (Personnage)
+        : pas de return, modifie l'attribut tab_personnages
+        '''
+        #assertion
+        assert isinstance(perso, module_personnage.Personnage), 'Le paramètre doit être un Personnage !'
+        #code
+        self.tab_personnages.append(perso)
+        
+    def supprimer_personnage(self, personnage) :
+        '''
+        Supprime le personnage passé en paramètre du tableau des personnages
+        : param personnage (module_personnage.Personnage)
+        : pas de return, modifie l'attribut tab_personnages
+        '''
+        #Assertion :
+        assert isinstance(personnage, module_personnage.Personnage), 'Le paramètre doit être un personnage (module_personnage.Personnage) !'
+        #Code :
+        self.tab_personnages.remove(personnage)
+
+    def ajouter_monstre(self, monstre) :
+        '''
+        Modifie l'attribut tab_monstres (ajoute !)
+        : param monstre (module_personnage.Monstre)
+        : pas de return, modifie l'attribut tab_monstres
+        '''
+        #Assertion :
+        assert isinstance(monstre, module_personnage.Monstre), 'Le paramètre doit être un monstre (module_personnage.Monstre)'
+        #Code :
+        self.tab_monstres.append(monstre)
+        
+    def supprimer_monstre(self, monstre) :
+        '''
+        Supprime le monstre passé en paramètre du tableau des monstres.
+        : param monstre (module_personnage.Monstre)
+        : pas de return, modifie l'attribut tab_monstres
+        '''
+        #Assertion :
+        assert isinstance(monstre, module_personnage.Monstre), 'Le paramètre doit être un monstre (module_personnage.Monstre) !'
+        #Code :
+        self.tab_monstres.remove(monstre)
+        
+    def ajouter_coffre(self, coffre) :
+        '''
+        Modifie l'attribut tab_coffres (ajoute !)
+        : param coffre (module_objets.Coffre)
+        : pas de return, modifie l'attribut tab_coffres
+        '''
+        #Assertion :
+        assert isinstance(coffre, module_objets.Coffre), 'Le paramètre doit être un coffre (module_objets.Coffre) !'
+        #Code :
+        self.tab_coffres.append(coffre)
+        
+    def supprimer_coffre(self, coffre) :
+        '''
+        Supprime le coffre passé en paramètre du tableau des coffres.
+        : param coffre (module_objets.Coffre)
+        : pas de return, modifie l'attribut tab_coffres
+        '''
+        #Assertion :
+        assert isinstance(coffre, module_objets.Coffre), 'Le paramètre doit être un coffre (module_objets.Coffre) !'
+        #Code :
+        self.tab_coffres.remove(coffre)  
     
     def mut_temps_jeu(self):
         '''
@@ -841,8 +863,6 @@ class Attributs_Jeu() :
         
         else :
             self.mut_temps_active(False)
-            
-            
             
     def ajouter_console(self, tab) :
         '''
@@ -874,5 +894,3 @@ class Attributs_Jeu() :
                 compteur -= 1
             else :
                 pile.empiler(stock.depiler())
-                
-    
