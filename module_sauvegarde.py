@@ -10,7 +10,7 @@ Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul
 ### Importation Modules :
 ######################################################
 
-import module_personnage, module_objets, tkinter
+import module_jeu, module_attributs_jeu, module_personnage, module_objets, tkinter
 from tkinter import filedialog
 
 ######################################################
@@ -22,15 +22,24 @@ class Sauvegarde() :
     Une classe Sauvegarde qui gère le chargement et la sauvegarde d'une partie dans un fichier texte.
     '''
     
-    def __init__(self, attributs_jeu) :
+    def __init__(self, jeu, attributs_jeu) :
         '''
         Initialise la classe
+        :params
+            jeu (module_jeu.Jeu)
+            attributs_jeu (module.attributs_jeu.Attributs_Jeu)
         '''
+        #Assertions :
+        assert isinstance(jeu, module_jeu.Jeu), 'jeu doit être de la classe Jeu du module_jeu !'
+        assert isinstance(attributs_jeu, module_attributs_jeu.Attributs_Jeu), 'attributs_jeu doit être de la classe Attributs_Jeu du module_attributs_jeu !'
+        
+        #Attributs des Paramètres :
+        self.jeu = jeu
         self.attributs_jeu = attributs_jeu
         
     def generer_chaines(self) :
         '''
-        Renvoie un tableau de chaines de caractères qui sera sauvegarder dans le fichier texte.
+        Renvoie un tableau de chaînes de caractères qui sera sauvegarder dans le fichier texte.
         '''
         tab_chaines = []
         
@@ -102,29 +111,6 @@ class Sauvegarde() :
         
         except :
             return "Erreur de Sauvegarde !"
-        
-    def charger(self) :
-        '''
-        Charge la partie.
-        : return (str), une phrase qui sera ajouté dans la console du jeu.
-        '''
-        #Demande le chemin du fichier qui sera chargé :
-        fichier = filedialog.askopenfilename(
-        filetypes = [("Fichiers texte", "*.txt"), ("Tous les fichiers", "*.*")]
-        )
-        
-        if not fichier :
-            return "Aucun fichier sélectionné."
-        
-        try :
-            lecture = open(fichier,'r',encoding='utf_8')
-            tab = lecture.readlines()
-            lecture.close()
-            self.restorer_partie(tab)
-            return "Partie Chargé !"
-            
-        except :
-            return "Erreur de Chargement !" 
         
     def convertir_chaine_list(self, chaine) :
         '''
@@ -198,3 +184,29 @@ class Sauvegarde() :
         
         for tombe in tab_tombes :
             self.attributs_jeu.positions_tombes.append([int(tombe[0]), int(tombe[1])])
+            
+        
+        
+    def charger(self) :
+        '''
+        Charge la partie.
+        : return (str), une phrase qui sera ajouté dans la console du jeu.
+        '''
+        #Demande le chemin du fichier qui sera chargé :
+        fichier = filedialog.askopenfilename(
+        filetypes = [("Fichiers texte", "*.txt"), ("Tous les fichiers", "*.*")]
+        )
+        
+        if not fichier :
+            return "Aucun fichier sélectionné."
+        
+        try :
+            lecture = open(fichier,'r',encoding='utf_8')
+            tab = lecture.readlines()
+            lecture.close()
+            self.restorer_partie(tab)
+            self.jeu.reinitialiser_attributs() #Réinitialise les attributs du jeu
+            return "Partie Chargé !"
+            
+        except :
+            return "Erreur de Chargement !" 

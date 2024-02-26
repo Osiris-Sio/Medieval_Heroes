@@ -626,7 +626,7 @@ class Monstre(Personnage):
         : params
             x, y (int) avec 0 <= x, y <= 20
             pv (int)
-            etat (int)
+            etat (int), 1 = dans la terre / ??? = hors de la terre
         '''
         #assertions
         assert isinstance(etat, int), "l'état doit être un entier !"
@@ -686,7 +686,7 @@ class Monstre(Personnage):
                     if 0 <= x <= 20 and 0 <= y <= 20 : #si la case est dans le terrain
                         perso = terrain.acc_terrain(x, y) #on regarde le personnage
                     #regarde le contenu de la case
-                    if isinstance(perso, Personnage) and not perso.acc_personnage() == 'monstre' : #c'est un perso et pas un mosntre
+                    if isinstance(perso, Personnage) and not perso.acc_personnage() == 'monstre' : #c'est un perso et pas un monstre
                         cases.append((x, y))
             #agrandissement de la recherche
             l -= 1

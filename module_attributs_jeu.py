@@ -47,7 +47,7 @@ class Attributs_Jeu() :
         
         #Jour/Nuit :
         self.temps = 'Jour' #Le temps du jeu
-        self.temps_active = True #Booléen qui permet de bloquer le Jour/Nuit pendant une condition vrai. C'est le cas dans la fonction mut_temps_jeu()
+        self.temps_active = False #Booléen qui permet de bloquer le Jour/Nuit pendant une condition vrai. C'est le cas dans la fonction mut_temps_jeu()
         self.monstres_active = False #True si des monstres doivent apparaître et False sinon
         
         #Action/Tour :
@@ -598,6 +598,16 @@ class Attributs_Jeu() :
         #Code :
         self.nombre_tour = valeur
         
+    def mut_console(self, valeur) :
+        '''
+        Modifie l'attribut console
+        : param valeur (module_lineaire.Pile)
+        '''
+        #Précondition :
+        assert isinstance(valeur, module_lineaire.Pile), 'Le paramètre doit être de la classe Pile (module_lineaire) !'
+        #Code :
+        self.console = valeur
+        
     def mut_chemin(self, tab) :
         '''
         Modifie l'attribut chemin
@@ -853,21 +863,23 @@ class Attributs_Jeu() :
         #Code :
         self.tab_coffres.remove(coffre)  
     
-    def mut_temps_jeu(self):
+    def changer_temps_jeu(self):
         '''
         modifie le temps de la journée si un certain nombre de déplacements/attaques a été effectué
         : pas de return
         '''
-        #Si il y a eu plus de 3 tours passé et que le "changement" de temps est activé, alors :
-        if self.acc_nombre_tour() % 4 == 0 and self.acc_nombre_tour() != 0 and self.acc_temps_active() :
+        #Si il y a eu plus de 4 tours passé :
+        if self.acc_nombre_tour() % 4 == 0 and self.acc_nombre_tour() != 0 :
+            #Si le "changement" de temps est activé :
+            if not self.acc_temps_active() :
                 dic = {'Jour': 'Nuit', 'Nuit': 'Jour'}
                 phrase = {
                     'Jour' : 'Le soleil se lève !',
                     'Nuit' : 'Le soleil se couche !'
                 }
                 self.mut_temps(dic[self.temps]) #Change le temps (par le contraire grâce au dictionnaire)
-                self.ajouter_console([phrase[self.acc_temps()], 'noir']) #Ajoute la phrase adapté dans la console.
-                self.mut_temps_active(False) #Le "changement" de temps est désactivé
+                self.ajouter_console([phrase[self.acc_temps()], 'noir']) #Ajoute la phrase adapté dans la console du jeu.
+                self.mut_temps_active(True) #Le "changement" de temps est activé
                 self.mut_monstres_deja_deplaces(False) # ???
         
         #Sinon si le nombre de tour est supérieur au reste de 4, alors :
@@ -882,7 +894,7 @@ class Attributs_Jeu() :
         
         #Sinon :
         else :
-            self.mut_temps_active(True) #Le "changement" de temps est activé
+            self.mut_temps_active(False) #Le "changement" de temps est désactiver
             
     def ajouter_console(self, tab) :
         '''

@@ -33,11 +33,13 @@ class Jeu() :
         
         #Attributs des Importations :
         self.attributs_jeu = module_attributs_jeu.Attributs_Jeu()
-        self.partie_commence_console() #Console de départ
-        self.sauvegarde = module_sauvegarde.Sauvegarde(self.attributs_jeu)
+        self.sauvegarde = module_sauvegarde.Sauvegarde(self, self.attributs_jeu)
         self.terrain = module_terrain.Terrain(self.attributs_jeu)
-        self.clavier_souris = module_clavier_souris.Clavier_Souris(self, self.attributs_jeu, self.terrain)
+        self.clavier_souris = module_clavier_souris.Clavier_Souris(self, self.attributs_jeu, self.sauvegarde, self.terrain)
         self.affichage = module_afficher.Affichage(self.attributs_jeu, self.terrain, self.ecran, self.clavier_souris)
+        
+        #Console de départ :
+        self.partie_commence_console() 
         
         ###Pose des personnages (par défaut)
         
@@ -95,15 +97,16 @@ class Jeu() :
         geant4b,
         ])
         
-        
-        
+    
         
     def placer(self) :
         '''
         Place les personnages, monstres et coffres sur le terrain
         '''
+        #self.attributs_jeu.mut_tab_monstres([module_personnage.Monstre(0, 0, 2, 0), module_personnage.Monstre(1, 0, 2, 3)])
         for elt in self.attributs_jeu.acc_tab_personnages() + self.attributs_jeu.acc_tab_monstres() + self.attributs_jeu.acc_tab_coffres() :
             self.terrain.mut_terrain(elt.acc_x(), elt.acc_y(), elt)
+        
                 
     ######################################################
     ### Accesseurs :
@@ -142,6 +145,59 @@ class Jeu() :
             famille = self.famille_geant_rouge
             self.coordonnees_rouge = [(famille[0].acc_x(), famille[0].acc_y()), (famille[1].acc_x(), famille[1].acc_y()),
                                    (famille[2].acc_x(), famille[2].acc_y()), (famille[3].acc_x(), famille[3].acc_y())]
+            
+    def mut_attributs_jeu(self, valeur) :
+        '''
+        Modifie l'attribut attributs_jeu
+        : param valeur (module_attributs_jeu.Attributs_Jeu)
+        '''
+        #Précondition :
+        assert isinstance(valeur, module_attributs_jeu.Attributs_Jeu), 'Le paramètre doit être de la classe Attribut_Jeu !'
+        #Code :
+        self.attributs_jeu = valeur
+    
+    def mut_sauvegarde(self, valeur) :
+        '''
+        Modifie l'attribut sauvegarde
+        : param valeur (module_sauvegarde.Sauvegarde)
+        '''
+        #Précondition :
+        assert isinstance(valeur, module_sauvegarde.Sauvegarde), 'Le paramètre doit être de la classe Sauvegarde !'
+        #Code :
+        self.sauvegarde = valeur
+    
+    def mut_terrain(self, valeur) :
+        '''
+        Modifie l'attribut terrain
+        : param valeur (module_terrain.Terrain)
+        '''
+        #Précondition :
+        assert isinstance(valeur, module_terrain.Terrain), 'Le paramètre doit être de la classe Terrain !'
+        #Code :
+        self.terrain = valeur
+    
+    def mut_clavier_souris(self, valeur) :
+        '''
+        Modifie l'attribut clavier_souris
+        : param valeur (module_clavier_souris.Clavier_Souris)
+        '''
+        #Précondition :
+        assert isinstance(valeur, module_clavier_souris.Clavier_Souris), 'Le paramètre doit être de la classe Clavier_Souris !'
+        #Code :
+        self.clavier_souris = valeur
+    
+    def mut_affichage(self, valeur) :
+        '''
+        Modifie l'attribut affichage
+        : param valeur (module_afficher.Affichage)
+        '''
+        #Précondition :
+        assert isinstance(valeur, module_afficher.Affichage), 'Le paramètre doit être de la classe Affichage !'
+        #Code :
+        self.affichage = valeur
+    
+    
+    
     
     ######################################################
     ### Déplacements :
@@ -153,11 +209,9 @@ class Jeu() :
         : params
             x, y (int), les nouvelles coordonnées
         '''
-        print('boucle' , self.attributs_jeu.compteur)
         ##
         self.terrain.mut_terrain(self.attributs_jeu.acc_selection().acc_x(), self.attributs_jeu.acc_selection().acc_y(), ' ')# remplace l'ancienne place du personnage par une case vide
         self.attributs_jeu.mut_nouvelles_coord((x, y))
-        print('attributs_jeu.nouvelles_coord')
         ######PARTIE AFFICHAGE DU DEPLACEMENT
         
         #Récupération du bon chemin :
@@ -190,9 +244,6 @@ class Jeu() :
         '''
         replace le personnage après l'avoir déplacé
         '''
-        print('yes')
-        print(self.attributs_jeu.acc_nouvelles_coord())
-        print(self.attributs_jeu.acc_selection())
         
         x, y = self.attributs_jeu.acc_nouvelles_coord()
         perso = self.attributs_jeu.acc_selection()
@@ -299,33 +350,56 @@ class Jeu() :
     
     def deplacer_monstre(self, monstre):
         '''
-        déplace le monstre aux nouvelles coordonnées
-        : param monstre (Monstre)
-        : pas de return
+        Déplace le monstre aux nouvelles coordonnées
+        : param monstre (module_personnage.Monstre)
         '''
+        #Assertion :
+        assert isinstance(monstre, module_personnage.Monstre), 'Le paramètre doit être un monstre de la classe Monstre du module_personnage !'
+        #Code :
         prochaines_coordonnees = monstre.prochaines_coordonnees(self.terrain)
         self.terrain.mut_terrain(monstre.acc_x(), monstre.acc_y(), ' ') #un vide à la place de l'ancienne case
         monstre.deplacer(prochaines_coordonnees[0], prochaines_coordonnees[1])
         self.terrain.mut_terrain(monstre.acc_x(), monstre.acc_y(), monstre) #le monstre à sa nouvelle place
+        
+    def attaquer_monstre(self, monstre) :
+        '''
+        Le monstre passé en paramètre attaque un personnage si c'est possible.
+        : param monstre (module_personnage.Monstre)
+        :return (bool), True si le monstre a attaqué, False sinon.
+        '''
+        #Assertion :
+        assert isinstance(monstre, module_personnage.Monstre), 'Le paramètre doit être un monstre de la classe Monstre du module_personnage !'
+        #Code :
+        
+        monstre.attaquer(self.terrain) #Le monstre cherche une victime à attaquer à proximité
+        
+        #Si le monstre a trouvé une victime :
+        if not monstre.attaquer_ennemi_proche() == None: 
+            victime = monstre.attaquer_ennemi_proche() #La victime qui est attaquée/sélectionné par le monstre
+            victime.est_attaque('monstre') #La victime perd des pv
+            victime.mut_endommage() #blesse la victime
+            self.attributs_jeu.mut_attaque_en_cours(True)
+            self.attributs_jeu.mut_attaque_temps(0)
+            return True #Le monstre a attaqué
+        
+        return False #Le monstre n'a pas attaqué
     
     def jouer_monstre(self):
         '''
         Déplace chaque monstre sur le plateau et gère leurs attaques.
         '''
-        for monstre in self.attributs_jeu.acc_tab_monstres(): # pour chaque monstre sur le plateau
-            # Attaque des monstres
-            monstre.attaquer(self.terrain) # cherche un ennemi à attaquer à proximité
-            if monstre.acc_etat() == 1 : #si c'est un bébé
-                if (self.attributs_jeu.acc_temps() == 'Jour' and self.attributs_jeu.nombre_tour % 4 == 3 and self.attributs_jeu.nombre_action == 3):
-                    monstre.mut_etat(2) #on le fait grandir
-            elif not monstre.attaquer_ennemi_proche() == None: # si une victime est trouvée
-                victime = monstre.attaquer_ennemi_proche() #la victime qui est attaquée
-                victime.est_attaque('monstre') #la victime perd des pv
-                victime.mut_endommage() # blesse la victime
-                self.attributs_jeu.mut_attaque_en_cours(True)
-                self.attributs_jeu.mut_attaque_temps(0)
-            else : # sinon on déplace le monstre
-                self.deplacer_monstre(monstre)
+        #Pour chaque monstre dans le tableau des monstres :
+        for monstre in self.attributs_jeu.acc_tab_monstres() :
+            
+            #Si le monstre est dans la terre :
+            if monstre.acc_etat() == 1 :
+                #Si le nombre de tour est un multiple de 4 (hors 0), le monstre sort de terre :
+                if self.attributs_jeu.nombre_tour % 4 == 0 and self.attributs_jeu.acc_nombre_tour() != 0 :
+                    monstre.mut_etat(2)     
+            else :
+                if not self.attaquer_monstre(monstre) :
+                    self.deplacer_monstre(monstre)
+        
         self.affichage.fini_transition = False
         
     ######################################################
@@ -353,7 +427,7 @@ class Jeu() :
             self.deplacement_console(self.attributs_jeu.acc_selection())
             self.effacer_actions()
             self.attributs_jeu.mut_nombre_action(self.attributs_jeu.acc_nombre_action() + 1)
-            self.jouer_monstre() #on fait jouer les monstres
+            self.jouer_monstre()
             rep = True  
         else :
             rep = False
@@ -394,7 +468,7 @@ class Jeu() :
                 self.attaque_console(self.attributs_jeu.acc_selection(), personnage_qui_subit)
                 self.changer_personnage(' ')
                 self.attributs_jeu.mut_nombre_action(self.attributs_jeu.acc_nombre_action() + 1)
-                self.jouer_monstre() #on fait jouer les monstres
+                self.jouer_monstre()
                 rep = True
             else :
                 rep = False
@@ -420,7 +494,6 @@ class Jeu() :
             if present :
                 coffre.ouverture()
                 self.ouverture_coffre(coffre)
-        print('coffre cliqué !')
         
     ######################################################
     ### Fonctions console :
@@ -635,68 +708,25 @@ class Jeu() :
                 if not self.terrain.est_possible(perso.acc_x(), perso.acc_y()) :
                     case = self.terrain.trouver_case_libre_proche(perso.acc_x(), perso.acc_y()) #on trouve une nouvelle case libre proche
                     perso.mut_pv(module_personnage.DIC_PV[perso.acc_personnage()]) #on réinitialise ses pv
-                    print(case)
                     perso.deplacer(case[0], case[1]) #on change les coordonnées du personnage
                     self.attributs_jeu.ajouter_personnage(perso)
                 #on ajoute le personnage ressuscité au terrain
                 self.terrain.mut_terrain(perso.acc_x(), perso.acc_y(), perso)
-            else :
-                print('oups, pas de dernier perso mort ...')
-     
+        
     ######################################################
-    ### Boutons :
-    ######################################################  
-          
-    def deselectionner_bouton(self):
+    ### Fonction Réinitialiser :
+    ######################################################
+    
+    def reinitialiser_attributs(self) :
         '''
-        Désélectionne un bouton après 0.3 secondes et lance l'action du bouton
+        Réinitialise quelques attributs du jeu quand le joueur charge une partie.
         '''
-        if self.attributs_jeu.acc_bouton_clique() != None and time.time() - self.attributs_jeu.acc_temps_appui_bouton() > 0.3:
-            
-            if self.attributs_jeu.acc_bouton_clique() == 'jouer':
-                self.placer()
-                self.attributs_jeu.mut_menu(False) #Lance le jeu
-                
-            elif self.attributs_jeu.acc_bouton_clique() == 'quitter':
-                self.attributs_jeu.mut_continuer(False)
-                
-            elif self.attributs_jeu.acc_bouton_clique() == 'rejouer':
-                self.__init__()# faire redémarrer le jeu
-                
-            elif self.attributs_jeu.acc_bouton_clique() == 'sauvegarder':
-                phrase = self.sauvegarde.sauvegarder()
-                self.attributs_jeu.ajouter_console([phrase, "noir"])
-            
-            elif self.attributs_jeu.acc_bouton_clique() == 'charger':
-                
-                phrase = self.sauvegarde.charger()
-
-                if phrase != "Erreur de Chargement !" :
-                    self.terrain = module_terrain.Terrain(self.attributs_jeu)
-                    self.clavier_souris = module_clavier_souris.Clavier_Souris(self, self.attributs_jeu, self.terrain)
-                    self.affichage = module_afficher.Affichage(self.attributs_jeu, self.terrain, self.ecran, self.clavier_souris)
-                    self.attributs_jeu.console = module_lineaire.Pile()
-                    self.placer()
-                    
-                self.attributs_jeu.ajouter_console([phrase, "noir"])
-                
-                
-            elif self.attributs_jeu.acc_bouton_clique() == 'quitter_fin':
-                self.attributs_jeu.mut_continuer(False)
-                
-            elif self.attributs_jeu.acc_bouton_clique() == 'quitter_menu':
-                self.attributs_jeu.mut_continuer(False)
-                
-            elif self.attributs_jeu.acc_bouton_clique() == 'option':
-                print('option')
-                self.attributs_jeu.mut_option(True)
-                
-            elif self.attributs_jeu.acc_bouton_clique() == 'quitter_option':
-                print('quitter_option')
-                self.attributs_jeu.mut_option(False)
-                
-            self.attributs_jeu.mut_bouton_clique(None)
-          
+        self.mut_terrain(module_terrain.Terrain(self.attributs_jeu))
+        self.mut_clavier_souris(module_clavier_souris.Clavier_Souris(self, self.attributs_jeu, self.sauvegarde, self.terrain))
+        self.mut_affichage(module_afficher.Affichage(self.attributs_jeu, self.terrain, self.ecran, self.clavier_souris))
+        self.attributs_jeu.mut_console(module_lineaire.Pile())
+        self.placer()
+        
     ######################################################
     ### Fonction Boucle :
     ######################################################
@@ -728,12 +758,6 @@ class Jeu() :
                 #Pour chaque entrées :
                 for evenement in pygame.event.get() :
                     self.clavier_souris.entrees_menu(evenement) #Vérifie s'il y a eu une interaction dans le menu
-
-                ######################################################
-                ### Calculs :
-                ######################################################
-                    
-                
                     
                 ######################################################
                 ### Affichage :
@@ -747,6 +771,8 @@ class Jeu() :
             
             #Si l'attribut menu est False, alors le joueur se trouve dans le jeu (dans une partie) :
             if not self.attributs_jeu.acc_menu() :
+                
+                self.gerer_animations_attaques() #Gère le temps d'animation des attaques
                 
                 #Si il n'y a pas de déplacement et/ou d'attaque de personnage en cours :
                 if not self.attributs_jeu.acc_deplacement_en_cours() and not self.attributs_jeu.acc_attaque_en_cours() :
@@ -764,13 +790,15 @@ class Jeu() :
                 #Pour chaque entrées :
                 for evenement in pygame.event.get() :
                     self.clavier_souris.entrees_jeu(evenement) #Vérifie s'il y a eu une interaction dans le jeu
+                
+                
                     
                 ######################################################
                 ### Monstres :
                 ######################################################
                 
                 #S'il fait nuit et que l'ajout de monstres est "activé", alors on ajoute des monstres
-                if self.attributs_jeu.acc_temps() == 'Nuit' and self.attributs_jeu.acc_monstres_active() :
+                if self.attributs_jeu.acc_nombre_tour() % 4 == 3 and self.attributs_jeu.acc_monstres_active() :
                     self.ajouter_tab_monstres()
                 
                 ######################################################
@@ -783,7 +811,7 @@ class Jeu() :
                 ### Temps :
                 ######################################################
                 
-                self.attributs_jeu.mut_temps_jeu() #Modifie l'atmosphère quand le temps est venu
+                self.attributs_jeu.changer_temps_jeu() #Modifie l'atmosphère quand le temps est venu
                 
                 ######################################################
                 ### Affichage :
@@ -792,11 +820,10 @@ class Jeu() :
                 self.affichage.afficher_jeu()
 
             ######################################################
-            ### Boutons :
+            ### Animations :
             ######################################################
 
-            self.deselectionner_bouton() #Désélectionne le bouton après 0.3 secondes
-            self.gerer_animations_attaques() #Gère le temps d'animation des attaques
+            self.clavier_souris.deselectionner_bouton() #Désélectionne le bouton après 0.3 secondes
             
             ######################################################
             ### Fréquence de 60 images par seconde :

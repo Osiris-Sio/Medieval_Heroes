@@ -570,7 +570,6 @@ class Affichage():
         self.ecran.blit(texte1, (1117, 675))
             
         if bouton_clique == 'sauvegarder':
-            print('ok')
             bouton_sauvegarde = self.boutons['sauvegarder'][1]
             texte2 = police.render("Sauvegarder" , 1, (145, 173, 73))
         else :
@@ -604,7 +603,6 @@ class Affichage():
         affiche le personnage en déplacement
         '''
         if self.attributs_jeu.acc_deplacement_en_cours() and self.attributs_jeu.acc_selection() != None :
-            print('bouge !')
             if self.attributs_jeu.acc_indice_courant() < len(self.attributs_jeu.acc_chemin()) - 1:
                 destination = self.attributs_jeu.acc_chemin()[self.attributs_jeu.acc_indice_courant() + 1]
                 x, y = self.attributs_jeu.acc_coordonnees_personnage()
@@ -653,14 +651,6 @@ class Affichage():
                 self.attributs_jeu.monstres_a_deplacer.remove(monstre)
                 monstre.futur_x = None
                 monstre.futur_y = None
-        
-        
-    def afficher_attaque_en_cours(self):
-        '''
-        affiche l'attaque en cours
-        '''
-        if self.attributs_jeu.acc_attaque_en_cours() == True :
-            print('attaque en cours')
         
     def afficher_tombes(self):
         '''
@@ -768,7 +758,6 @@ class Affichage():
         self.afficher_personnages_plateau()
         self.afficher_personnage_en_deplacement()
         self.afficher_monstres_en_deplacement()
-        self.afficher_attaque_en_cours()
         self.afficher_deplacements()
         self.afficher_attaques()
         self.afficher_personnage_selection()

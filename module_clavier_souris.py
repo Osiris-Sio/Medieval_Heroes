@@ -10,7 +10,7 @@ Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul
 ### Importation Modules :
 ######################################################
 
-import pygame, module_personnage, time
+import pygame, module_jeu, module_attributs_jeu, module_sauvegarde, module_terrain, module_personnage, time
 
 ######################################################
 ### Classe Affichage :
@@ -21,7 +21,7 @@ class Clavier_Souris() :
     Une classe Clavier_Souris qui gère les entrées du clavier et de la souris.
     '''
     
-    def __init__(self, jeu, attributs_jeu, terrain) :
+    def __init__(self, jeu, attributs_jeu, sauvegarde, terrain) :
         '''
         Initialise les attributs pour gérer les entrées.
         :params 
@@ -29,9 +29,16 @@ class Clavier_Souris() :
             attributs_jeu (module.attributs_jeu.Attributs_Jeu)
             terrain (module_terrain.Terrain)
         '''
+        #Assertions :
+        assert isinstance(jeu, module_jeu.Jeu), 'jeu doit être de la classe Jeu du module_jeu !'
+        assert isinstance(attributs_jeu, module_attributs_jeu.Attributs_Jeu), 'attributs_jeu doit être de la classe Attributs_Jeu du module_attributs_jeu !'
+        assert isinstance(sauvegarde, module_sauvegarde.Sauvegarde), 'terrain doit être de la classe Terrain du module_terrain !'
+        assert isinstance(terrain, module_terrain.Terrain), 'terrain doit être de la classe Terrain du module_terrain !'
+        
         #Attributs des Paramètres :
         self.jeu = jeu
         self.attributs_jeu = attributs_jeu
+        self.sauvegarde = sauvegarde
         self.terrain = terrain
 
         #Autres Attributs :
@@ -103,6 +110,54 @@ class Clavier_Souris() :
     ######################################################
     ### Différents Boutons :
     ######################################################
+    
+    def deselectionner_bouton(self):
+        '''
+        Désélectionne un bouton après 0.3 secondes et lance l'action du bouton
+        '''
+        #Si le joueur a appuyé sur un bouton et que le temps après avoir appuyé est de 3 secondes :
+        if self.attributs_jeu.acc_bouton_clique() != None and time.time() - self.attributs_jeu.acc_temps_appui_bouton() > 0.3:
+            
+            #Si le bouton est jouer, place les personnage et lance la partie
+            if self.attributs_jeu.acc_bouton_clique() == 'jouer':
+                self.jeu.placer()
+                self.attributs_jeu.mut_menu(False)
+                
+            #Sinon si le bouton est quitter, ferme la fenêtre pygame en "désactivant" la boucle.
+            elif self.attributs_jeu.acc_bouton_clique() == 'quitter':
+                self.attributs_jeu.mut_continuer(False)
+                
+            #Sinon si le bouton est rejouer, réinitialise la classe Jeu du module_jeu.
+            elif self.attributs_jeu.acc_bouton_clique() == 'rejouer':
+                self.jeu.__init__()
+                
+            #Sinon si le bouton est sauvegarder, sauvegarde la partie en cours et signale au joueur par phrase dans la console du jeu (Succès ou Échec).
+            elif self.attributs_jeu.acc_bouton_clique() == 'sauvegarder':
+                phrase = self.sauvegarde.sauvegarder()
+                self.attributs_jeu.ajouter_console([phrase, "noir"])
+                
+            #Sinon si le bouton est charger, charge la partie sélectionné et signale au joueur par phrase dans la console du jeu (Succès ou Échec).
+            elif self.attributs_jeu.acc_bouton_clique() == 'charger':
+                phrase = self.sauvegarde.charger()
+                self.attributs_jeu.ajouter_console([phrase, "noir"])
+                
+            #Sinon si le bouton est quitter_fin, ferme la fenêtre pygame en "désactivant" la boucle.
+            elif self.attributs_jeu.acc_bouton_clique() == 'quitter_fin':
+                self.attributs_jeu.mut_continuer(False)
+                
+            #Sinon si le bouton est quitter_menu, ferme la fenêtre pygame en "désactivant" la boucle.
+            elif self.attributs_jeu.acc_bouton_clique() == 'quitter_menu':
+                self.attributs_jeu.mut_continuer(False)
+                
+            #Sinon si le bouton est option, ouvre la fenêtre de menu options.
+            elif self.attributs_jeu.acc_bouton_clique() == 'option':
+                self.attributs_jeu.mut_option(True)
+                
+            #Sinon si le bouton est quitter_option, ferme la fenêtre du menu option.
+            elif self.attributs_jeu.acc_bouton_clique() == 'quitter_option':
+                self.attributs_jeu.mut_option(False)
+                
+            self.attributs_jeu.mut_bouton_clique(None) #Enlève le bouton sélectionné/cliqué
     
     def boutons_option(self) :
         '''
