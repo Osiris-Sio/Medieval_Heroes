@@ -96,9 +96,8 @@ class Jeu() :
         geant3b,
         geant4b,
         ])
-        
     
-        
+ 
     def placer(self) :
         '''
         Place les personnages, monstres et coffres sur le terrain
@@ -244,7 +243,6 @@ class Jeu() :
         '''
         replace le personnage après l'avoir déplacé
         '''
-        
         x, y = self.attributs_jeu.acc_nouvelles_coord()
         perso = self.attributs_jeu.acc_selection()
         
@@ -331,22 +329,25 @@ class Jeu() :
         '''
         Ajoute des monstres avec des coordonnées aléatoires dans le tableau en fonction de combien de Nuit sont passées.
         '''
-        for _ in range(self.attributs_jeu.acc_nombre_tour() // 2) :
-            #Coordonnées au hasard
-            x = random.randint(1, 20)
-            y = random.randint(1, 20)
-            #Tant que la future case n'est pas libre, on choisit une nouvelle fois une case au hasard
-            while self.terrain.acc_terrain(x, y) != ' ' :
+        #Si l'ajout de monstres est "activé" et qu'ils n'ont pas encore été ajouté alors on ajoute des monstres
+        if self.attributs_jeu.acc_monstres_active() and not self.attributs_jeu.acc_monstres_deja_deplaces() :
+            for _ in range(self.attributs_jeu.acc_nombre_tour() // 3) :
                 #Coordonnées au hasard
                 x = random.randint(1, 20)
                 y = random.randint(1, 20)
-            self.attributs_jeu.ajouter_monstre(module_personnage.Monstre(x, y, 2, 1)) #Ajoute le monstre dans le tableau des monstres
-        
-        #Ajoute de chaque monstre du tableau des monstres sur le terrain :
-        for monstre in self.attributs_jeu.acc_tab_monstres() :
-            self.terrain.mut_terrain(monstre.acc_x(), monstre.acc_y(), monstre)
-        self.attributs_jeu.mut_monstres_active(False) #Active la possibilité d’interactions
-        self.attributs_jeu.monstres_deja_deplaces = True
+                #Tant que la future case n'est pas libre, on choisit une nouvelle fois une case au hasard
+                while self.terrain.acc_terrain(x, y) != ' ' :
+                    #Coordonnées au hasard
+                    x = random.randint(1, 20)
+                    y = random.randint(1, 20)
+                self.attributs_jeu.ajouter_monstre(module_personnage.Monstre(x, y, 2, 1)) #Ajoute le monstre dans le tableau des monstres
+            
+            #Ajoute de chaque monstre du tableau des monstres sur le terrain :
+            for monstre in self.attributs_jeu.acc_tab_monstres() :
+                self.terrain.mut_terrain(monstre.acc_x(), monstre.acc_y(), monstre)
+            #Monstres déjà déplacés
+            self.attributs_jeu.mut_monstres_active(False) #Active la possibilité d’interactions
+            self.attributs_jeu.mut_monstres_deja_deplaces(True)
     
     def deplacer_monstre(self, monstre):
         '''
@@ -356,7 +357,7 @@ class Jeu() :
         #Assertion :
         assert isinstance(monstre, module_personnage.Monstre), 'Le paramètre doit être un monstre de la classe Monstre du module_personnage !'
         #Code :
-        prochaines_coordonnees = monstre.prochaines_coordonnees(self.terrain)
+        prochaines_coordonnees = monstre.prochaines_coordonnees(self.terrain, self.attributs_jeu.acc_equipe_en_cours())
         self.terrain.mut_terrain(monstre.acc_x(), monstre.acc_y(), ' ') #un vide à la place de l'ancienne case
         monstre.deplacer(prochaines_coordonnees[0], prochaines_coordonnees[1])
         self.terrain.mut_terrain(monstre.acc_x(), monstre.acc_y(), monstre) #le monstre à sa nouvelle place
@@ -374,8 +375,8 @@ class Jeu() :
         monstre.attaquer(self.terrain) #Le monstre cherche une victime à attaquer à proximité
         
         #Si le monstre a trouvé une victime :
-        if not monstre.attaquer_ennemi_proche() == None: 
-            victime = monstre.attaquer_ennemi_proche() #La victime qui est attaquée/sélectionné par le monstre
+        if not monstre.attaquer_ennemi_proche(self.attributs_jeu.acc_equipe_en_cours()) == None: 
+            victime = monstre.attaquer_ennemi_proche(self.attributs_jeu.acc_equipe_en_cours()) #La victime qui est attaquée/sélectionné par le monstre
             victime.est_attaque('monstre') #La victime perd des pv
             victime.mut_endommage() #blesse la victime
             self.attributs_jeu.mut_attaque_en_cours(True)
@@ -394,13 +395,13 @@ class Jeu() :
             #Si le monstre est dans la terre :
             if monstre.acc_etat() == 1 :
                 #Si le nombre de tour est un multiple de 4 (hors 0), le monstre sort de terre :
-                if self.attributs_jeu.nombre_tour % 4 == 0 and self.attributs_jeu.acc_nombre_tour() != 0 :
-                    monstre.mut_etat(2)     
+                if self.attributs_jeu.acc_nombre_tour() % 4 == 3 and self.attributs_jeu.acc_nombre_action() == 3:
+                    monstre.mut_etat(2)
+            #Si le monstre était déjà sortis de terre
             else :
                 if not self.attaquer_monstre(monstre) :
                     self.deplacer_monstre(monstre)
         
-        self.affichage.fini_transition = False
         
     ######################################################
     ### Fonctions Clique :
@@ -770,7 +771,7 @@ class Jeu() :
             ######################################################
             
             #Si l'attribut menu est False, alors le joueur se trouve dans le jeu (dans une partie) :
-            if not self.attributs_jeu.acc_menu() :
+            else:
                 
                 self.gerer_animations_attaques() #Gère le temps d'animation des attaques
                 
@@ -791,15 +792,11 @@ class Jeu() :
                 for evenement in pygame.event.get() :
                     self.clavier_souris.entrees_jeu(evenement) #Vérifie s'il y a eu une interaction dans le jeu
                 
-                
-                    
                 ######################################################
                 ### Monstres :
                 ######################################################
                 
-                #S'il fait nuit et que l'ajout de monstres est "activé", alors on ajoute des monstres
-                if self.attributs_jeu.acc_nombre_tour() % 4 == 3 and self.attributs_jeu.acc_monstres_active() :
-                    self.ajouter_tab_monstres()
+                self.ajouter_tab_monstres()
                 
                 ######################################################
                 ### Console :

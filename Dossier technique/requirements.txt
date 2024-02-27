@@ -1,0 +1,17 @@
+Pour pouvoir jouer au jeu, vous avez besoin :
+- D'un écran de taille suffisante : au minimum de dimension 1300x800 pixels, les écrans de   pouces ne sont pas compatibles
+- D'avoir Un executeur pyhton
+- Avoir le module Pygame instalés
+
+Utilisez Thonny en tant qu'executeur de code python (c'est notre cas):
+	Si vous n'avez pas installé le module pygame :
+	respectez ces instructions dans l'ordre
+	 - Cliquez sur "Outil" en haut
+	 - Cliquez ensuite sur "gerer les paquets"
+	 - Entrez dans la barre de recherche "pygame"
+	 - Cliquez sur installer en bas de la fenêtre
+	Le module pygame est maintenant installé
+
+
+
+
