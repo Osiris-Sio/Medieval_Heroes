@@ -11,8 +11,7 @@ Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul
 ######################################################
 
 import pygame, module_attributs_jeu, module_terrain, module_afficher, module_clavier_souris, module_objets, module_personnage, time, random, module_sauvegarde
-from graphe import parcourir_graphe
-from graphe import module_lineaire #provisoire
+from graphe import parcourir_graphe, module_lineaire
 
 ######################################################
 ### Classe Jeu :
@@ -29,7 +28,7 @@ class Jeu() :
         '''
         #Attributs Fenêtre :
         self.ecran = pygame.display.set_mode((1300, 800)) #Affiche l'écran du jeu de dimension 1300 x 800
-        self.horloge = pygame.time.Clock()
+        self.horloge = pygame.time.Clock() #Permet de fixer les fps du de la fenêtre (rafraîchissement et calculs par seconde)
         
         #Attributs des Importations :
         self.attributs_jeu = module_attributs_jeu.Attributs_Jeu()
@@ -96,16 +95,6 @@ class Jeu() :
         geant3b,
         geant4b,
         ])
-    
- 
-    def placer(self) :
-        '''
-        Place les personnages, monstres et coffres sur le terrain
-        '''
-        #self.attributs_jeu.mut_tab_monstres([module_personnage.Monstre(0, 0, 2, 0), module_personnage.Monstre(1, 0, 2, 3)])
-        for elt in self.attributs_jeu.acc_tab_personnages() + self.attributs_jeu.acc_tab_monstres() + self.attributs_jeu.acc_tab_coffres() :
-            self.terrain.mut_terrain(elt.acc_x(), elt.acc_y(), elt)
-        
                 
     ######################################################
     ### Accesseurs :
@@ -195,8 +184,45 @@ class Jeu() :
         #Code :
         self.affichage = valeur
     
+    ######################################################
+    ### Placement :
+    ######################################################
     
+    def placer(self) :
+        '''
+        Place les personnages, monstres et coffres sur le terrain
+        '''
+        #self.attributs_jeu.mut_tab_monstres([module_personnage.Monstre(0, 0, 2, 0), module_personnage.Monstre(1, 0, 2, 3)])
+        for elt in self.attributs_jeu.acc_tab_personnages() + self.attributs_jeu.acc_tab_monstres() + self.attributs_jeu.acc_tab_coffres() :
+            self.terrain.mut_terrain(elt.acc_x(), elt.acc_y(), elt)
+            
+    ######################################################
+    ### Fonctions Console :
+    ######################################################
     
+    def partie_commence_console(self) :
+        '''
+        Ajoute dans la console que l'équipe a changé.
+        '''
+        self.attributs_jeu.ajouter_console(['La partie commence !', 'noir'])
+    
+    def equipe_console(self, equipe) :
+        '''
+        Ajoute dans la console que l'équipe a changé.
+        '''
+        self.attributs_jeu.ajouter_console(['À l\'équipe ' + str(equipe) + ' de jouer !', 'noir'])
+    
+    def deplacement_console(self, perso) :
+        '''
+        Ajoute dans la console que le personnage (passé en paramètre) s'est déplacé.
+        '''
+        self.attributs_jeu.ajouter_console([str(perso.acc_personnage()) + ' s\'est déplacé.', perso.acc_equipe()])
+        
+    def attaque_console(self, perso_qui_attaque, perso_qui_subit) :
+        '''
+        Ajoute dans la console que le personnage attaque un personnage de l'équipe adverse.
+        '''
+        self.attributs_jeu.ajouter_console([str(perso_qui_attaque.acc_personnage()) + ' a attaqué ' + str(perso_qui_subit.acc_personnage()) + '.', perso_qui_attaque.acc_equipe()])
     
     ######################################################
     ### Déplacements :
@@ -227,7 +253,7 @@ class Jeu() :
             chemin2.append((elt[0] * 38 + 250, elt[1] * 38))
         self.attributs_jeu.mut_chemin(chemin2) # on obtient un chemin avec toutes les coordonnées dans lesquelles le personnage doit passer
         self.attributs_jeu.mut_coordonnees_personnage((chemin2[0])) # le personnage se situe au premier point du chemin
-        self.attributs_jeu.mut_personnage_en_deplacement([self.attributs_jeu.acc_selection().acc_personnage(), self.attributs_jeu.acc_selection().acc_equipe()]) # on désigne le personnage qui se déplace
+        self.attributs_jeu.mut_personnage_en_deplacement(perso) # on désigne le personnage qui se déplace
         self.attributs_jeu.mut_deplacement_en_cours(True) # on déclare qu'un déplacement est en cours
         self.attributs_jeu.nb_actions += 1 # on augmente le nombre d'action effectuée du joueur de 1
         
@@ -375,7 +401,7 @@ class Jeu() :
         monstre.attaquer(self.terrain) #Le monstre cherche une victime à attaquer à proximité
         
         #Si le monstre a trouvé une victime :
-        if not monstre.attaquer_ennemi_proche(self.attributs_jeu.acc_equipe_en_cours()) == None: 
+        if monstre.attaquer_ennemi_proche(self.attributs_jeu.acc_equipe_en_cours()) != None: 
             victime = monstre.attaquer_ennemi_proche(self.attributs_jeu.acc_equipe_en_cours()) #La victime qui est attaquée/sélectionné par le monstre
             victime.est_attaque('monstre') #La victime perd des pv
             victime.mut_endommage() #blesse la victime
@@ -385,7 +411,7 @@ class Jeu() :
         
         return False #Le monstre n'a pas attaqué
     
-    def jouer_monstre(self):
+    def jouer_monstres(self):
         '''
         Déplace chaque monstre sur le plateau et gère leurs attaques.
         '''
@@ -394,17 +420,77 @@ class Jeu() :
             
             #Si le monstre est dans la terre :
             if monstre.acc_etat() == 1 :
+                
                 #Si le nombre de tour est un multiple de 4 (hors 0), le monstre sort de terre :
                 if self.attributs_jeu.acc_nombre_tour() % 4 == 3 and self.attributs_jeu.acc_nombre_action() == 3:
                     monstre.mut_etat(2)
+            
             #Si le monstre était déjà sortis de terre
             else :
                 if not self.attaquer_monstre(monstre) :
                     self.deplacer_monstre(monstre)
+                    
+    ########################################################
+    #### Fonction Coffre :
+    ########################################################
+            
+    def ouverture_coffre(self, coffre):
+        '''
+        réalise la bonne action en fonction du contenu du coffre
+        : coffre (Coffre)
+        '''
+        self.attributs_jeu.mut_annonce_coffre(True)
+        self.attributs_jeu.event_coffre = coffre.acc_contenu()
         
+        ########################################################
+        #### BONUS DE VIE POUR LE PERSONNAGE
+        ########################################################
+        
+        if coffre.acc_contenu() == 1 :
+            perso = self.attributs_jeu.acc_selection() #le personnage sélectionné
+            perso.mut_pv(perso.acc_pv() + 10) #on augmente de 10 les pv du personnage
+            
+        ########################################################
+        #### CHANGEMENT DE PERSONNAGE (aléatoire pour l'instant)
+        ########################################################
+        
+        elif coffre.acc_contenu() == 3 :
+            perso = self.attributs_jeu.acc_selection()
+            personnages_plateau = ['monstre', 'mage', 'paladin', 'geant', 'sorciere', 'valkyrie', 'archere', 'poulet', 'cavalier', 'cracheur de feu', 'ivrogne', 'barbare']
+            personnages_plateau.remove(perso.acc_personnage()) #il ne faut pas que le nouveau personnage soit l'ancien
+            perso.mut_personnage(random.choice(personnages_plateau)) #on remplace au hasard le personnage
+        
+        ########################################################
+        #### AUGMENTATION DES DÉGÂTS DU PERSONNAGE
+        ########################################################
+        elif coffre.acc_contenu() == 5 :
+            perso = self.attributs_jeu.acc_selection().acc_personnage() #le personnage sélectionné
+            nouvelle_attaque = module_personnage.DIC_ATTAQUES[perso] + 5 #les nouveaux pv de dommage du personnage
+            module_personnage.mut_dic_attaques(perso, nouvelle_attaque) #on change dans le dictionnaire
+            
+        ########################################################
+        #### RESUSCITATION DU DERNIER PERSONNAGE MORT
+        ########################################################
+        
+        elif coffre.acc_contenu() == 8:
+            #récupération du dernier personnage mort de la bonne équipe
+            if self.attributs_jeu.acc_equipe_en_cours() == 'bleu':
+                perso = self.attributs_jeu.acc_dernier_personnage_mort_bleu()
+            else:
+                perso = self.attributs_jeu.acc_dernier_personnage_mort_rouge()
+            #resuscitation du personnage
+            if not perso == None :
+                #si la case n'est pas libre
+                if not self.terrain.est_possible(perso.acc_x(), perso.acc_y()) :
+                    case = self.terrain.trouver_case_libre_proche(perso.acc_x(), perso.acc_y()) #on trouve une nouvelle case libre proche
+                    perso.mut_pv(module_personnage.DIC_PV[perso.acc_personnage()]) #on réinitialise ses pv
+                    perso.deplacer(case[0], case[1]) #on change les coordonnées du personnage
+                    self.attributs_jeu.ajouter_personnage(perso)
+                #on ajoute le personnage ressuscité au terrain
+                self.terrain.mut_terrain(perso.acc_x(), perso.acc_y(), perso)
         
     ######################################################
-    ### Fonctions Clique :
+    ### Fonctions de Clique :
     ###################################################### 
         
     def deplacement_est_clique(self) :
@@ -421,59 +507,65 @@ class Jeu() :
             if self.attributs_jeu.acc_selection().acc_personnage() == 'geant':
                 self.deplacer_geant(position_case[0], position_case[1])
             
-            #Sinon (si le personnage est "normal")
+            #Sinon, le personnage est "classique" :
             else:
                 self.deplacer(position_case[0], position_case[1])
             
-            self.deplacement_console(self.attributs_jeu.acc_selection())
+            self.deplacement_console(self.attributs_jeu.acc_selection()) #Ajoute une phrase de déplacement dans la console du jeu
             self.effacer_actions()
-            self.attributs_jeu.mut_nombre_action(self.attributs_jeu.acc_nombre_action() + 1)
-            self.jouer_monstre()
-            rep = True  
-        else :
-            rep = False
-        return rep
+            self.attributs_jeu.mut_nombre_action(self.attributs_jeu.acc_nombre_action() + 1) #Augmente le nombre d'action de 1
+            self.jouer_monstres() #Fait jouer les monstres
+            return True
+            
+        return False
             
     def attaque_est_clique(self):
         '''
         attaque le personnage en question selon si il est "normal" ou si il est un geant.
         : return (bool) True si une attaque a été effectuée, False sinon
         '''
-        position_case = self.clavier_souris.acc_position_case()  
+        position_case = self.clavier_souris.acc_position_case()
+        
+        #Si la position de la souris est sur une case du terrain :  
         if 0 <= position_case[0] <= 20 and 0 <= position_case[1] <= 20 :
-            personnage_qui_subit = self.terrain.acc_terrain(position_case[0], position_case[1])
-            
+            personnage_qui_subit = self.terrain.acc_terrain(position_case[0], position_case[1]) #Sélectionne le personnage qui va subir les attaques
             
             #Si la souris est dans une case d'attaque :
             if position_case in self.attributs_jeu.acc_attaques() and personnage_qui_subit.acc_equipe() != self.attributs_jeu.acc_equipe_en_cours():
                 
                 #Si le personnage_qui_subit est le Géant :
                 if personnage_qui_subit.acc_personnage() == 'geant':
-                    if personnage_qui_subit.acc_equipe() == 'rouge' : #géant rouge
+                    
+                    #Si le Géant est rouge :
+                    if personnage_qui_subit.acc_equipe() == 'rouge' :
                         famille = self.famille_geant_rouge
+                        
+                    #Sinon, le Géant est bleu
                     else:
                         famille = self.famille_geant_bleu
-                    for geant in famille : #pour chaque partie du géant
+                        
+                    #Pour chaque partie du geant :
+                    for geant in famille :
                         geant.est_attaque(self.attributs_jeu.acc_selection().acc_personnage())
                         geant.mut_endommage()
                         self.attributs_jeu.mut_attaque_en_cours(True)
                         self.attributs_jeu.mut_attaque_temps(0)
                         
-                #Sinon (si le personnage est "normal")
+                #Sinon, le personnage est "classique" :
                 else :
                     personnage_qui_subit.est_attaque(self.attributs_jeu.acc_selection().acc_personnage())
                     personnage_qui_subit.mut_endommage()
                     self.attributs_jeu.mut_attaque_en_cours(True)
                     self.attributs_jeu.mut_attaque_temps(0)
                 
-                self.attaque_console(self.attributs_jeu.acc_selection(), personnage_qui_subit)
-                self.changer_personnage(' ')
-                self.attributs_jeu.mut_nombre_action(self.attributs_jeu.acc_nombre_action() + 1)
-                self.jouer_monstre()
-                rep = True
-            else :
-                rep = False
-            return rep
+                self.attaque_console(self.attributs_jeu.acc_selection(), personnage_qui_subit) #Ajoute une phrase d'attaque dans la console du jeu
+                self.changer_personnage(' ') #Enlève le personnage sélectionner par le joueur (rien sélectionné)
+                self.attributs_jeu.mut_nombre_action(self.attributs_jeu.acc_nombre_action() + 1) #Augmente le nombre d'action de 1
+                self.effacer_actions()
+                self.jouer_monstres() #Fait jouer les monstres
+                return True
+            
+            return False
 
     def coffre_est_clique(self):
         '''
@@ -495,34 +587,6 @@ class Jeu() :
             if present :
                 coffre.ouverture()
                 self.ouverture_coffre(coffre)
-        
-    ######################################################
-    ### Fonctions console :
-    ######################################################
-    
-    def partie_commence_console(self) :
-        '''
-        Ajoute dans la console que l'équipe a changé.
-        '''
-        self.attributs_jeu.ajouter_console(['La partie commence !', 'noir'])
-    
-    def equipe_console(self, equipe) :
-        '''
-        Ajoute dans la console que l'équipe a changé.
-        '''
-        self.attributs_jeu.ajouter_console(['À l\'équipe ' + str(equipe) + ' de jouer !', 'noir'])
-    
-    def deplacement_console(self, perso) :
-        '''
-        Ajoute dans la console que le personnage (passé en paramètre) s'est déplacé.
-        '''
-        self.attributs_jeu.ajouter_console([str(perso.acc_personnage()) + ' s\'est déplacé.', perso.acc_equipe()])
-        
-    def attaque_console(self, perso_qui_attaque, perso_qui_subit) :
-        '''
-        Ajoute dans la console que le personnage attaque un personnage de l'équipe adverse.
-        '''
-        self.attributs_jeu.ajouter_console([str(perso_qui_attaque.acc_personnage()) + ' a attaqué ' + str(perso_qui_subit.acc_personnage()) + '.', perso_qui_attaque.acc_equipe()])
     
     ######################################################
     ### Événements pendant une partie :
@@ -585,11 +649,11 @@ class Jeu() :
                         
                         #Si son numero est 0, place une tombe à sa position :
                         if personnage.numero_geant == 0:
-                            self.attributs_jeu.mut_positions_tombes((personnage.acc_x() * 38 + 269, personnage.acc_y() * 38 + 19))
+                            self.attributs_jeu.ajouter_positions_tombes((personnage.acc_x() * 38 + 269, personnage.acc_y() * 38 + 19))
                             
                     #Sinon, le personnage est un personnage "classique", place une tombe à sa position :
                     else :
-                        self.attributs_jeu.mut_positions_tombes((personnage.acc_x() * 38 + 250, personnage.acc_y() * 38))
+                        self.attributs_jeu.ajouter_positions_tombes((personnage.acc_x() * 38 + 250, personnage.acc_y() * 38))
 
                     #Si le personnage est de l'équipe bleu, alors on change le dernier personnage mort de l'équipe bleu par ce personnage :
                     if personnage.acc_equipe() == 'bleu':
@@ -653,67 +717,6 @@ class Jeu() :
         
         return self.attributs_jeu.acc_partie_terminee()
         
-    
-                
-    ########################################################
-    #### Fonction Coffre :
-    ########################################################
-            
-    def ouverture_coffre(self, coffre):
-        '''
-        réalise la bonne action en fonction du contenu du coffre
-        : coffre (Coffre)
-        '''
-        self.attributs_jeu.mut_annonce_coffre(True)
-        self.attributs_jeu.event_coffre = coffre.acc_contenu()
-        
-        ########################################################
-        #### BONUS DE VIE POUR LE PERSONNAGE
-        ########################################################
-        
-        if coffre.acc_contenu() == 1 :
-            perso = self.attributs_jeu.acc_selection() #le personnage sélectionné
-            perso.mut_pv(perso.acc_pv() + 10) #on augmente de 10 les pv du personnage
-            
-        ########################################################
-        #### CHANGEMENT DE PERSONNAGE (aléatoire pour l'instant)
-        ########################################################
-        
-        elif coffre.acc_contenu() == 3 :
-            perso = self.attributs_jeu.acc_selection()
-            personnages_plateau = ['monstre', 'mage', 'paladin', 'geant', 'sorciere', 'valkyrie', 'archere', 'poulet', 'cavalier', 'cracheur de feu', 'ivrogne', 'barbare']
-            personnages_plateau.remove(perso.acc_personnage()) #il ne faut pas que le nouveau personnage soit l'ancien
-            perso.mut_personnage(random.choice(personnages_plateau)) #on remplace au hasard le personnage
-        
-        ########################################################
-        #### AUGMENTATION DES DÉGÂTS DU PERSONNAGE
-        ########################################################
-        elif coffre.acc_contenu() == 5 :
-            perso = self.attributs_jeu.acc_selection().acc_personnage() #le personnage sélectionné
-            nouvelle_attaque = module_personnage.DIC_ATTAQUES[perso] + 5 #les nouveaux pv de dommage du personnage
-            module_personnage.mut_dic_attaques(perso, nouvelle_attaque) #on change dans le dictionnaire
-            
-        ########################################################
-        #### RESUSCITATION DU DERNIER PERSONNAGE MORT
-        ########################################################
-        
-        elif coffre.acc_contenu() == 8:
-            #récupération du dernier personnage mort de la bonne équipe
-            if self.attributs_jeu.acc_equipe_en_cours() == 'bleu':
-                perso = self.attributs_jeu.acc_dernier_personnage_mort_bleu()
-            else:
-                perso = self.attributs_jeu.acc_dernier_personnage_mort_rouge()
-            #resuscitation du personnage
-            if not perso == None :
-                #si la case n'est pas libre
-                if not self.terrain.est_possible(perso.acc_x(), perso.acc_y()) :
-                    case = self.terrain.trouver_case_libre_proche(perso.acc_x(), perso.acc_y()) #on trouve une nouvelle case libre proche
-                    perso.mut_pv(module_personnage.DIC_PV[perso.acc_personnage()]) #on réinitialise ses pv
-                    perso.deplacer(case[0], case[1]) #on change les coordonnées du personnage
-                    self.attributs_jeu.ajouter_personnage(perso)
-                #on ajoute le personnage ressuscité au terrain
-                self.terrain.mut_terrain(perso.acc_x(), perso.acc_y(), perso)
-        
     ######################################################
     ### Fonction Réinitialiser :
     ######################################################
@@ -725,8 +728,13 @@ class Jeu() :
         self.mut_terrain(module_terrain.Terrain(self.attributs_jeu))
         self.mut_clavier_souris(module_clavier_souris.Clavier_Souris(self, self.attributs_jeu, self.sauvegarde, self.terrain))
         self.mut_affichage(module_afficher.Affichage(self.attributs_jeu, self.terrain, self.ecran, self.clavier_souris))
-        self.attributs_jeu.mut_console(module_lineaire.Pile())
-        self.placer()
+        self.attributs_jeu.mut_console(module_lineaire.Pile()) #Réinitialise la console du jeu
+        
+        #Si jamais la partie est terminée, réinitialise les attributs suivant du module_attributs_jeu :
+        self.attributs_jeu.mut_partie_terminee(False)
+        self.attributs_jeu.mut_equipe_gagnante(None)
+        
+        self.placer() #Place les personnages, monstres et coffres de la partie qui a été chargé.
         
     ######################################################
     ### Fonction Boucle :

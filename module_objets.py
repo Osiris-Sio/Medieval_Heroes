@@ -45,6 +45,10 @@ class Coffre():
         
         return "Un coffre de coordonnées (" + str(self.x) + ', ' + str(self.y) + ") et de contenu : " + self.dic_contenu[self.contenu]
     
+    ######################################################
+    ### Accesseurs :
+    ######################################################
+    
     def acc_x(self):
         '''
         renvoie l'attribut x
@@ -72,6 +76,30 @@ class Coffre():
         : return (bool)
         '''
         return self.est_ouvert
+    
+    def acc_avancement_ouverture(self) :
+        '''
+        renvoie l'attribut avancement_ouverture
+        : return (bool)
+        '''
+        return self.avancement_ouverture
+    
+    ######################################################
+    ### Mutateurs :
+    ######################################################
+    
+    def mut_avancement_ouverture(self, valeur) :
+        '''
+        Modifie l'attribut avancement_ouverture
+        :param valeur (int)
+        :pas de return
+        '''
+        assert isinstance(valeur, int), 'Le paramètre doit être un entier (int) !'
+        self.avancement_ouverture = valeur
+    
+    ######################################################
+    ### Méthodes :
+    ######################################################
     
     def definir_contenu(self):
         '''

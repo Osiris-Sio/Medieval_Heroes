@@ -77,6 +77,7 @@ def construire_pile(parent, destination):
     : return (Pile)
     '''
     p = module_lineaire.Pile()
+    destination = (destination[0], destination[1])
     p.empiler(destination)
     while not parent[destination] == None:
         destination = parent[destination]
@@ -86,7 +87,7 @@ def construire_pile(parent, destination):
     
 def depiler_chemin(graphe, sommet, destination):
     '''
-    renvoie la liste correpondant au chemin le plus court dans le graphe su sommet à la destination
+    renvoie la liste correspondant au chemin le plus court dans le graphe su sommet à la destination
     : params
         graphe (Graphe...)
         sommet (?) le sommet de départ 

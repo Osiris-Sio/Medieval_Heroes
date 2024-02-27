@@ -322,6 +322,12 @@ class Attributs_Jeu() :
         '''
         return self.monstres_deja_deplaces
     
+    def acc_monstres_a_deplacer(self):
+        '''
+        Renvoie l'attribut monstres_a_deplacer
+        '''
+        return self.monstres_a_deplacer
+    
     def acc_attaque_en_cours(self):
         '''
         Renvoie l'attribut attaque_en_cours
@@ -648,15 +654,15 @@ class Attributs_Jeu() :
         #Code :
         self.coordonnees_monstre = coordonnees
     
-    def mut_personnage_en_deplacement(self, tab) :
+    def mut_personnage_en_deplacement(self, personnage) :
         '''
         Modifie l'attribut personnage_en_deplacement
-        : param tab (list or None)
+        : param personnage (module_personnage.Personnage or None)
         '''
         #Précondition :
-        assert isinstance(tab, list) or tab == None, 'Le paramètre doit être un tableau (list) ou None !'
+        assert isinstance(personnage, module_personnage.Personnage) or personnage == None, 'Le paramètre doit être un personnage de la classe Personnage ou None !'
         #Code :
-        self.personnage_en_deplacement = tab
+        self.personnage_en_deplacement = personnage
         
     def mut_monstre_en_deplacement(self, tab) :
         '''
@@ -687,8 +693,6 @@ class Attributs_Jeu() :
         assert isinstance(valeur, bool), 'Le paramètre doit être un booléen (bool) !'
         #Code :
         self.deplacement_en_cours = valeur
-        
-    
     
     def mut_nouvelles_coord(self, coordonnees) :
         '''
@@ -719,6 +723,26 @@ class Attributs_Jeu() :
         assert isinstance(valeur, bool), 'Le paramètre doit être un booléen (bool) !'
         #Code :
         self.monstres_deja_deplaces = valeur
+        
+    def mut_monstres_a_deplacer(self, tab) :
+        '''
+        Modifie l'attribut monstres_a_deplacer
+        : param tab (list)
+        '''
+        #Précondition :
+        assert isinstance(tab, list), 'Le paramètre doit être un tableau (list) !'
+        #Code :
+        self.monstres_a_deplacer = tab
+        
+    def mut_positions_tombes(self, valeur) :
+        '''
+        Modifie l'attribut positions_tombes
+        : param valeur (tuple)
+        '''
+        #Précondition :
+        assert isinstance(valeur, tuple), 'Le paramètre doit être un tuple !'
+        #Code :
+        self.positions_tombes = valeur
        
     def mut_attaque_en_cours(self, valeur) :
         '''
@@ -770,15 +794,15 @@ class Attributs_Jeu() :
         #Code :
         self.position_y_menu_fin += valeur          
                 
-    def mut_equipe_gagnante(self, chaine) :
+    def mut_equipe_gagnante(self, valeur) :
         '''
         Modifie l'attribut equipe_gagnante
-        : param chaine (str) 'rouge' ou 'bleu'
+        : param valeur (str) 'rouge' ou 'bleu' (ou None en cas de chargement d'une partie)
         '''
         #Précondition :
-        assert chaine in ['rouge', 'bleu'], 'Le paramètre doit être soir \'rouge\' ou \'bleu\' !'
+        assert valeur in ['rouge', 'bleu', None], 'Le paramètre doit être soit \'rouge\' ou \'bleu\' ou None !'
         #Code :
-        self.equipe_gagnante = chaine          
+        self.equipe_gagnante = valeur          
                 
     ######################################################
     ### Autres Accesseurs :
@@ -933,3 +957,13 @@ class Attributs_Jeu() :
         : param valeur (int)
         '''
         self.nombre_tour += 1
+        
+    def ajouter_positions_tombes(self, coordonnees) :
+        '''
+        Modifie l'attribut positions_tombes (ajouté ! (append))
+        : param coordonnees (tuple)
+        '''
+        #Précondition :
+        assert isinstance(coordonnees, tuple), 'Le paramètre doit être un tuple !'
+        #Code :
+        self.positions_tombes.append(coordonnees)

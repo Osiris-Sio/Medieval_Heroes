@@ -695,7 +695,7 @@ class Monstre(Personnage):
                         perso = terrain.acc_terrain(x, y) #on regarde le personnage
                     #regarde le contenu de la case
                     if isinstance(perso, Personnage) and not perso.acc_personnage() == 'monstre' : #c'est un perso et pas un monstre
-                        cases.append((x, y))
+                        cases.append((x, y, perso.acc_equipe()))
             #agrandissement de la recherche
             l -= 1
             h += 1
@@ -710,7 +710,7 @@ class Monstre(Personnage):
         : return tuple
         '''
         #assertion
-        assert isinstance(equipe_en_cours, str) and equipe_en_cours in ['bleu', 'rouge'], "l'équipe en cours doit être une chaîne de cractères entre bleu et rouge !"
+        assert isinstance(equipe_en_cours, str) and equipe_en_cours in ['bleu', 'rouge'], "l'équipe en cours doit être une chaîne de caractères entre bleu et rouge !"
         #code
         victimes = self.trouver_joueurs_proches(terrain)
         #on essaie de prendre une victime appartenant à l'équipe en cours ou alors on choisit au pif
@@ -731,12 +731,25 @@ class Monstre(Personnage):
         #on essaie de trouver une victime de la bonne équipe
         while i < len(victimes) and pro_victime == None:
             vic = victimes[i]
-            if vic.acc_equipe() == equipe_en_cours:
-                pro_victime = vic
+            
+            if isinstance(vic, Personnage) and vic.acc_equipe() == equipe_en_cours :
+                pro_victime = (vic.acc_x(), vic.acc_y())
+            
+            elif not isinstance(vic, Personnage) and vic[2] == equipe_en_cours :
+                pro_victime = (vic[0], vic[1])
+            
+            
             i += 1
+            
         #si il n'y a aucune victime de l'équipe en cours
-        if pro_victime == None:
-            pro_victime = random.choice(victimes) #on choisit au hasard
+        if isinstance(pro_victime, Personnage) and pro_victime == None :
+            pro_victime = random.choice(victimes)
+            pro_victime = (pro_victime.acc_x(), pro_victime.acc_y()) #on choisit au hasard
+            
+        elif not isinstance(pro_victime, Personnage) and pro_victime == None :
+            pro_victime = random.choice(victimes)
+            pro_victime = (pro_victime[0], pro_victime[1]) #on choisit au hasard
+        
         return pro_victime
          
     def construire_graphe_perso(self, victime, terrain):
@@ -760,7 +773,7 @@ class Monstre(Personnage):
     
     def prochaines_coordonnees(self, terrain, equipe_en_cours):
         '''
-        renvoie les coordonnées du déplacement le plus optimable, le chemin le plus court
+        renvoie les coordonnées du déplacement le plus optimale, le chemin le plus court
         : param terrain (Terrain)
         : return (tuple)
         '''
@@ -799,7 +812,7 @@ class Monstre(Personnage):
         : return (Personnage)
         '''
         #assertion
-        assert isinstance(equipe_en_cours, str) and equipe_en_cours in ['bleu', 'rouge'], "l'équipe en cours doit être une chaîne de cractères entre bleu et rouge !"
+        assert isinstance(equipe_en_cours, str) and equipe_en_cours in ['bleu', 'rouge'], "l'équipe en cours doit être une chaîne de caractères entre bleu et rouge !"
         #code
         print(self.tab_victime)
         if not self.tab_victime == [] : #si une attaque est possible
