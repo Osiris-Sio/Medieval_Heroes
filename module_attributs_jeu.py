@@ -542,6 +542,26 @@ class Attributs_Jeu() :
         #Code :
         self.tab_coffres = tab
         
+    def supprime_tab_coffres(self, coffre):
+        '''
+        enlève du tableau tab_coffres le coffre passé en paramètres
+        : pas de return, modifie l'attribut tab_coffres
+        '''
+        #Assertion :
+        assert isinstance(coffre, module_objets.Coffre), 'Le paramètre doit être un coffre du module_coffre !'
+        #Code :
+        self.tab_coffres.remove(coffre)
+        
+    def ajoute_tab_coffres(self, coffre):
+        '''
+        ajoute au tableau tab_coffres le coffre passé en paramètres
+        : pas de return, modifie l'attribut tab_coffres
+        '''
+        #Assertion :
+        assert isinstance(coffre, module_objets.Coffre), 'Le paramètre doit être un coffre du module_coffre !'
+        #Code :
+        self.tab_coffres.append(coffre)
+
     def mut_deplacements(self, tab) :
         '''
         Modifie l'attribut deplacements

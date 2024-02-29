@@ -8,7 +8,7 @@ Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul
 ######################################################
 ### Importation
 ######################################################
-import random
+import random, module_personnage
 
 ######################################################
 ### Coffres
@@ -147,6 +147,22 @@ class Coffre():
                 if 0 <= n_x <= 20 and 0 <= n_y <= 20: #la case est dans le terrain
                     tab.append((n_x, n_y))
         return tab
+    
+    def est_present_autour(self, terrain, equipe_en_cours):
+        '''
+        renvoie True si il y a un personnage de l'équipe qui joue autour du coffre et False sinon
+        : param terrain (module_terrain.Terrain)
+        : return (bool)
+        '''
+        alentour = self.alentour() #on regarde les cases autour du coffre
+        present = False
+        i = 0
+        while not present and i < len(alentour): #tant qu'on n'a pas trouvé ou qu'on n'a pas tout regardé
+            perso = terrain.acc_terrain(alentour[i][0], alentour[i][1])
+            if isinstance(perso, module_personnage.Personnage): #si il y a un personnage
+                present = perso.acc_equipe() == equipe_en_cours #si un personnage de l'équipe en cours est à côté du coffre
+            i += 1
+        return present
     
     def ouverture(self):
         '''

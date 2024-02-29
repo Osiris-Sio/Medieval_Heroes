@@ -145,7 +145,8 @@ class Terrain():
         : params x, y (int)
         : return (tuple)
         '''
-        trouve = False
+        case = (x, y)
+        trouve = self.est_possible(x, y) #regarde si la case passée en paramètre est libre
         i = 1
         while not trouve : #on cherche tant qu'on n'a pas trouvé
             tab = self.trouver_case(i)

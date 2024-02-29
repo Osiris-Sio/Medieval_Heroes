@@ -533,6 +533,20 @@ class Geant(Personnage):
                      3 : (-1, -1)
                      }
         
+    #####################################
+    ##### Accesseurs :
+    #####################################
+    def acc_numero_geant(self):
+        '''
+        renvoie l'attribut numero_geant
+        : return (int), 0, 1, 2, ou 3
+        '''
+        return self.numero_geant
+
+    #####################################
+    ##### Méthodes :
+    #####################################
+        
     def cases_deplacements(self):
         '''
         renvoie un tableau contenant les coordonnées des cases sur lesquelles le personnage pourrait éventuellement aller
@@ -636,12 +650,13 @@ class Monstre(Personnage):
             pv (int)
             etat (int), 1 = dans la terre / ??? = hors de la terre
         '''
-        #assertions
+        #assertion
         assert isinstance(etat, int), "l'état doit être un entier !"
         #code
         super().__init__('monstre', 'neutre', x, y, pv)
         self.etat = etat
         self.tab_victime = []
+        #pour l'affichage
         self.coord_x = x * 38 + 250
         self.coord_y = y * 38
         self.futur_coord_x = None
@@ -680,6 +695,7 @@ class Monstre(Personnage):
     def trouver_joueurs_proches(self, terrain):
         '''
         renvoie les coordonnées des joueurs les plus proches de lui
+        : param terrain (module_terrain.Terrain)
         : return (list of tuples)
         '''
         cases = []
@@ -695,7 +711,7 @@ class Monstre(Personnage):
                         perso = terrain.acc_terrain(x, y) #on regarde le personnage
                     #regarde le contenu de la case
                     if isinstance(perso, Personnage) and not perso.acc_personnage() == 'monstre' : #c'est un perso et pas un monstre
-                        cases.append((x, y, perso.acc_equipe()))
+                        cases.append(perso) #on ajoute le personnage au tableau
             #agrandissement de la recherche
             l -= 1
             h += 1
@@ -703,15 +719,12 @@ class Monstre(Personnage):
     
     def prochaine_victime(self, terrain, equipe_en_cours):
         '''
-        renvoie les coordonnées de la prochaine victime (choisis au hasard parmi la liste possible
+        renvoie les coordonnées de la prochaine victime (choisis au hasard parmi la liste possible)
         : params
-            terrain (Terrain)
+            terrain (module_terrain.Terrain)
             equipe_en_cours (str), 'bleu' ou 'rouge'
         : return tuple
         '''
-        #assertion
-        assert isinstance(equipe_en_cours, str) and equipe_en_cours in ['bleu', 'rouge'], "l'équipe en cours doit être une chaîne de caractères entre bleu et rouge !"
-        #code
         victimes = self.trouver_joueurs_proches(terrain)
         #on essaie de prendre une victime appartenant à l'équipe en cours ou alors on choisit au pif
         pro_victime = self.choisir_victime(victimes, equipe_en_cours)
@@ -728,27 +741,17 @@ class Monstre(Personnage):
         '''
         pro_victime = None
         i = 0
-        #on essaie de trouver une victime de la bonne équipe
+        #on essaie de trouver une victime de l'équipe qui est en train de jouer
         while i < len(victimes) and pro_victime == None:
             vic = victimes[i]
-            
-            if isinstance(vic, Personnage) and vic.acc_equipe() == equipe_en_cours :
-                pro_victime = (vic.acc_x(), vic.acc_y())
-            
-            elif not isinstance(vic, Personnage) and vic[2] == equipe_en_cours :
-                pro_victime = (vic[0], vic[1])
-            
-            
+            #on regarde si la victime est de l'équipe qui est en train de jouer
+            if vic.acc_equipe() == equipe_en_cours :
+                pro_victime = vic
             i += 1
             
         #si il n'y a aucune victime de l'équipe en cours
-        if isinstance(pro_victime, Personnage) and pro_victime == None :
-            pro_victime = random.choice(victimes)
-            pro_victime = (pro_victime.acc_x(), pro_victime.acc_y()) #on choisit au hasard
-            
-        elif not isinstance(pro_victime, Personnage) and pro_victime == None :
-            pro_victime = random.choice(victimes)
-            pro_victime = (pro_victime[0], pro_victime[1]) #on choisit au hasard
+        if pro_victime == None :
+            pro_victime = random.choice(victimes) #on choisit au hasard
         
         return pro_victime
          
@@ -773,14 +776,19 @@ class Monstre(Personnage):
     
     def prochaines_coordonnees(self, terrain, equipe_en_cours):
         '''
-        renvoie les coordonnées du déplacement le plus optimale, le chemin le plus court
-        : param terrain (Terrain)
+        renvoie les coordonnées du déplacement le plus optimal, du chemin le plus court
+        : params
+            terrain (Terrain)
+            equipe_en_cours(str)
         : return (tuple)
         '''
+        #assertion
+        assert isinstance(equipe_en_cours, str) and equipe_en_cours in ['bleu', 'rouge'], "l'équipe en cours doit être une chaîne de caractères entre bleu et rouge !"
+        #code
         victime = self.prochaine_victime(terrain, equipe_en_cours)
         ##graphe
-        graphe = self.construire_graphe_perso(victime, terrain)
-        chemin = parcourir_graphe.depiler_chemin(graphe, (self.x, self.y), victime)
+        graphe = self.construire_graphe_perso((victime.acc_x(), victime.acc_y()), terrain)
+        chemin = parcourir_graphe.depiler_chemin(graphe, (self.x, self.y), (victime.acc_x(), victime.acc_y()))
         #renvoie la prochaine case
         return chemin[1] #la prochaine case autre que la case du monstre elle-même
 
@@ -788,7 +796,7 @@ class Monstre(Personnage):
         '''
         modifie l'attribut attaque_possible si il y a un ou des ennemis à côté du monstre et renvoie
         le tableau contenant toutes les victimes autour du monstre
-        : terrain (Terrain)
+        : terrain (module_terrain.Terrain)
         : return (list), la liste des victimes
         '''
         #tableau cases
@@ -814,9 +822,8 @@ class Monstre(Personnage):
         #assertion
         assert isinstance(equipe_en_cours, str) and equipe_en_cours in ['bleu', 'rouge'], "l'équipe en cours doit être une chaîne de caractères entre bleu et rouge !"
         #code
-        print(self.tab_victime)
         if not self.tab_victime == [] : #si une attaque est possible
-            victime = self.choisir_victime(self.tab_victime, equipe_en_cours) #on choisit au hasard la victime à attaquer
+            victime = self.choisir_victime(self.tab_victime, equipe_en_cours) #on choisit au hasard la victime à attaquer, de préférance appartenant à l"équipe qui joue
         else:
             victime = None #pas de victime à proximité
         return victime

@@ -10,7 +10,7 @@ Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul
 ### Importation Modules :
 ######################################################
 
-import pygame, module_attributs_jeu, module_terrain, module_afficher, module_clavier_souris, module_objets, module_personnage, time, random, module_sauvegarde
+import pygame, module_attributs_jeu, module_terrain, module_afficher, module_clavier_souris, module_objets, module_personnage, random, module_sauvegarde
 from graphe import parcourir_graphe, module_lineaire
 
 ######################################################
@@ -95,7 +95,15 @@ class Jeu() :
         geant3b,
         geant4b,
         ])
-                
+        
+        ###Pose des coffres (par défaut)
+        self.attributs_jeu.mut_tab_coffres([
+        module_objets.Coffre(1, 6),
+        module_objets.Coffre(19, 14),
+        module_objets.Coffre(1, 14),
+        module_objets.Coffre(19, 6),
+        ])
+                                            
     ######################################################
     ### Accesseurs :
     ######################################################
@@ -438,8 +446,22 @@ class Jeu() :
         #Si le monstre a trouvé une victime :
         if monstre.attaquer_ennemi_proche(self.attributs_jeu.acc_equipe_en_cours()) != None: 
             victime = monstre.attaquer_ennemi_proche(self.attributs_jeu.acc_equipe_en_cours()) #La victime qui est attaquée/sélectionné par le monstre
-            victime.est_attaque('monstre') #La victime perd des pv
-            victime.mut_endommage() #blesse la victime
+        #Si la victime est le Géant :
+            if victime.acc_personnage() == 'geant':
+                #Si le Géant est rouge :
+                if victime.acc_equipe() == 'rouge' :
+                    famille = self.famille_geant_rouge
+                #Sinon, le Géant est bleu
+                else:
+                    famille = self.famille_geant_bleu
+                #Pour chaque partie du geant :
+                for geant in famille :
+                    geant.est_attaque('monstre')
+                    geant.mut_endommage()
+            else: #autre personnage
+                victime.est_attaque('monstre') #La victime perd des pv
+                victime.mut_endommage() #blesse la victime
+                
             self.attributs_jeu.mut_attaque_en_cours(True)
             self.attributs_jeu.mut_attaque_temps(0)
             return True #Le monstre a attaqué
@@ -468,7 +490,64 @@ class Jeu() :
     ########################################################
     #### Fonction Coffre :
     ########################################################
+    
+    def apparition_coffres(self):
+        '''
+        ajoute des coffres à tab_coffres selon ces conditions:
+            • ajoute autant de coffres que de coffres qui ont été ouvert (toujours 4 sur le terrain)
+            • respect la position : autant de coffres dans la partie haute que dans la aprtie basse du terrain
+        : pas de return
+        '''
+        if self.attributs_jeu.acc_nombre_tour() % 8 == 0 and not self.attributs_jeu.acc_nombre_tour() == 0 : #tous les matins, les coffres apparaissent
+            #on supprime les coffres déjà ouvert et on compte combien ont été supprimé (en haut et en bas)
+            nombre_haut, nombre_bas = self.suppression_coffre()
+            #de nouvelles_coordonnées pour un coffre
+            self.ajoute_coffre(nombre_haut, 'haut') #ajoute en haut
+            self.ajoute_coffre(nombre_bas, 'bas') #ajoute en bas
             
+    def suppression_coffre(self):
+        '''
+        supprime les coffres déjà ouvert et renvoie un tuple avec en premier le nombre de coffres supprimés en haut et en deuxième,
+        le nombre de coffres supprimés en bas
+        : return (tuple)
+        '''
+        nombre_haut = 0
+        nombre_bas = 0
+        for coffre in self.attributs_jeu.acc_tab_coffres():
+            if coffre.acc_est_ouvert(): #si il a été ouvert
+                self.attributs_jeu.supprime_tab_coffres(coffre) #on l'enlève du tableau
+                if coffre.acc_y() < 10 : #partie supérieure du terrain
+                    nombre_haut += 1
+                else:
+                    nombre_bas += 1  #sinon, c'est qu'il était dans la partie inférieure du terrain
+        return nombre_haut, nombre_bas
+    
+    def ajoute_coffre(self, nombre, chaine):
+        '''
+        ajoute au tab_coffres le nombre de coffre qu'il faut dans la bonne partie du terrain
+        : pas de return, modifie l'attribut tab_coffre
+        '''
+        #assertions
+        assert isinstance(nombre, int) and nombre >= 0, 'le nombre doit être un entier positif ! '
+        assert isinstance(chaine, str) and chaine in ['haut', 'bas'], "la chaîne doit être de type str et doit être soit 'haut' soit 'bas'"
+        #code
+        ##dic des cases prédéfinies pour les coffres
+        dic_coffre = {'haut' : [(1, 6), (19, 6), (0, 4), (20, 4), (4, 0), (16, 0)],
+                      'bas' : [(1, 14), (19, 14), (20, 16), (0, 16), (4, 20), (16, 20)]
+                      }
+        ##coordonnées possibles pour les coffres
+        tab_coordo = dic_coffre[chaine]
+        random.shuffle(tab_coordo) #on mélange le tableau pour que l'apparition soit aléatoire
+        ##on ajoute autant de coffre qu'il faut
+        for _ in range(nombre): 
+            trouve = False #par défaut, on n'a pas encore trouvé de case pour le futur coffre
+            i = 0
+            while not trouve and i < len(tab_coordo): #tant qu'on n'a pas trouvé de case libre ou qu'on n'a pas tout regardé
+                trouve = self.terrain.est_possible(tab_coordo[i][0], tab_coordo[i][1])
+                i += 1
+            if trouve : #si une case est vide
+                self.attributs_jeu.ajoute_tab_coffres(module_objets.Coffre(tab_coordo[i-1][0], tab_coordo[i-1][1])) #ajout d'un nouveau coffre
+      
     def ouverture_coffre(self, coffre):
         '''
         réalise la bonne action en fonction du contenu du coffre
@@ -516,11 +595,10 @@ class Jeu() :
             #resuscitation du personnage
             if not perso == None :
                 #si la case n'est pas libre
-                if not self.terrain.est_possible(perso.acc_x(), perso.acc_y()) :
-                    case = self.terrain.trouver_case_libre_proche(perso.acc_x(), perso.acc_y()) #on trouve une nouvelle case libre proche
-                    perso.mut_pv(module_personnage.DIC_PV[perso.acc_personnage()]) #on réinitialise ses pv
-                    perso.deplacer(case[0], case[1]) #on change les coordonnées du personnage
-                    self.attributs_jeu.ajouter_personnage(perso)
+                case = self.terrain.trouver_case_libre_proche(perso.acc_x(), perso.acc_y()) #on trouve une nouvelle case libre proche
+                perso.mut_pv(module_personnage.DIC_PV[perso.acc_personnage()]) #on réinitialise ses pv
+                perso.deplacer(case[0], case[1]) #on change les coordonnées du personnage
+                self.attributs_jeu.ajouter_personnage(perso)
                 #on ajoute le personnage ressuscité au terrain
                 self.terrain.mut_terrain(perso.acc_x(), perso.acc_y(), perso)
         
@@ -609,15 +687,8 @@ class Jeu() :
         '''
         #vérification d'un joueur autour
         coffre = self.attributs_jeu.acc_coffre_selection()
-        if not coffre.acc_est_ouvert(): #si le coffre n'a pas été ouvert
-            alentour = coffre.alentour()
-            present = False
-            i = 0
-            while not present and i < len(alentour):
-                perso = self.terrain.acc_terrain(alentour[i][0], alentour[i][1])
-                if isinstance(perso, module_personnage.Personnage): #si il y a un personnage
-                    present = perso.acc_equipe() == self.attributs_jeu.acc_equipe_en_cours() #si un personnage de l'équipe en cours est à côté du coffre
-                i += 1
+        if not coffre.acc_est_ouvert(): #si le coffre n'a pas déjà été ouvert
+            present = coffre.est_present_autour(self.terrain, self.attributs_jeu.acc_equipe_en_cours())
             #si oui, ouverture du coffre
             if present :
                 coffre.ouverture()
@@ -840,6 +911,10 @@ class Jeu() :
                 for evenement in pygame.event.get() :
                     self.clavier_souris.entrees_jeu(evenement) #Vérifie s'il y a eu une interaction dans le jeu
                 
+                ######################################################
+                ### Coffres :
+                ######################################################
+                self.apparition_coffres()
                 ######################################################
                 ### Monstres :
                 ######################################################

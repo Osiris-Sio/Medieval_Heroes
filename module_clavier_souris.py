@@ -246,18 +246,18 @@ class Clavier_Souris() :
             #Si la partie est fini :
             if self.attributs_jeu.acc_partie_terminee() :
 
-                    #Si le joueur clique dans la zone des boutons de fin (verticale) :
-                    if 465 <= position_curseur[0] <= 795 :
-                        
-                        #Si le joueur clique sur le bouton 'Rejouer' :
-                        if self.attributs_jeu.acc_position_y_menu_fin() + 230 < position_curseur[1] < self.attributs_jeu.acc_position_y_menu_fin() + 295 :
-                            self.attributs_jeu.mut_bouton_clique('rejouer')
-                            self.attributs_jeu.mut_temps_appui_bouton(time.time())
-                        
-                        #Si le joueur clique sur le bouton 'Quitter' :
-                        if self.attributs_jeu.position_y_menu_fin + 310 < position_curseur[1] < self.attributs_jeu.position_y_menu_fin + 375 :
-                            self.attributs_jeu.mut_bouton_clique('quitter')
-                            self.attributs_jeu.mut_temps_appui_bouton(time.time())
+                #Si le joueur clique dans la zone des boutons de fin (verticale) :
+                if 465 <= position_curseur[0] <= 795 :
+                    
+                    #Si le joueur clique sur le bouton 'Rejouer' :
+                    if self.attributs_jeu.acc_position_y_menu_fin() + 230 < position_curseur[1] < self.attributs_jeu.acc_position_y_menu_fin() + 295 :
+                        self.attributs_jeu.mut_bouton_clique('rejouer')
+                        self.attributs_jeu.mut_temps_appui_bouton(time.time())
+                    
+                    #Si le joueur clique sur le bouton 'Quitter' :
+                    if self.attributs_jeu.position_y_menu_fin + 310 < position_curseur[1] < self.attributs_jeu.position_y_menu_fin + 375 :
+                        self.attributs_jeu.mut_bouton_clique('quitter')
+                        self.attributs_jeu.mut_temps_appui_bouton(time.time())
 
     ######################################################
     ### Différentes Entrées (Quitter / Menu / Jeu) :
@@ -324,9 +324,6 @@ class Clavier_Souris() :
         Contrôle les entrées du clavier et de la souris et qui donne les actions demandées dans le jeu.
         : param evenement (input)
         '''
-        position_curseur = self.acc_position_curseur()
-        position_case = self.acc_position_case()
-        
         #Permet de fermer la fenêtre pygame :
         self.quitter(evenement)
         
