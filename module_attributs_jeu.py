@@ -57,6 +57,11 @@ class Attributs_Jeu() :
         #Console (pile) :
         self.console = module_lineaire.Pile() #Une pile où sera ajouté des tableaux contenant une phrase et sa couleur pour ensuite l'afficher.
         
+        #Options :
+        self.sols_de_couleur = True
+        self.deplacements_attaques = True
+        self.option_console = True
+        
         #Attributs pour le déplacement avec le chemin (graphe) :
         self.chemin = []
         self.coordonnees_personnage = None
@@ -83,6 +88,7 @@ class Attributs_Jeu() :
         self.dernier_personnage_mort_bleu = None
         self.dernier_personnage_mort_rouge = None
         self.annonce_coffre = False
+        self.annonce_coffre_console = True
         self.event_coffre = 0
         
         #Éléments du décor
@@ -97,11 +103,35 @@ class Attributs_Jeu() :
     ### Accesseurs :
     ######################################################
     
+    def acc_sols_de_couleur(self):
+        '''
+        Renvoie l'attribut sols_de_couleur
+        '''
+        return self.sols_de_couleur
+    
+    def acc_deplacements_attaques(self):
+        '''
+        Renvoie l'attribut deplacements_attaques
+        '''
+        return self.deplacements_attaques
+    
+    def acc_option_console(self):
+        '''
+        Renvoie l'attribut option_console
+        '''
+        return self.option_console
+    
     def acc_annonce_coffre(self):
         '''
         Renvoie l'attribut annonce_coffre
         '''
         return self.annonce_coffre
+    
+    def acc_annonce_coffre_console(self):
+        '''
+        Renvoie l'attribut annonce_coffre_console
+        '''
+        return self.annonce_coffre_console
     
     def temps_annonce(self):
         '''
@@ -367,6 +397,39 @@ class Attributs_Jeu() :
     ######################################################
     ### Mutateurs :
     ######################################################
+    
+    def mut_sols_de_couleur(self, valeur) :
+        '''
+        Modifie l'attribut sols_de_couleur
+        : param valeur (boolean)
+        : pas de return, modifie l'attribut sols_de_couleur
+        '''
+        #Assertion :
+        assert isinstance(valeur, bool), 'Le paramètre doit être soit True, soit False !'
+        #Code :
+        self.sols_de_couleur = valeur
+        
+    def mut_deplacements_attaques(self, valeur) :
+        '''
+        Modifie l'attribut deplacements_attaques
+        : param valeur (boolean)
+        : pas de return, modifie l'attribut deplacements_attaques
+        '''
+        #Assertion :
+        assert isinstance(valeur, bool), 'Le paramètre doit être soit True, soit False !'
+        #Code :
+        self.deplacements_attaques = valeur
+        
+    def mut_option_console(self, valeur) :
+        '''
+        Modifie l'attribut option_console
+        : param valeur (boolean)
+        : pas de return, modifie l'attribut option_console
+        '''
+        #Assertion :
+        assert isinstance(valeur, bool), 'Le paramètre doit être soit True, soit False !'
+        #Code :
+        self.option_console = valeur
         
     def mut_continuer(self, valeur) :
         '''
@@ -424,6 +487,16 @@ class Attributs_Jeu() :
         #Assertion :
         assert isinstance(etat, bool), 'Le paramètre doit être soit True, soit False !'
         self.annonce_coffre = etat
+        
+    def mut_annonce_coffre_console(self, etat):
+        '''
+        Modifie l'attribut annonce_coffre_console
+        : param valeur (boolean)
+        : pas de return, modifie l'attribut menu
+        '''
+        #Assertion :
+        assert isinstance(etat, bool), 'Le paramètre doit être soit True, soit False !'
+        self.annonce_coffre_console = etat
         
     def mut_compteur(self, valeur) :
         '''
@@ -927,7 +1000,7 @@ class Attributs_Jeu() :
         : pas de return, effet de bord sur la pile !
         '''
         #Précondition :
-        assert isinstance(tab, list) and len(tab) == 2 and isinstance(tab[0], str) and tab[1] in ['rouge', 'bleu', 'noir', 'neutre'], 'Le paramètre doit être un tableau (list) comprenant deux chaînes de caractères (str) comme éléments (phrase et equipe) !'
+        assert isinstance(tab, list) and len(tab) == 2 and isinstance(tab[0], str) and tab[1] in ['rouge', 'bleu', 'noir'], 'Le paramètre doit être un tableau (list) comprenant deux chaînes de caractères (str) comme éléments (phrase et equipe) !'
         #Code :
         self.console.empiler(tab)
         

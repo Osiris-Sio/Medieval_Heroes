@@ -275,7 +275,7 @@ class Affichage():
                         pygame.image.load("medias/cadres/cadre_sauvegarder1.png")],
             'rejouer' : [pygame.image.load("medias/cadres/cadre_sauvegarder0.png"), 
                         pygame.image.load("medias/cadres/cadre_sauvegarder1.png")],
-            'option1' : [pygame.image.load("medias/cadres/active.png"), pygame.image.load("medias/cadres/desactive.png")],
+            'on_off' : [pygame.image.load("medias/cadres/active.png"), pygame.image.load("medias/cadres/desactive.png")],
             'barre_fps' : pygame.image.load("medias/cadres/fps_barre.png"),
             'pointeur_fps' : pygame.image.load("medias/cadres/pointeur_fps.png")
         }
@@ -311,15 +311,7 @@ class Affichage():
         '''
         self.ecran.blit(self.image_fond, (0, 0))
         
-    def afficher_option(self) :
-        '''
-        Affiche le menu option
-        '''
-        police = pygame.font.Font("medias/pixelec.ttf", 21)
-        texte = police.render("Options" , 1, (152, 82, 51))
-        self.ecran.blit(self.fond_option, (455, 290)) 
-        self.ecran.blit(texte, (580, 310))
-        self.afficher_boutons_option()
+
     
     def afficher_boutons_menu(self):
         '''
@@ -328,84 +320,141 @@ class Affichage():
         police = pygame.font.Font("medias/pixelec.ttf", 21)
         bouton_clique = self.attributs_jeu.acc_bouton_clique()
 
+        #Bouton Jouer :
         if bouton_clique == 'jouer':
             bouton_jouer = self.boutons['jouer'][1]
-            texte1 = police.render("Jouer" , 1, (200, 165, 80))
+            texte_jouer = police.render("Jouer" , 1, (200, 165, 80))
         else :
             bouton_jouer = self.boutons['jouer'][0]
-            texte1 = police.render("Jouer" , 1, (196, 144, 4))
+            texte_jouer = police.render("Jouer" , 1, (196, 144, 4))
             
         self.ecran.blit(bouton_jouer, (450, 340)) 
-        self.ecran.blit(texte1, (620, 360))
+        self.ecran.blit(texte_jouer, (615, 360))
         
+        #Bouton Charger :
+        if bouton_clique == 'charger':
+            bouton_charger = self.boutons['jouer'][1]
+            texte_charger = police.render("Charger" , 1, (200, 165, 80))
+        else :
+            bouton_charger = self.boutons['jouer'][0]
+            texte_charger = police.render("Charger" , 1, (196, 144, 4))
+            
+        self.ecran.blit(bouton_charger, (450, 420)) 
+        self.ecran.blit(texte_charger, (600, 440))
+        
+        #Bouton Option :
         if bouton_clique == 'option':
             bouton_jouer = self.boutons['jouer'][1]
-            texte1 = police.render("Options" , 1, (224, 165, 80))
+            texte_option = police.render("Options" , 1, (224, 165, 80))
         else :
             bouton_jouer = self.boutons['jouer'][0]
-            texte1 = police.render("Options" , 1, (196, 144, 4))
+            texte_option = police.render("Options" , 1, (196, 144, 4))   
             
-            
-        self.ecran.blit(bouton_jouer, (450, 420)) 
-        self.ecran.blit(texte1, (600, 440))
+        self.ecran.blit(bouton_jouer, (450, 500)) 
+        self.ecran.blit(texte_option, (600, 520))
         
-        
-        if bouton_clique == 'quitter_menu':
+        #Bouton Quitter (fermer la fenêtre pygame) :
+        if bouton_clique == 'quitter':
             bouton_quitter = self.boutons['quitter_menu'][1]
-            texte2 = police.render("Quitter" , 1, (224, 85, 92))
+            texte_quitter = police.render("Quitter" , 1, (224, 85, 92))
         else :
             bouton_quitter = self.boutons['quitter_menu'][0]
-            texte2 = police.render("Quitter" , 1, (179, 12, 36))
+            texte_quitter = police.render("Quitter" , 1, (179, 12, 36))
         
-        self.ecran.blit(bouton_quitter, (450, 500)) 
-        self.ecran.blit(texte2, (590, 520))
+        self.ecran.blit(bouton_quitter, (450, 580)) 
+        self.ecran.blit(texte_quitter, (597, 600))
             
     def afficher_boutons_option(self):
         '''
-        affiche les différents boutons du menu
+        Affiche les différents boutons du menu option
         '''
         police = pygame.font.Font("medias/pixelec.ttf", 21)
         bouton_clique = self.attributs_jeu.acc_bouton_clique()
-        #####option 1 :
-        ###si l'option1 est activée
-        bouton_option1 = self.boutons['option1'][0]
-        ### sinon
-        bouton_option1 = self.boutons['option1'][1]
-
-        self.ecran.blit(bouton_option1, (475, 360))
         
-        ###si l'option1 est activée
-        bouton_option2 = self.boutons['option1'][0]
-        ### sinon
-        bouton_option2 = self.boutons['option1'][1]
-
-        self.ecran.blit(bouton_option2, (475, 415))
+        #Texte On/Off
+        texte_on = police.render("On" , 1, (0, 0, 0))
+        texte_off = police.render("Off" , 1, (224, 85, 92))
         
-        ###si l'option3 est activée
-        bouton_option3 = self.boutons['option1'][0]
-        ### sinon
-        bouton_option3 = self.boutons['option1'][1]
-
-        self.ecran.blit(bouton_option3, (475, 470))
+        #Sol de couleur :
+        #On :
+        if self.attributs_jeu.acc_sols_de_couleur() :
+            bouton_sols_de_couleur = self.boutons['on_off'][0]
+            self.ecran.blit(texte_on, (715, 357))
+        #Off :
+        else :
+            bouton_sols_de_couleur = self.boutons['on_off'][1]
+            self.ecran.blit(texte_off, (707, 357))
+            
+        self.ecran.blit(bouton_sols_de_couleur, (680, 345))
         
-        #### barre des fps
+        #Deplacement/Attaque :
+        #On :
+        if self.attributs_jeu.acc_deplacements_attaques() :
+            bouton_sols_de_couleur = self.boutons['on_off'][0]
+            self.ecran.blit(texte_on, (715, 422))
+        #Off :
+        else :
+            bouton_sols_de_couleur = self.boutons['on_off'][1]
+            self.ecran.blit(texte_off, (707, 422))
+            
+        self.ecran.blit(bouton_sols_de_couleur, (680, 410))
+        
+        #Console :
+        #On :
+        if self.attributs_jeu.acc_option_console() :
+            bouton_sols_de_couleur = self.boutons['on_off'][0]
+            self.ecran.blit(texte_on, (715, 487))
+        #Off :
+        else :
+            bouton_sols_de_couleur = self.boutons['on_off'][1]
+            self.ecran.blit(texte_off, (707, 487))
+            
+        self.ecran.blit(bouton_sols_de_couleur, (680, 475))
+        
+        
+        #Barre des fps :
         bouton_option_fps = self.boutons['barre_fps']
-        self.ecran.blit(bouton_option_fps, (475, 525))
+        self.ecran.blit(bouton_option_fps, (475, 550))
         
         pointeur_barre = self.boutons['pointeur_fps']
-        self.ecran.blit(pointeur_barre, (575, 525))
+        self.ecran.blit(pointeur_barre, (575, 550))
         
-        #### retour
-        
-        if bouton_clique == 'quitter_option':
+        #Retour :
+        if bouton_clique == 'retour_menu':
             bouton_quitter = self.boutons['quitter_fin'][1]
-            texte1 = police.render("Quitter" , 1, (224, 85, 92))
+            texte1 = police.render("Retour" , 1, (224, 85, 92))
         else :
             bouton_quitter = self.boutons['quitter_fin'][0]
-            texte1 = police.render("Quitter" , 1, (179, 12, 36))
+            texte1 = police.render("Retour" , 1, (179, 12, 36))
             
         self.ecran.blit(bouton_quitter, (515, 650)) 
         self.ecran.blit(texte1, (580, 670))
+        
+    def afficher_option(self) :
+        '''
+        Affiche le menu option
+        '''
+        police = pygame.font.Font("medias/pixelec.ttf", 21)
+        police_textes_statiques = pygame.font.Font("medias/pixelec.ttf", 21)
+        
+        self.ecran.blit(self.fond_option, (455, 290)) 
+        self.ecran.blit(police.render("Options" , 1, (152, 82, 51)), (580, 310))
+        
+        #Textes statiques :
+        texte_sols_de = police_textes_statiques.render("Sols de" , 1, (152, 82, 51))
+        texte_couleur = police_textes_statiques.render("couleur" , 1, (152, 82, 51))
+        texte_deplacements = police_textes_statiques.render("Deplacements" , 1, (152, 82, 51))
+        texte_attaques = police_textes_statiques.render("/ Attaques" , 1, (152, 82, 51))
+        texte_console = police_textes_statiques.render("Console" , 1, (152, 82, 51))
+        
+        #Affiche les Textes statiques :
+        self.ecran.blit(texte_sols_de, (470, 350))
+        self.ecran.blit(texte_couleur, (470, 365))
+        self.ecran.blit(texte_deplacements, (470, 418))
+        self.ecran.blit(texte_attaques, (470, 435))
+        self.ecran.blit(texte_console, (470, 485))
+        
+        self.afficher_boutons_option()
         
     ########################################
     ### Affichages Jeu :
@@ -631,8 +680,8 @@ class Affichage():
             endommage = personnage.acc_endommage()
             
             
-            #Contour de couleur (si le personnage est de l'équipe en cours et que le personnage n'est pas en déplacement) :   
-            if equipe == self.attributs_jeu.acc_equipe_en_cours() and self.attributs_jeu.acc_personnage_en_deplacement() != personnage :
+            #Contour de couleur (si l'option est activé, le personnage est de l'équipe en cours et que le personnage n'est pas en déplacement) :   
+            if self.attributs_jeu.acc_sols_de_couleur() and equipe == self.attributs_jeu.acc_equipe_en_cours() and self.attributs_jeu.acc_personnage_en_deplacement() != personnage :
                 self.ecran.blit(self.sol_personnages[equipe], (x , y))
 
             #Endommagé (si le personnage est endommagé) :
@@ -912,8 +961,12 @@ class Affichage():
         self.afficher_terrain()
         self.afficher_personnages()
         self.afficher_tombes()
-        self.afficher_deplacements()
-        self.afficher_attaques()
+        
+        #Si l'option deplacement/attaques est activé, alors on affiche l'aide de déplacements/attaques :
+        if self.attributs_jeu.acc_deplacements_attaques() :
+            self.afficher_deplacements()
+            self.afficher_attaques()
+            
         self.afficher_personnage_en_deplacement()
         self.afficher_monstres_en_deplacement()
         self.afficher_cerisier()
@@ -924,7 +977,10 @@ class Affichage():
         
         #Côté Droit :
         self.afficher_boutons_jeu()
-        self.afficher_console()
+        
+        #Si l'option console est activé, alors on l'affiche :
+        if self.attributs_jeu.acc_option_console() :   
+            self.afficher_console()
         
         #Tout :
         self.afficher_filtre()
