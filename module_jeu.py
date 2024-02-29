@@ -209,20 +209,55 @@ class Jeu() :
     def equipe_console(self, equipe) :
         '''
         Ajoute dans la console que l'équipe a changé.
+        :param equipe (str)
         '''
-        self.attributs_jeu.ajouter_console(['À l\'équipe ' + str(equipe) + ' de jouer !', 'noir'])
+        #Assertion :
+        assert isinstance(equipe, str), 'le paramètre doit être une chaîne de caractères (str) !'
+        #Code :
+        self.attributs_jeu.ajouter_console(['À l\'équipe ' + equipe + ' de jouer !', 'noir'])
     
-    def deplacement_console(self, perso) :
+    def deplacement_console(self, personnage) :
         '''
         Ajoute dans la console que le personnage (passé en paramètre) s'est déplacé.
+        :param personnage (module_personnage.Personnage)
         '''
-        self.attributs_jeu.ajouter_console([str(perso.acc_personnage()) + ' s\'est déplacé.', perso.acc_equipe()])
+        #Assertion :
+        assert isinstance(personnage, module_personnage.Personnage), 'personnage_qui_attaque doit être un personnage de la classe Personnage (module_personnage) !'
+        #Code :
+        self.attributs_jeu.ajouter_console([personnage.acc_personnage() + ' s\'est déplacé.', personnage.acc_equipe()])
         
-    def attaque_console(self, perso_qui_attaque, perso_qui_subit) :
+    def attaque_console(self, personnage_qui_attaque, personnage_qui_subit) :
         '''
         Ajoute dans la console que le personnage attaque un personnage de l'équipe adverse.
+        :params
+            personnage_qui_attaque (module_personnage.Personnage)
+            personnage_qui_subit (module_personnage.Personnage)
         '''
-        self.attributs_jeu.ajouter_console([str(perso_qui_attaque.acc_personnage()) + ' a attaqué ' + str(perso_qui_subit.acc_personnage()) + '.', perso_qui_attaque.acc_equipe()])
+        #Assertions :
+        assert isinstance(personnage_qui_attaque, module_personnage.Personnage), 'personnage_qui_attaque doit être un personnage de la classe Personnage (module_personnage) !'
+        assert isinstance(personnage_qui_subit, module_personnage.Personnage), 'personnage_qui_subit doit être un personnage de la classe Personnage (module_personnage) !'
+        #Code :
+        self.attributs_jeu.ajouter_console([personnage_qui_attaque.acc_personnage() + ' a attaqué ' + personnage_qui_subit.acc_personnage() + '.', personnage_qui_attaque.acc_equipe()])
+        
+    def coffre_console(self, numero_contenu) :
+        '''
+        Ajoute dans la console le contenu du coffre ouvert.
+        :param numero_contenu (int)
+        '''
+        #Assertion :
+        assert isinstance(numero_contenu, int), 'Le paramètre doit être un entier (int) !'
+        #Code :
+        dictionnaire_contenu = {1 : 'Bonus de vie',
+                                    2 : 'Météorite',
+                                    3 : 'Personnage Aléatoire',
+                                    4 : 'Nuage de fumée',
+                                    5 : "Dégâts d'attaque",
+                                    6 : "Geant allié",
+                                    7 : "Geant ennemi",
+                                    8 : "Necromancie",
+                                    }
+        
+        self.attributs_jeu.ajouter_console(['Coffre : ' + dictionnaire_contenu[numero_contenu], 'noir'])
     
     ######################################################
     ### Déplacements :
@@ -587,6 +622,10 @@ class Jeu() :
             if present :
                 coffre.ouverture()
                 self.ouverture_coffre(coffre)
+                self.coffre_console(coffre.acc_contenu())
+                
+        if not self.attributs_jeu.acc_annonce_coffre() :
+            self.attributs_jeu.mut_annonce_coffre_console(True)
     
     ######################################################
     ### Événements pendant une partie :
@@ -730,9 +769,10 @@ class Jeu() :
         self.mut_affichage(module_afficher.Affichage(self.attributs_jeu, self.terrain, self.ecran, self.clavier_souris))
         self.attributs_jeu.mut_console(module_lineaire.Pile()) #Réinitialise la console du jeu
         
-        #Si jamais la partie est terminée, réinitialise les attributs suivant du module_attributs_jeu :
+        #Si jamais la partie est terminée ou qu'aucune partie n'est lancé, réinitialise les attributs suivant du module_attributs_jeu :
         self.attributs_jeu.mut_partie_terminee(False)
         self.attributs_jeu.mut_equipe_gagnante(None)
+        self.attributs_jeu.mut_menu(False)
         
         self.placer() #Place les personnages, monstres et coffres de la partie qui a été chargé.
         
