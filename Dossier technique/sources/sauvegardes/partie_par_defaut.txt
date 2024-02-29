@@ -1,5 +1,0 @@
-[[paladin,rouge,6,2,8][rouge,8,2,8][ivrogne,rouge,7,2,8][poulet,rouge,10,3,8][valkyrie,rouge,9,2,8][sorciere,rouge,10,2,8][archere,rouge,11,2,8][barbare,rouge,12,2,8][mage,rouge,13,2,8][cracheur de feu,rouge,14,2,8][rouge,10,0,8,0][rouge,11,0,8,1][rouge,10,1,8,2][rouge,11,1,8,3][paladin,bleu,6,18,8][bleu,8,18,8][ivrogne,bleu,7,18,8][poulet,bleu,10,17,8][valkyrie,bleu,9,18,8][sorciere,bleu,10,18,8][archere,bleu,11,18,8][barbare,bleu,12,18,8][mage,bleu,13,18,8][cracheur de feu,bleu,14,18,8][bleu,10,19,8,0][bleu,11,19,8,1][bleu,10,20,8,2][bleu,11,20,8,3]]
-[]
-[]
-[bleu,0,0]
-[]
