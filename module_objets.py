@@ -37,6 +37,7 @@ class Coffre():
                     7 : "fait spawn un géant dans l'équipe adverse",
                     8 : "ressuscite le dernier personnage mort de l'équipe du personnage",
                     }
+        
     def __repr__(self):
         '''
         renvoie une chaîne de caractères pour décrire le coffre
@@ -180,17 +181,20 @@ class Potion():
     '''
     une classe pour une potion
     '''
-    def __init__(self, x, y):
+    def __init__(self, contenu):
         '''
         initialise une potion mystère
-        : params
-            x, y (int), coordonnées de la case où a atteri la potion
+        : param contenu (int)
+            • 1 : réduit les pv de l'ennemi
+            • 2 : guérit le coéquipier
+            • 3 : tue instantanément
+            • 4 : l'ennemi change d'équipe
         '''
-        self.x = x
-        self.y = y
-        self.contenu = self.definir_contenu()
-        self.etendu = self.etendue_potion()
-        self.cases_atteintes = self.definir_cases_atteintes
+        #assertions
+        assert isinstance(contenu, int) and contenu in [1, 2, 3, 4], "le contenu doit être une entier entre 1 et 4 inclus !"
+        #code
+        self.contenu = contenu
+        self.etendue = self.etendue_potion()
         
     def __repr__(self):
         '''
@@ -201,6 +205,10 @@ class Potion():
                        }
         return "Une potion qui" + dic_contenu[self.contenu] + " et qui a une portée de " + str(len(self.etendue_potion()))
     
+    ####################################
+    ############# Accesseurs :
+    ####################################
+    
     def acc_contenu(self):
         '''
         renvoie le contenu de la potion avec un entier naturel compris entre 1 et 1
@@ -208,21 +216,12 @@ class Potion():
         '''
         return self.contenu
     
-    def acc_cases(self):
+    def acc_etendue(self):
         '''
-        renvoie le tableau contenant toutes les cases atteintes par la potion
-        : return (list)
-        '''
-        return self.cases_atteintes
-        
-    def definir_contenu(self):
-        '''
-        renvoie le contenu de la potion avec un entier naturel compris entre 0 et 5
-            1 : réduit les pv du personnage visé (100%)
+        renvoie l'attribut etendue
         : return (int)
         '''
-        nombre = random.randint(0, 100)
-        return 1
+        return self.etendue
         
     def etendue_potion(self):
         '''
@@ -233,20 +232,26 @@ class Potion():
             4 : neuf cases (le carré autour du centre) (1%)
         : return (int)
         '''
-        nombre = random.randint(0, 100)
-        if 0 <= nombre <= 69:
-            reponse = 1
-        elif 70 <= nombre <= 94:
-            reponse = 2
-        elif 95 <= nombre <= 99:
-            reponse = 3
-        else:
-            reponse = 4
+        if self.contenu == 1 or self.contenu == 2: #potion d'attaque ou de guérison
+            nombre = random.randint(0, 100)
+            if 0 <= nombre <= 69:
+                reponse = 1
+            elif 70 <= nombre <= 94:
+                reponse = 2
+            elif 95 <= nombre <= 99:
+                reponse = 3
+            else:
+                reponse = 4
+        else : #potion de mort ou changement d'équipe
+            reponse = 1 #juste la case elle-même
         return reponse
-    
-    def definir_cases_atteintes(self):
+
+    def definir_cases_atteintes(x, y, etendu):
         '''
         renvoie un tableau avec les coordonnées des cases touchées par la potion
+        : params
+            x, y (int)
+            etendu (int)
         : return (list)
         '''
         ##Tableau des coordonnées finales
@@ -254,20 +259,20 @@ class Potion():
         ##Intermédiaire
         tuples_cases_2 = [(-1, 0), (1, 0), (0, -1), (0, 1)]
         tuples_cases = [(0, 0)]
-        if not self.etendu == 1: #2, 3 et 4
-            if self.etendu == 2: #2
+        if not etendu == 1: #2, 3 et 4
+            if etendu == 2: #2
                 tuples_cases.append(random.choice(tuples_cases_2))
             else: #3 et 4
                 for tuples in tuples_cases_2 :
                     tuples_cases.append(tuples)
-                if self.etendu == 4: #4
+                if etendu == 4: #4
                     for tuples in [(-1, -1), (1, 1), (-1, 1), (1, -1)]:
                         tuples_cases.append(tuples)
         #Finalité                            
         for tuples in tuples_cases:
-            tab_cases.append((self.x + tuples[0], self.y + tuples[1]))
+            tab_cases.append((x + tuples[0], y + tuples[1]))
         return tab_cases
-        
+       
         
         
             

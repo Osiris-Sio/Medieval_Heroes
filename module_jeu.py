@@ -289,7 +289,7 @@ class Jeu() :
             dep = self.attributs_jeu.acc_deplacements_cavalier()
         else:
             dep = self.attributs_jeu.acc_deplacements()
-        graphe = perso.construire_graphe_perso(coordonnees, dep)
+        graphe = perso.construire_graphe(coordonnees, dep)
         chemin = parcourir_graphe.depiler_chemin(graphe, coordonnees, (x, y))
         chemin2 = []
         for elt in chemin:
@@ -400,7 +400,7 @@ class Jeu() :
         '''
         #Si l'ajout de monstres est "activé" et qu'ils n'ont pas encore été ajouté alors on ajoute des monstres
         if self.attributs_jeu.acc_monstres_active() and not self.attributs_jeu.acc_monstres_deja_deplaces() :
-            for _ in range(self.attributs_jeu.acc_nombre_tour() // 3) :
+            for _ in range(self.attributs_jeu.acc_nombre_tour() // 2) :
                 #Coordonnées au hasard
                 x = random.randint(1, 20)
                 y = random.randint(1, 20)
@@ -570,13 +570,14 @@ class Jeu() :
         
         elif coffre.acc_contenu() == 3 :
             perso = self.attributs_jeu.acc_selection()
-            personnages_plateau = ['monstre', 'mage', 'paladin', 'geant', 'sorciere', 'valkyrie', 'archere', 'poulet', 'cavalier', 'cracheur de feu', 'ivrogne', 'barbare']
+            personnages_plateau = ['monstre', 'mage', 'paladin', 'sorciere', 'valkyrie', 'archere', 'poulet', 'cavalier', 'cracheur de feu', 'ivrogne', 'barbare']
             personnages_plateau.remove(perso.acc_personnage()) #il ne faut pas que le nouveau personnage soit l'ancien
             perso.mut_personnage(random.choice(personnages_plateau)) #on remplace au hasard le personnage
         
         ########################################################
         #### AUGMENTATION DES DÉGÂTS DU PERSONNAGE
         ########################################################
+            
         elif coffre.acc_contenu() == 5 :
             perso = self.attributs_jeu.acc_selection().acc_personnage() #le personnage sélectionné
             nouvelle_attaque = module_personnage.DIC_ATTAQUES[perso] + 5 #les nouveaux pv de dommage du personnage
@@ -592,16 +593,76 @@ class Jeu() :
                 perso = self.attributs_jeu.acc_dernier_personnage_mort_bleu()
             else:
                 perso = self.attributs_jeu.acc_dernier_personnage_mort_rouge()
-            #resuscitation du personnage
-            if not perso == None :
-                #si la case n'est pas libre
-                case = self.terrain.trouver_case_libre_proche(perso.acc_x(), perso.acc_y()) #on trouve une nouvelle case libre proche
+            #ressuscitation du personnage
+            if not perso == None : #si il y a quelqu'un à ressusciter
+                ##si géant
+                if perso.acc_personnage() == 'geant' :
+                    chaine = 'oui'
+                ##si autre
+                else:
+                    chaine = 'non'
+                    
+                case = self.terrain.trouver_case_libre_proche(perso.acc_x(), perso.acc_y(), chaine) #on trouve une nouvelle case libre proche
                 perso.mut_pv(module_personnage.DIC_PV[perso.acc_personnage()]) #on réinitialise ses pv
                 perso.deplacer(case[0], case[1]) #on change les coordonnées du personnage
                 self.attributs_jeu.ajouter_personnage(perso)
                 #on ajoute le personnage ressuscité au terrain
                 self.terrain.mut_terrain(perso.acc_x(), perso.acc_y(), perso)
         
+    ########################################################
+    #### Fonction Potion :
+    ########################################################   
+    def ouverture_potion(self, x, y):
+        '''
+        réalise la bonne action en fonction du contenu de la potion
+        : params
+            x, y (int) coordonnées où est jetée la potion
+        : pas de return
+        '''
+        equipe = self.attributs_jeu.acc_equipe_en_cours()
+        if equipe == 'bleu':
+            potion = self.attributs_jeu.acc_potion_bleue_selectionnee().defiler() #la première de la file
+        else:
+            potion = self.attributs_jeu.acc_potion_bleue_selectionnee().defiler() #la première de la file
+            
+        ########################################################
+        #### ATTAQUE PERSONNAGE
+        ########################################################
+        if potion.acc_contenu() == 1:
+            pv = random.randint(1, 10) #on retire des pv au hasard
+            case = module_objets.Potion.definir_cases_atteintes(x, y, potion.acc_etendue())
+            for cases in case: #chaque case de l'étendu
+                perso = self.terrain.acc_terrain(cases[0], cases[1])
+                if isinstance(perso, module_personnage.Personnage) and not perso.acc_equipe() == self.attributs_jeu.acc_equipe_en_cours():
+                    perso.est_attaque('sorciere', pv) #on retire le bon nombre de pv
+            if equipe == 'bleu':
+                self.attributs_jeu.mut_ajoute_potions_bleues(module_objets.Potion(1)) #la file ne doit pas être vide
+            else:
+                self.attributs_jeu.mut_ajoute_potions_rouges(module_objets.Potion(1)) #la file ne doit pas être vide
+
+        ########################################################
+        #### GUERISION PERSONNAGE
+        ########################################################
+        if potion.acc_contenu() == 2:
+            for cases in module_objets.Potion.definir_cases_atteintes(x, y, potion.acc_etendue()): #chaque case de l'étendu
+                perso = self.terrain.acc_terrain(cases[0], cases[1])
+                if isinstance(perso, module_personnage.Personnage) and perso.acc_equipe() == self.attributs_jeu.acc_equipe_en_cours():
+                    perso.est_attaque('sorciere', -10) #on ajoute 10 pv
+            
+        ########################################################
+        #### MORT INSTANTANNEE
+        ########################################################
+        if potion.acc_contenu() == 3:
+            perso = self.terrain.acc_terrain(x, y)
+            perso.est_attaque('sorciere', perso.acc_pv()) #on retire tous les pv
+            
+        ########################################################
+        #### CHANGEMENT D'EQUIPE
+        ########################################################
+        if potion.acc_contenu() == 4:
+            perso = self.terrain.acc_terrain(x, y)
+            perso.mut_equipe() #le personnage change d'équipe
+          
     ######################################################
     ### Fonctions de Clique :
     ###################################################### 
@@ -645,6 +706,9 @@ class Jeu() :
             
             #Si la souris est dans une case d'attaque :
             if position_case in self.attributs_jeu.acc_attaques() and personnage_qui_subit.acc_equipe() != self.attributs_jeu.acc_equipe_en_cours():
+                #Si la sorcière attaque
+                if self.attributs_jeu.acc_selection().acc_personnage() == 'sorciere' :
+                    self.ouverture_potion(position_case[0], position_case[1])
                 
                 #Si le personnage_qui_subit est le Géant :
                 if personnage_qui_subit.acc_personnage() == 'geant':
@@ -914,7 +978,9 @@ class Jeu() :
                 ######################################################
                 ### Coffres :
                 ######################################################
+                    
                 self.apparition_coffres()
+                
                 ######################################################
                 ### Monstres :
                 ######################################################

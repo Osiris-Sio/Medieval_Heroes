@@ -210,6 +210,16 @@ class Personnage():
         #code
         self.personnage = nouveau_perso
         
+    def mut_equipe(self):
+        '''
+        modifie l'attribut equipe
+        : pas de return
+        '''
+        if self.equipe == 'bleu':
+            self.equipe = 'rouge' #devient rouge
+        else:
+            self.equipe = 'bleu' #devient bleu
+        
     def deplacer(self, nouveau_x, nouveau_y):
         '''
         déplace le personnage aux nouvelles coordonnées (nouveau_x, nouveau_y)
@@ -247,13 +257,16 @@ class Personnage():
         '''
         return self.pv <= 0
     
-    def est_attaque(self, ennemi):
+    def est_attaque(self, ennemi, nombre = None):
         '''
         retire le nombre de pv au personnage correspondant à l'ennemi
         : ennemi (str)
         : pas de return, modifie l'attribut pv
         '''
-        self.pv -= DIC_ATTAQUES[ennemi]
+        if nombre is None: #autre qu'une sorcière
+            self.pv -= DIC_ATTAQUES[ennemi]
+        else:
+            self.pv -= nombre
         
     #################################################
     ####### Déplacements + Attaques
@@ -392,7 +405,7 @@ class Personnage():
         : return (list of tuples)
         '''
         dep_ok = []  
-        graphe = self.construire_graphe_perso((self.x, self.y), cases)
+        graphe = self.construire_graphe((self.x, self.y), cases)
         for elt in cases :
             try:
                 parcourir_graphe.depiler_chemin(graphe, (self.x, self.y), elt) #on regarde si la case est atteignable par un chemin
@@ -415,7 +428,7 @@ class Personnage():
                 tab_cases.append(nouveau_tuple)
         return tab_cases
     
-    def construire_graphe_perso(self, coordo, deplacements):
+    def construire_graphe(self, coordo, deplacements):
         '''
         renvoie le graphe construit à partir des déplacements possibles et des coordonnées du personnage
         : params
@@ -709,9 +722,9 @@ class Monstre(Personnage):
                     y = self.y + hauteur
                     if 0 <= x <= 20 and 0 <= y <= 20 : #si la case est dans le terrain
                         perso = terrain.acc_terrain(x, y) #on regarde le personnage
-                    #regarde le contenu de la case
-                    if isinstance(perso, Personnage) and not perso.acc_personnage() == 'monstre' : #c'est un perso et pas un monstre
-                        cases.append(perso) #on ajoute le personnage au tableau
+                        #regarde le contenu de la case
+                        if isinstance(perso, Personnage) and not perso.acc_personnage() == 'monstre' : #c'est un perso et pas un monstre
+                            cases.append(perso) #on ajoute le personnage au tableau
             #agrandissement de la recherche
             l -= 1
             h += 1
@@ -755,7 +768,7 @@ class Monstre(Personnage):
         
         return pro_victime
          
-    def construire_graphe_perso(self, victime, terrain):
+    def construire_graphe(self, victime, terrain):
         '''
         renvoie le graphe construit à partir de toutes les cases du terrain
         : params
@@ -787,7 +800,7 @@ class Monstre(Personnage):
         #code
         victime = self.prochaine_victime(terrain, equipe_en_cours)
         ##graphe
-        graphe = self.construire_graphe_perso((victime.acc_x(), victime.acc_y()), terrain)
+        graphe = self.construire_graphe((victime.acc_x(), victime.acc_y()), terrain)
         chemin = parcourir_graphe.depiler_chemin(graphe, (self.x, self.y), (victime.acc_x(), victime.acc_y()))
         #renvoie la prochaine case
         return chemin[1] #la prochaine case autre que la case du monstre elle-même

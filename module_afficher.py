@@ -10,7 +10,7 @@ Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul
 ### Importation Modules :
 ######################################################
 
-import pygame, random, module_attributs_jeu, module_clavier_souris, module_terrain, module_personnage, module_objets
+import pygame, random, module_attributs_jeu, module_clavier_souris, module_terrain, module_personnage
 from graphe import module_lineaire
 
 ######################################################
@@ -289,7 +289,7 @@ class Affichage():
     
     def afficher_curseur(self):
         '''
-        Affiche le curseur en fonction de l'état (appuyé ou non)
+        Affiche le curseur en fonction de l'état (appuyé ou non) et affiche sa position dans l'écran si il est dans le plateau de jeu
         '''
         position_souris = self.clavier_souris.acc_position_curseur() #Position de la souris sur la fenêtre Pygame.
         
@@ -300,6 +300,16 @@ class Affichage():
         #Sinon, affiche le curseur non appuyé :
         else :
             self.ecran.blit(self.curseur_normal, position_souris)
+        #affichage de la position de la souris
+        if not self.attributs_jeu.acc_menu():
+            position_case = self.clavier_souris.acc_position_case()
+            if position_case[0] >= 0 and position_case[0] <= 20 and position_case[1] >= 0 and position_case[1] <= 20:
+                police = pygame.font.Font("medias/pixelec.ttf", 17)
+                texte = police.render("Position de la ", 1, (152, 82, 51))
+                texte1 = police.render("souris :" + str(position_case) , 1, (152, 82, 51))
+                
+                self.ecran.blit(texte, (10, 680))
+                self.ecran.blit(texte1, (10, 700))
             
     ########################################
     ### Affichages Menu/Option :

@@ -91,6 +91,43 @@ class Attributs_Jeu() :
         self.annonce_coffre_console = True
         self.event_coffre = 0
         
+        #Potions :
+        ####file rouge
+        f1r = module_lineaire.File()
+        f1r.enfiler(module_objets.Potion(1))
+        f2r = module_lineaire.File()
+        for _ in range(3):
+            f1r.enfiler(module_objets.Potion(2))
+        f3r = module_lineaire.File()
+        f1r.enfiler(module_objets.Potion(3))
+        f4r = module_lineaire.File()
+        for _ in range(2):
+            f1r.enfiler(module_objets.Potion(4)) 
+        ####file bleue
+        f1b = module_lineaire.File()
+        f1b.enfiler(module_objets.Potion(1))
+        f2b = module_lineaire.File()
+        for _ in range(3):
+            f1b.enfiler(module_objets.Potion(2))
+        f3b = module_lineaire.File()
+        f1b.enfiler(module_objets.Potion(3))
+        f4b = module_lineaire.File()
+        for _ in range(2):
+            f1b.enfiler(module_objets.Potion(4))
+        ##dic
+        self.potions_rouges = {1 : f1r, 
+                               2 : f2r,
+                               3 : f3r,
+                               4 : f4r
+                               }
+        self.potions_bleues = {1 : f1b, 
+                               2 : f2b,
+                               3 : f3b,
+                               4 : f4b
+                               }
+        self.potion_rouge_selectionnee = self.potions_rouges[1] #la première file
+        self.potion_bleue_selectionnee = self.potions_rouges[1] #la première file
+        
         #Éléments du décor
         self.positions_tombes = [] #Tableau de tuples (x, y) des coordonnées de chaque tombe 
         
@@ -394,10 +431,99 @@ class Attributs_Jeu() :
         '''
         return self.equipe_gagnante
     
+    def acc_potions_rouges(self):
+        '''
+        renvoie l'attribut potions_rouges
+        : return (dic)
+        '''
+        return self.potions_rouges
+    
+    def acc_potions_bleues(self):
+        '''
+        renvoie l'attribut potions_bleues
+        : return (dic)
+        '''
+        return self.potions_bleues
+    
+    def acc_potion_rouge_selectionnee(self):
+        '''
+        renvoie l'attribut potion_rouge_selectionnee
+        : return (module_lineaire.File)
+        '''
+        return self.potion_rouge_selectionnee
+    
+    def acc_potion_bleue_selectionnee(self):
+        '''
+        renvoie l'attribut potion_bleue_selectionnee
+        : return (module_lineaire.File)
+        '''
+        return self.potion_bleue_selectionnee
     ######################################################
     ### Mutateurs :
     ######################################################
     
+    def mut_potion_rouge_selectionnee(self, contenu):
+        '''
+        modifie l'attribut potion_rouge_selectionnee (on séléctionne une file)
+        : contenu (int), catégorie de la potion séléctionnée (1, 2, 3, ou 4)
+        : pas de return
+        '''
+        #assertion
+        assert isinstance(contenu, int) and contenu in [1, 2, 3, 4], "le contenu de la potion doit être un entier compris entre 1 et 4 inclus"
+        #code
+        self.potion_rouge_selectionnee = self.potions_rouges[contenu]
+        
+    def mut_potion_bleue_selectionnee(self, contenu):
+        '''
+        modifie l'attribut potion_bleue_selectionnee (on séléctionne une file)
+        : contenu (int), catégorie de la potion séléctionnée (1, 2, 3, ou 4)
+        : pas de return
+        '''
+        #assertion
+        assert isinstance(contenu, int) and contenu in [1, 2, 3, 4], "le contenu de la potion doit être un entier compris entre 1 et 4 inclus"
+        #code
+        self.potion_bleue_selectionnee = self.potions_bleues[contenu]
+    
+    def mut_ajoute_potions_rouges(self, potion):
+        '''
+        modifie l'attribut potions_rouges en augmentant ou en baissant le nombre de potions de la potion passée en paramètre
+        : params
+            potion (Potion)
+        : pas de return
+        '''
+        #assertion
+        assert isinstance(potion, module_objets.Potion), "le paramètre doit être une potion !"
+        #code
+        contenu = potion.acc_contenu()
+        self.potions_rouges[contenu].enfiler(potion)
+        
+    def mut_ajoute_potions_bleues(self, potion):
+        '''
+        modifie l'attribut potions_bleues en augmentant ou en baissant le nombre de potions de la potion passée en paramètre
+        : params
+            potion (Potion)
+        : pas de return
+        '''
+        #assertion
+        assert isinstance(potion, module_objets.Potion), "le paramètre doit être une potion !"
+        #code
+        contenu = potion.acc_contenu()
+        self.potions_bleues[contenu].enfiler(potion)
+        
+    def mut_enleve_potions_rouges(self):
+        '''
+        modifie l'attribut potions_rouges enlevant la première potion de la file sélectionnée
+        : return (Potion)
+        '''
+        return self.potion_rouge_selectionnee.defiler()
+        
+    def mut_enleve_potions_bleues(self):
+        '''
+        modifie l'attribut potions_bleues enlevant la première potion de la file sélectionnée
+        : return (Potion)
+        '''
+        return self.potion_bleue_selectionnee.defiler()
+
     def mut_sols_de_couleur(self, valeur) :
         '''
         Modifie l'attribut sols_de_couleur
@@ -999,7 +1125,7 @@ class Attributs_Jeu() :
                 self.mut_temps_active(True) #Le "changement" de temps est activé
            
         ##Temps pour les monstres d'apparaître ?
-        elif self.acc_nombre_tour() % 4 == 3 and self.acc_nombre_tour() != 0 and self.acc_temps() == 'Jour':
+        elif self.acc_nombre_tour() % 4 == 2 and self.acc_temps() == 'Jour':
             
             #Si l'apparition des monstres est activée et qu'ils n'ont pas encore été déplacés
             if not self.acc_monstres_active() and not self.acc_monstres_deja_deplaces() :

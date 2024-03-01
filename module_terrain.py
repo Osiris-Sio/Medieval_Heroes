@@ -138,16 +138,27 @@ class Terrain():
         : return (bool)
         '''
         return isinstance(self.acc_terrain(x, y), module_personnage.Personnage) and not self.acc_terrain(x, y).acc_personnage() == 'monstre' 
-                
-    def trouver_case_libre_proche(self, x, y):
+    
+    #####################################
+    ########### Trouve case libre
+    #####################################
+    
+    def trouver_case_libre_proche(self, x, y, chaine):
         '''
         renvoie les coordonnées de la case libre la plus proche de la case dont les coordonnées sont ceux passés en paramètres
-        : params x, y (int)
+        : params
+            x, y (int)
+            chaine (str), 'non' si le personnage à ressuciter est un géant et 'non' sinon
         : return (tuple)
         '''
+        ##on vérifie la case de départ
         case = (x, y)
         trouve = self.est_possible(x, y) #regarde si la case passée en paramètre est libre
         i = 1
+        if trouve and chaine == 'oui' : #si on a trouvé une case libre mais que le personnage est un géant
+            #4 cases doivent être libre
+            self.condition_case_geant(x, y)
+        ##on cherche
         while not trouve : #on cherche tant qu'on n'a pas trouvé
             tab = self.trouver_case(i)
             t = 0
@@ -157,6 +168,9 @@ class Terrain():
                 if 0 <= n_x <= 20 and 0 <= n_y <= 20: #si la case est dans la grille
                     trouve = self.est_possible(n_x, n_y)
                     case = (n_x, n_y)
+                    if trouve and chaine == 'oui' : #si on a trouvé une case libre mais que le personnage est un géant
+                        #4 cases doivent être libre
+                        self.condition_case_geant(n_x, n_y) 
                 t += 1
             i += 1
         return case
@@ -164,6 +178,7 @@ class Terrain():
     def trouver_case(self, rang):
         '''
         renvoie le tableau avec des semis-coordonnées des cases éloignés de rang de la case centrale
+        : param rang (int)
         : return (list)
         '''
         tab = []
@@ -173,8 +188,20 @@ class Terrain():
                     tab.append((i, j))
         return tab
     
+    def condition_case_geant(self, x, y):
+        '''
+        renvoie Vrai si la case de coordonnées x, y peut être la case en haut à gauche d'un géant
+        (les 3 autres cases doivent être libres)
+        : params
+            x, y (int)
+        : return (bool)
+        '''
+        return (self.est_possible(x + 1, y) and
+                self.est_possible(x , y + 1) and
+                self.est_possible(x + 1, y + 1))
+    
 
-            
+      
     
             
     
