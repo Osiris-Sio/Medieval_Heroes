@@ -202,8 +202,11 @@ class Potion():
         : return (str)
         '''
         dic_contenu = {1 : 'réduit les pv du personnage visé',
+                       2 : 'augmente les pv du personnage visé',
+                       3 : 'tue instantanément le personnage visé',
+                       4 : "change l'équipe du personnage visé"
                        }
-        return "Une potion qui" + dic_contenu[self.contenu] + " et qui a une portée de " + str(len(self.etendue_potion()))
+        return "Une potion qui " + dic_contenu[self.contenu] + " et qui a une portée de " + str(self.etendue)
     
     ####################################
     ############# Accesseurs :

@@ -257,7 +257,8 @@ class Affichage():
             'mage' : [pygame.image.load("medias/en_deplacement/sr.png"), pygame.image.load("medias/en_deplacement/sb.png")],
             'monstre' : [pygame.image.load("medias/en_deplacement/m.png")]
         }
-        
+        #potions :
+        self.potions = [pygame.image.load("medias/potions/retirer.png"), pygame.image.load("medias/potions/soin.png"), pygame.image.load("medias/potions/tuer.png"), pygame.image.load("medias/potions/changer.png")]
         
         #Boutons :
         self.boutons = {
@@ -321,8 +322,6 @@ class Affichage():
         '''
         self.ecran.blit(self.image_fond, (0, 0))
         
-
-    
     def afficher_boutons_menu(self):
         '''
         affiche les différents boutons du menu
@@ -530,10 +529,10 @@ class Affichage():
             else :
                 index = 1
             if isinstance(selection, module_personnage.Personnage):
-                if selection.personnage == 'monstre':
+                if selection.acc_personnage() == 'monstre':
                     image = self.cadres_personnages[selection.personnage][0]
                 else :
-                    if selection.equipe == 'rouge' :
+                    if selection.acc_equipe() == 'rouge' :
                         image = self.cadres_personnages[selection.personnage][index][0]
                     else :
                         image = self.cadres_personnages[selection.personnage][index][1]
@@ -556,11 +555,72 @@ class Affichage():
                 texte2 = police.render(str(selection.pv) , 1, (152, 82, 51))
                 self.ecran.blit(texte2, (10, 225))
                 
-                texte3 = police.render("Attaque : " , 1, (152, 82, 51))
-                self.ecran.blit(texte3, (10, 250))
+                if selection.acc_personnage() == 'sorciere':
+                    ##vérifie si le joueur clique sur une autre potion
+                    self.clavier_souris.potion_est_clique(self.attributs_jeu.acc_equipe_en_cours(), self.attributs_jeu.acc_selection().acc_equipe())
+                    #affichage des potions pour la sorciere
+                    texte3 = police.render("Potions : " , 1, (152, 82, 51))
+                    self.ecran.blit(texte3, (10, 250))
+                    
+                    ####longueur des files
+                    if selection.acc_equipe() == 'bleu' : #équipe bleue
+                        l = str(self.attributs_jeu.acc_potions_bleues()[2].acc_longueur())
+                        l2 = str(self.attributs_jeu.acc_potions_bleues()[3].acc_longueur())
+                        l3 = str(self.attributs_jeu.acc_potions_bleues()[4].acc_longueur())
+                        potion_s = self.attributs_jeu.acc_potion_bleue_selectionnee()
+                    else: #équipe rouge
+                        l = str(self.attributs_jeu.acc_potions_rouges()[2].acc_longueur())
+                        l2 = str(self.attributs_jeu.acc_potions_rouges()[3].acc_longueur())
+                        l3 = str(self.attributs_jeu.acc_potions_rouges()[4].acc_longueur())
+                        potion_s = self.attributs_jeu.acc_potion_rouge_selectionnee()
+                    ##en haut à gauche
+                    self.ecran.blit(self.potions[0], (47, 290)) 
+                    infini = pygame.image.load("medias/potions/infini.png")
+                    self.ecran.blit(infini,(70, 350))
+                    ##en haut à droite
+                    self.ecran.blit(self.potions[1], (156, 290))
+                    self.ecran.blit(police.render(l , 1, (0, 0, 0)), (195, 372))
+                    ##en bas à gauche
+                    self.ecran.blit(self.potions[2], (40, 404))
+                    self.ecran.blit(police.render(l2 , 1, (0, 0, 0)), (90, 495))
+                    ##en bas à droite
+                    self.ecran.blit(self.potions[3], (154, 404))
+                    self.ecran.blit(police.render(l3 , 1, (0, 0, 0)), (200, 495))
+                    
+                    ###potion séléctionnée
+                    dic_position_rec = {1 : (33, 286, 88),
+                                        2 : (133, 286, 87),
+                                        3 : (22, 400, 95),
+                                        4 : (134, 400, 96)
+                                        }
+                    if selection.acc_equipe() == self.attributs_jeu.acc_equipe_en_cours() : #le joueur ne peut regarder que ses personnages
+                        rectangle = pygame.Rect(dic_position_rec[potion_s][0], dic_position_rec[potion_s][1], dic_position_rec[potion_s][2], dic_position_rec[potion_s][2])
+                        pygame.draw.rect(self.ecran, (0, 0, 0), rectangle, 2) #(surface, couleur, figure (x, y, longueur, hauteur), si contour → épaisseur)
+                        ####INFOBULLE
+                        dic_phrase = {1 : 'inflige des dégâts',
+                                            2 : 'soigne',
+                                            3 : 'tue instantanément',
+                                            4 : "fais changer d'équipe"
+                                            }
+                        font = pygame.font.Font(None, 24)
+                        pos_souris = self.clavier_souris.acc_position_curseur()
+                        
+                        if rectangle.collidepoint(pos_souris): #si la souris est sur le rectangle
+                            # Afficher une info-bulle
+                            infobulle_texte = font.render(dic_phrase[potion_s], True, (0, 0, 0))
+                            infobulle_rect = infobulle_texte.get_rect()
+                            infobulle_rect.topleft = (pos_souris[0] + 24, pos_souris[1] + 18) #un peu en dessous du curseur
+                            pygame.draw.rect(self.ecran, (152, 82, 51), infobulle_rect)
+                            self.ecran.blit(infobulle_texte, infobulle_rect)
+                    
+                    
+                else :
+                    #si c'est un personnage lambda, on lui affiche ses dégats
+                    texte3 = police.render("Attaque : " , 1, (152, 82, 51))
+                    self.ecran.blit(texte3, (10, 250))
                 
-                texte3 = police.render(str(module_personnage.DIC_ATTAQUES[selection.personnage]) , 1, (152, 82, 51))
-                self.ecran.blit(texte3, (10, 275))
+                    texte3 = police.render(str(module_personnage.DIC_ATTAQUES[selection.personnage]) , 1, (152, 82, 51))
+                    self.ecran.blit(texte3, (10, 275))
                 
     def afficher_equipe_en_cours(self):
         '''

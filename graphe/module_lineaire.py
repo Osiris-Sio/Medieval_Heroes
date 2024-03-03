@@ -409,6 +409,7 @@ class File:
         '''
         self.tete = None # premier maillon de la queue
         self.queue = None # dernier maillon de la queue
+        self.longueur = 0 # la longueur de la file
     
     def __str__(self):
         '''
@@ -437,6 +438,24 @@ class File:
         : return (str)
         '''
         return 'Classe File'
+    
+    def acc_longueur(self):
+        '''
+        renvoie l'attribut longueur
+        : return (int)
+        >>> f = File()
+        >>> f.enfiler(2)
+        >>> f.enfiler(1)
+        >>> f.enfiler(9)
+        >>> f.enfiler(5)
+        >>> f.acc_longueur()
+        4
+        >>> f.defiler()
+        2
+        >>> f.acc_longueur()
+        3
+        '''
+        return self.longueur
     
     def est_vide(self):
         '''
@@ -468,8 +487,8 @@ class File:
         else:
             self.queue.mut_suivant(nouveau_maillon)
             self.queue = nouveau_maillon
-
-            
+        self.longueur += 1 #la longueur augmente de 1
+   
     def defiler(self):
         '''
         renvoie la valeur en tête de file et la retire de la file si la file n'est pas vide, déclenche un message d'erreur sinon.
@@ -489,24 +508,11 @@ class File:
         #code
         valeur = self.tete.acc_valeur()
         self.tete = self.tete.acc_suivant() #on change la tête par son suivant
+        self.longueur -= 1 #la longueur diminue de 1
         return valeur
             
-            
-            
-        nb_maillon = 1
-        while maillon != None :
-            chaine = chaine + str(maillon.acc_valeur()) + ',('
-            maillon = maillon.acc_suivant()
-            nb_maillon += 1
-        chaine = chaine +  ')' * nb_maillon # on ajoute la valeur du maillon à la chaine puis ',('
-            
-            
-            
-            
-            
-        
-        
-################# DOCTEST #########################
+    
+################# DOCTEST #################
 if __name__ == '__main__':
     import doctest
     doctest.testmod(verbose = False)

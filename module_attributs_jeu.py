@@ -93,27 +93,35 @@ class Attributs_Jeu() :
         
         #Potions :
         ####file rouge
+        #potion -pv
         f1r = module_lineaire.File()
         f1r.enfiler(module_objets.Potion(1))
+        #potion vie
         f2r = module_lineaire.File()
         for _ in range(3):
-            f1r.enfiler(module_objets.Potion(2))
+            f2r.enfiler(module_objets.Potion(2))
+        #potion mort
         f3r = module_lineaire.File()
-        f1r.enfiler(module_objets.Potion(3))
+        f3r.enfiler(module_objets.Potion(3))
+        #potion d'équipe
         f4r = module_lineaire.File()
         for _ in range(2):
-            f1r.enfiler(module_objets.Potion(4)) 
+            f4r.enfiler(module_objets.Potion(4)) 
         ####file bleue
+        #potion -pv
         f1b = module_lineaire.File()
         f1b.enfiler(module_objets.Potion(1))
+        #potion vie
         f2b = module_lineaire.File()
         for _ in range(3):
-            f1b.enfiler(module_objets.Potion(2))
+            f2b.enfiler(module_objets.Potion(2))
+        #potion mort
         f3b = module_lineaire.File()
-        f1b.enfiler(module_objets.Potion(3))
+        f3b.enfiler(module_objets.Potion(3))
+        #potion d'équipe
         f4b = module_lineaire.File()
         for _ in range(2):
-            f1b.enfiler(module_objets.Potion(4))
+            f4b.enfiler(module_objets.Potion(4))
         ##dic
         self.potions_rouges = {1 : f1r, 
                                2 : f2r,
@@ -125,8 +133,8 @@ class Attributs_Jeu() :
                                3 : f3b,
                                4 : f4b
                                }
-        self.potion_rouge_selectionnee = self.potions_rouges[1] #la première file
-        self.potion_bleue_selectionnee = self.potions_rouges[1] #la première file
+        self.potion_rouge_selectionnee = 1 #la première file
+        self.potion_bleue_selectionnee = 1 #la première file
         
         #Éléments du décor
         self.positions_tombes = [] #Tableau de tuples (x, y) des coordonnées de chaque tombe 
@@ -471,7 +479,7 @@ class Attributs_Jeu() :
         #assertion
         assert isinstance(contenu, int) and contenu in [1, 2, 3, 4], "le contenu de la potion doit être un entier compris entre 1 et 4 inclus"
         #code
-        self.potion_rouge_selectionnee = self.potions_rouges[contenu]
+        self.potion_rouge_selectionnee = contenu
         
     def mut_potion_bleue_selectionnee(self, contenu):
         '''
@@ -482,7 +490,7 @@ class Attributs_Jeu() :
         #assertion
         assert isinstance(contenu, int) and contenu in [1, 2, 3, 4], "le contenu de la potion doit être un entier compris entre 1 et 4 inclus"
         #code
-        self.potion_bleue_selectionnee = self.potions_bleues[contenu]
+        self.potion_bleue_selectionnee = contenu
     
     def mut_ajoute_potions_rouges(self, potion):
         '''

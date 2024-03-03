@@ -97,8 +97,8 @@ class Clavier_Souris() :
 
     def personnage_est_selectionne(self):
         '''
-        Si un personnage est cliqué, alors calculs ces déplacements et ces attaques qui sont possibles.
-        Sinon, on fait rien.
+        Si un personnage est cliqué, alors calculs ses déplacements et ses attaques qui sont possibles
+        Sinon, on fait rien
         '''
         position_case = self.acc_position_case()
         
@@ -106,6 +106,46 @@ class Clavier_Souris() :
         if 0 <= position_case[0] <= 20 and 0 <= position_case[1] <= 20:
             selection = self.terrain.acc_terrain(position_case[0], position_case[1]) #Selectionne le personnage de la case
             self.jeu.changer_personnage(selection) #Change le personnage.
+            
+    def potion_est_clique(self, equipe_en_cours, equipe_perso):
+        '''
+        si une potion est cliquée, change la sélection
+        : params
+            equipe_en_cours (str), 'rouge' ou 'bleu'
+            equipe_perso (str), 'rouge' ou 'bleu'
+        : pas de return
+        '''
+        pos_cur = self.acc_position_curseur()
+        if self.appuye : #si le joueur a cliqué sur quelque chose
+            ##potion 1
+            if 33 <= pos_cur[0] <= 121 and 286 <= pos_cur[1] <= 374 :
+                if equipe_en_cours == 'bleu' and equipe_perso == 'bleu':
+                    self.attributs_jeu.mut_potion_bleue_selectionnee(1)
+                if equipe_en_cours == 'rouge' and equipe_perso == 'rouge':
+                    self.attributs_jeu.mut_potion_rouge_selectionnee(1)
+            
+            ##potion 2
+            elif 133 <= pos_cur[0] <= 220 and 286 <= pos_cur[1] <= 373 :
+                if equipe_en_cours == 'bleu' and equipe_perso == 'bleu':
+                    self.attributs_jeu.mut_potion_bleue_selectionnee(2)
+                if equipe_en_cours == 'rouge' and equipe_perso == 'rouge':
+                    self.attributs_jeu.mut_potion_rouge_selectionnee(2)
+            
+            ##potion 3
+            elif 22 <= pos_cur[0] <= 117 and 400 <= pos_cur[1] <= 495 :
+                if equipe_en_cours == 'bleu' and equipe_perso == 'bleu':
+                    self.attributs_jeu.mut_potion_bleue_selectionnee(3)
+                if equipe_en_cours == 'rouge' and equipe_perso == 'rouge':
+                    self.attributs_jeu.mut_potion_rouge_selectionnee(3)
+            
+            ##potion 4
+            elif 134 <= pos_cur[0] <= 230 and 400 <= pos_cur[1] <= 496 :
+                if equipe_en_cours == 'bleu' and equipe_perso == 'bleu':
+                    self.attributs_jeu.mut_potion_bleue_selectionnee(4)
+                if equipe_en_cours == 'rouge' and equipe_perso == 'rouge':
+                    self.attributs_jeu.mut_potion_rouge_selectionnee(4)
+                    
+        
         
     ######################################################
     ### Différents Boutons :
@@ -301,7 +341,7 @@ class Clavier_Souris() :
     def entrees_menu(self, evenement) :
         '''
         Contrôle les entrées du clavier et de la souris et qui donne les actions demandées dans le menu.
-        :param evenement (input)
+        : param evenement (input)
         '''
         #Permet de fermer la fenêtre pygame :
         self.quitter(evenement)
