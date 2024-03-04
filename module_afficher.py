@@ -602,14 +602,13 @@ class Affichage():
                                             3 : 'tue instantanément',
                                             4 : "fais changer d'équipe"
                                             }
-                        font = pygame.font.Font(None, 24)
                         pos_souris = self.clavier_souris.acc_position_curseur()
                         
                         if rectangle.collidepoint(pos_souris): #si la souris est sur le rectangle
                             # Afficher une info-bulle
-                            infobulle_texte = font.render(dic_phrase[potion_s], True, (0, 0, 0))
+                            infobulle_texte = police.render(dic_phrase[potion_s], True, (0, 0, 0))
                             infobulle_rect = infobulle_texte.get_rect()
-                            infobulle_rect.topleft = (pos_souris[0] + 24, pos_souris[1] + 18) #un peu en dessous du curseur
+                            infobulle_rect.topleft = (pos_souris[0] - 4, pos_souris[1] - 18) #un peu en dessous du curseur
                             pygame.draw.rect(self.ecran, (152, 82, 51), infobulle_rect)
                             self.ecran.blit(infobulle_texte, infobulle_rect)
                     
@@ -618,8 +617,10 @@ class Affichage():
                     #si c'est un personnage lambda, on lui affiche ses dégats
                     texte3 = police.render("Attaque : " , 1, (152, 82, 51))
                     self.ecran.blit(texte3, (10, 250))
-                
-                    texte3 = police.render(str(module_personnage.DIC_ATTAQUES[selection.personnage]) , 1, (152, 82, 51))
+                    if selection.acc_equipe() == 'bleu' :
+                        texte3 = police.render(str(module_personnage.DIC_ATTAQUES_BLEU[selection.personnage]) , 1, (152, 82, 51))
+                    else:
+                        texte3 = police.render(str(module_personnage.DIC_ATTAQUES_ROUGE[selection.personnage]) , 1, (152, 82, 51))
                     self.ecran.blit(texte3, (10, 275))
                 
     def afficher_equipe_en_cours(self):
@@ -1023,10 +1024,6 @@ class Affichage():
         '''
         self.afficher_bandes()
         
-        #Côté Gauche :
-        self.afficher_personnage_selection()
-        self.afficher_equipe_en_cours()
-        
         #Milieu :
         self.afficher_terrain()
         self.afficher_personnages()
@@ -1052,6 +1049,9 @@ class Affichage():
         if self.attributs_jeu.acc_option_console() :   
             self.afficher_console()
         
+        #Côté Gauche :
+        self.afficher_personnage_selection()
+        self.afficher_equipe_en_cours()
         #Tout :
         self.afficher_filtre()
         self.afficher_annonce_coffre()

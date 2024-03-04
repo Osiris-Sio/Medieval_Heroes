@@ -29,21 +29,22 @@ class Coffre():
         self.est_ouvert = False
         self.avancement_ouverture = 1
         self.dic_contenu = {1 : 'bonus de vie pour le personnage',
-                    2 : 'envoie une météorite sur un endroit choisi par le joueur',
-                    3 : 'changement de personnage',
-                    4 : 'nuage de fumée à un endroit donné',
-                    5 : "augmente les dégâts d'attaque du personnage",
-                    6 : "fait spawn un géant dans l'équipe du personnage",
-                    7 : "fait spawn un géant dans l'équipe adverse",
-                    8 : "ressuscite le dernier personnage mort de l'équipe du personnage",
-                    }
+                            2 : 'changement de personnage',
+                            3 : "augmente de 5 les dégâts d'attaque du personnage",
+                            4 : "ressuscite le dernier personnage mort de l'équipe du personnage",
+                            5 : "ressuscite le dernier personnage mort de l'équipe adverse",
+                            6 : 'ajoute une potion de vie à la réserve de la sorcière',
+                            7 : 'ajoute une potion de mort à la réserve de la sorcière',
+                            8 : "ajoute une potion de changement d'équipe à la réserve de la sorcière",
+                            9 : 'ajoute une potion de mort à la réserve de la sorcière ennemie',
+                            10 : "augmente de 1 les dégâts d'attaque de tous les personnages de l'équipe adverse"
+                            }
         
     def __repr__(self):
         '''
         renvoie une chaîne de caractères pour décrire le coffre
         : return (str)
         '''
-        
         return "Un coffre de coordonnées (" + str(self.x) + ', ' + str(self.y) + ") et de contenu : " + self.dic_contenu[self.contenu]
     
     ######################################################
@@ -105,35 +106,39 @@ class Coffre():
     def definir_contenu(self):
         '''
         renvoie un nombre entre 1 et 5 suivant le contenu du coffre:
-            1 : +bonus de vie pour le personnage (30%)
-            2 : +envoie une météorite sur un endroit choisi par le joueur (11%)
-            3 : +changement de personnage (5%)
-            4 : -nuage de fumée à un endroit donné (15%)
-            5 : +augmente les dégâts d'attaque du personnage (25%)
-            6 : +fait spawn un géant dans l'équipe du personnage (3%)
-            7 : -fait spawn un géant dans l'équipe adverse (4%)
-            8 : +ressuscite le dernier personnage mort de l'équipe du personnage (7%)
-        '''
+            1 : 'bonus de vie pour le personnage' (14%)
+            2 : 'changement de personnage' (12%)
+            3 : "augmente de 5 les dégâts d'attaque du personnage" (9%)
+            4 : "ressuscite le dernier personnage mort de l'équipe du personnage" (11%)
+            5 : "ressuscite le dernier personnage mort de l'équipe adverse" (8%)
+            6 : 'ajoute trois potion de vie à la réserve de la sorcière' (15%)
+            7 : 'ajoute une potion de mort à la réserve de la sorcière' (8%)
+            8 : "ajoute deux potion de changement d'équipe à la réserve de la sorcière" (11%)
+            9 : 'ajoute une potion de mort à la réserve de la sorcière ennemie' (6%)
+            10 : "augmente de 1 les dégâts d'attaque de tous les personnages de l'équipe adverse" (6%)
         '''
         nombre = random.randint(0, 100)
-        if 0 <= nombre <= 29:
+        if 0 <= nombre <= 13 : #bonus de vie pour le personnage
             reponse = 1
-        elif 30 <= nombre <= 41 :
+        elif 14 <= nombre <= 25 : #changement de personnage
             reponse = 2
-        elif 42 <= nombre <= 46:
+        elif 26 <= nombre <= 34 : #augmente de 5 les dégâts d'attaque du personnage
             reponse = 3
-        elif 47 <= nombre <= 61:
+        elif 35 <= nombre <= 45 : #ressuscite le dernier personnage mort de l'équipe du personnage
             reponse = 4
-        elif 62 <= nombre <= 86:
+        elif 46 <= nombre <= 53 : #ressuscite le dernier personnage mort de l'équipe adverse
             reponse = 5
-        elif 87 <= nombre <= 89:
+        elif 54 <= nombre <= 68 : #ajoute une potion de vie à la réserve de la sorcière
             reponse = 6
-        elif 90 <= nombre <= 93:
+        elif 69 <= nombre <= 76 : #ajoute une potion de mort à la réserve de la sorcière 
             reponse = 7
-        else:
+        elif 77 <= nombre <= 87 : #ajoute une potion de changement d'équipe à la réserve de la sorcière
             reponse = 8
-        '''
-        return random.choice([1, 3, 5, 8])
+        elif 88 <= nombre <= 93 : #ajoute une potion de mort à la réserve de la sorcière ennemie
+            reponse = 9
+        else : #augmente de 1 les dégâts d'attaque de tous les personnages de l'équipe adverse
+            reponse = 10
+        return reponse
     
     def alentour(self):
         '''

@@ -31,7 +31,7 @@ DIC_PV = {'archere' : 10,
                 'monstre' : 10
                 }
 
-DIC_ATTAQUES = {'archere' : 7,
+DIC_ATTAQUES_BLEU = {'archere' : 7,
                 'paladin' : 5,
                 'cavalier' : 7,
                 'geant' : 15,
@@ -45,9 +45,23 @@ DIC_ATTAQUES = {'archere' : 7,
                 'monstre' : 3
                 }
                
-def mut_dic_attaques(personnage, val):
+DIC_ATTAQUES_ROUGE = {'archere' : 7,
+                'paladin' : 5,
+                'cavalier' : 7,
+                'geant' : 15,
+                'sorciere' : 0,
+                'poulet' : 2,
+                'ivrogne' : 5,
+                'barbare' : 10,
+                'cracheur de feu' : 10,
+                'valkyrie' : 12,
+                'mage' : 8,
+                'monstre' : 3
+                }
+
+def mut_dic_attaques_bleu(personnage, val):
     '''
-    modifie le DIC_ATTAQUES
+    modifie le DIC_ATTAQUES_BLEU
     : params
         personnage (str), le personnage du dic pour lequel il y a un changement
         val (int), la nouvelle valeur
@@ -56,7 +70,20 @@ def mut_dic_attaques(personnage, val):
     assert personnage in ['monstre', 'mage', 'paladin', 'geant', 'sorciere', 'valkyrie', 'archere', 'poulet', 'cavalier', 'cracheur de feu', 'ivrogne', 'barbare'], 'le personnage doit exister !' 
     assert isinstance(val, int), 'la nouvelle valeur à entrer dans le dictionnaire doit être un entier !'
     #code
-    DIC_ATTAQUES[personnage] = val
+    DIC_ATTAQUES_BLEU[personnage] = val
+    
+def mut_dic_attaques_rouge(personnage, val):
+    '''
+    modifie le DIC_ATTAQUES_ROUGE
+    : params
+        personnage (str), le personnage du dic pour lequel il y a un changement
+        val (int), la nouvelle valeur
+    '''
+    #assertions
+    assert personnage in ['monstre', 'mage', 'paladin', 'geant', 'sorciere', 'valkyrie', 'archere', 'poulet', 'cavalier', 'cracheur de feu', 'ivrogne', 'barbare'], 'le personnage doit exister !' 
+    assert isinstance(val, int), 'la nouvelle valeur à entrer dans le dictionnaire doit être un entier !'
+    #code
+    DIC_ATTAQUES_ROUGE[personnage] = val
 
 class Personnage():
     '''

@@ -256,13 +256,15 @@ class Jeu() :
         assert isinstance(numero_contenu, int), 'Le paramètre doit être un entier (int) !'
         #Code :
         dictionnaire_contenu = {1 : 'Bonus de vie',
-                                    2 : 'Météorite',
-                                    3 : 'Personnage Aléatoire',
-                                    4 : 'Nuage de fumée',
-                                    5 : "Dégâts d'attaque",
-                                    6 : "Geant allié",
-                                    7 : "Geant ennemi",
-                                    8 : "Necromancie",
+                                2 : 'Changement de personnage',
+                                3 : 'Bonus de dégâts',
+                                4 : 'Nécromancie bienveillante',
+                                5 : 'Nécromancie maligne',
+                                6 : "Potions de vie",
+                                7 : "Potion de mort",
+                                8 : "Potions changement d'équipe",
+                                9 : "Potion de mort adverse",
+                                10 : "Bonus de dégâts adverse"
                                     }
         
         self.attributs_jeu.ajouter_console(['Coffre : ' + dictionnaire_contenu[numero_contenu], 'noir'])
@@ -568,7 +570,7 @@ class Jeu() :
         #### CHANGEMENT DE PERSONNAGE (aléatoire pour l'instant)
         ########################################################
         
-        elif coffre.acc_contenu() == 3 :
+        elif coffre.acc_contenu() == 2 :
             perso = self.attributs_jeu.acc_selection()
             personnages_plateau = ['monstre', 'mage', 'paladin', 'sorciere', 'valkyrie', 'archere', 'poulet', 'cavalier', 'cracheur de feu', 'ivrogne', 'barbare']
             personnages_plateau.remove(perso.acc_personnage()) #il ne faut pas que le nouveau personnage soit l'ancien
@@ -578,21 +580,32 @@ class Jeu() :
         #### AUGMENTATION DES DÉGÂTS DU PERSONNAGE
         ########################################################
             
-        elif coffre.acc_contenu() == 5 :
+        elif coffre.acc_contenu() == 3 :
             perso = self.attributs_jeu.acc_selection().acc_personnage() #le personnage sélectionné
-            nouvelle_attaque = module_personnage.DIC_ATTAQUES[perso] + 5 #les nouveaux pv de dommage du personnage
-            module_personnage.mut_dic_attaques(perso, nouvelle_attaque) #on change dans le dictionnaire
-            
-        ########################################################
-        #### RESUSCITATION DU DERNIER PERSONNAGE MORT
-        ########################################################
-        
-        elif coffre.acc_contenu() == 8:
-            #récupération du dernier personnage mort de la bonne équipe
-            if self.attributs_jeu.acc_equipe_en_cours() == 'bleu':
-                perso = self.attributs_jeu.acc_dernier_personnage_mort_bleu()
+            if self.attributs_jeu.acc_equipe_en_cours() == 'bleu' :
+                nouvelle_attaque = module_personnage.DIC_ATTAQUES_BLEU[perso] + 5 #les nouveaux pv de dommage du personnage
+                module_personnage.mut_dic_attaques_bleu(perso, nouvelle_attaque) #on change dans le dictionnaire
             else:
-                perso = self.attributs_jeu.acc_dernier_personnage_mort_rouge()
+                nouvelle_attaque = module_personnage.DIC_ATTAQUES_ROUGE[perso] + 5 #les nouveaux pv de dommage du personnage
+                module_personnage.mut_dic_attaques_rouge(perso, nouvelle_attaque) #on change dans le dictionnaire
+            
+        #############################################################################
+        #### RESUSCITATION DU DERNIER PERSONNAGE MORT DE L'EQUIPE QUI JOUE / ADVERSE
+        #############################################################################
+        
+        elif coffre.acc_contenu() == 4 or coffre.acc_contenu() == 5:
+            #récupération du dernier personnage mort de la bonne équipe
+            if coffre.acc_contenu() == 4 : 
+                if self.attributs_jeu.acc_equipe_en_cours() == 'bleu':
+                    perso = self.attributs_jeu.acc_dernier_personnage_mort_bleu()
+                else:
+                    perso = self.attributs_jeu.acc_dernier_personnage_mort_rouge()
+            #récupération du dernier personnage mort de l'équipe adverse
+            else :
+                if self.attributs_jeu.acc_equipe_en_cours() == 'bleu':
+                    perso = self.attributs_jeu.acc_dernier_personnage_mort_rouge()
+                else:
+                    perso = self.attributs_jeu.acc_dernier_personnage_mort_bleu()
             #ressuscitation du personnage
             if not perso == None : #si il y a quelqu'un à ressusciter
                 ##si géant
@@ -608,6 +621,43 @@ class Jeu() :
                 self.attributs_jeu.ajouter_personnage(perso)
                 #on ajoute le personnage ressuscité au terrain
                 self.terrain.mut_terrain(perso.acc_x(), perso.acc_y(), perso)
+                
+        ###################################################################################
+        #### AJOUTE UNE POTION DE VIE/MORT/CHANGEMENT D'EQUIPE A L'EQUIPE QUI JOUE/ADVERSE
+        ###################################################################################
+        
+        elif coffre.acc_contenu() == 6 or coffre.acc_contenu() == 7 or coffre.acc_contenu() == 8 or coffre.acc_contenu() == 9 :
+            #dic_potion[contenu] = (x fois, type potion)
+            dic_potion = {6 : (3, 2),
+                          7 : (1, 3),
+                          8 : (2, 4)
+                          }
+            if not coffre.acc_contenu() == 9 : #ajout à la bonne équipe
+                if self.attributs_jeu.acc_equipe_en_cours() == 'bleu' :
+                    for _ in range(dic_potion[coffre.acc_contenu()][0]):
+                        self.attributs_jeu.mut_ajoute_potions_bleues(module_objets.Potion(dic_potion[coffre.acc_contenu()][1]))
+                else:
+                    for _ in range(dic_potion[coffre.acc_contenu()][0]):
+                        self.attributs_jeu.mut_ajoute_potions_rouges(module_objets.Potion(dic_potion[coffre.acc_contenu()][1]))
+            else : #ajout à l'équipe adverse
+                if self.attributs_jeu.acc_equipe_en_cours() == 'bleu' :
+                    self.attributs_jeu.mut_ajoute_potions_rouges(module_objets.Potion(3))
+                else:
+                    self.attributs_jeu.mut_ajoute_potions_bleues(module_objets.Potion(3))   
+        
+        #######################################################################
+        #### AUGMENTATION DES DÉGÂTS DE TOUS LES PERSONNAGES ADVERSES
+        #######################################################################
+        
+        else : #10
+            equipe = self.attributs_jeu.acc_equipe_en_cours()
+            for perso in ['monstre', 'mage', 'paladin', 'geant', 'sorciere', 'valkyrie', 'archere', 'poulet', 'cavalier', 'cracheur de feu', 'ivrogne', 'barbare'] :
+                if equipe == 'bleu' :
+                    nouvelle_attaque = module_personnage.DIC_ATTAQUES_ROUGE[perso] + 1 #les nouveaux pv de dommage du personnage
+                    module_personnage.mut_dic_attaques_rouge(perso, nouvelle_attaque) #on change dans le dictionnaire
+                else :
+                    nouvelle_attaque = module_personnage.DIC_ATTAQUES_BLEU[perso] + 1 #les nouveaux pv de dommage du personnage
+                    module_personnage.mut_dic_attaques_bleu(perso, nouvelle_attaque) #on change dans le dictionnaire
         
     ########################################################
     #### Fonction Potion :

@@ -98,14 +98,15 @@ class Attributs_Jeu() :
         f1r.enfiler(module_objets.Potion(1))
         #potion vie
         f2r = module_lineaire.File()
-        for _ in range(3):
+        for _ in range(5):
             f2r.enfiler(module_objets.Potion(2))
         #potion mort
         f3r = module_lineaire.File()
-        f3r.enfiler(module_objets.Potion(3))
+        for _ in range(2):
+            f3r.enfiler(module_objets.Potion(3))
         #potion d'équipe
         f4r = module_lineaire.File()
-        for _ in range(2):
+        for _ in range(3):
             f4r.enfiler(module_objets.Potion(4)) 
         ####file bleue
         #potion -pv
@@ -113,14 +114,15 @@ class Attributs_Jeu() :
         f1b.enfiler(module_objets.Potion(1))
         #potion vie
         f2b = module_lineaire.File()
-        for _ in range(3):
+        for _ in range(5):
             f2b.enfiler(module_objets.Potion(2))
         #potion mort
         f3b = module_lineaire.File()
-        f3b.enfiler(module_objets.Potion(3))
+        for _ in range(2):
+            f3b.enfiler(module_objets.Potion(3))
         #potion d'équipe
         f4b = module_lineaire.File()
-        for _ in range(2):
+        for _ in range(3):
             f4b.enfiler(module_objets.Potion(4))
         ##dic
         self.potions_rouges = {1 : f1r, 
