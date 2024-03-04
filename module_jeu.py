@@ -224,15 +224,21 @@ class Jeu() :
         #Code :
         self.attributs_jeu.ajouter_console(['À l\'équipe ' + equipe + ' de jouer !', 'noir'])
     
-    def deplacement_console(self, personnage) :
+    def deplacement_console(self, personnage, position_deplacement) :
         '''
         Ajoute dans la console que le personnage (passé en paramètre) s'est déplacé.
-        :param personnage (module_personnage.Personnage)
+        :params 
+            personnage (module_personnage.Personnage)
+            position_deplacement (tuple)
         '''
-        #Assertion :
+        #Assertions :
         assert isinstance(personnage, module_personnage.Personnage), 'personnage_qui_attaque doit être un personnage de la classe Personnage (module_personnage) !'
+        assert isinstance(position_deplacement, tuple) and 0 <= position_deplacement[0] <= 20 and 0 <= position_deplacement[1] <= 20, 'position_deplacement doit être un tuple de coordonnées (x, y) du terrain (compris entre 0 et 20) !'
         #Code :
-        self.attributs_jeu.ajouter_console([personnage.acc_personnage() + ' s\'est déplacé.', personnage.acc_equipe()])
+        if personnage.acc_personnage() == 'cracheur de feu' : 
+            self.attributs_jeu.ajouter_console(['cracheur d.f. s\'est déplacé (' + self.attributs_jeu.acc_dic_alphabet()[position_deplacement[0]] + ", " + str(position_deplacement[1]) + ")" , personnage.acc_equipe()])
+        else :
+            self.attributs_jeu.ajouter_console([personnage.acc_personnage() + ' s\'est déplacé (' + self.attributs_jeu.acc_dic_alphabet()[position_deplacement[0]] + ", " + str(position_deplacement[1]) + ")" , personnage.acc_equipe()])
         
     def attaque_console(self, personnage_qui_attaque, personnage_qui_subit) :
         '''
@@ -319,11 +325,11 @@ class Jeu() :
         
         if perso != None :
             perso.deplacer(x, y) # change les attributs des personnages dans la grille
-            #
             self.terrain.mut_terrain(x, y, perso) # déplace la selection aux nouvelles coordonnées
             self.attributs_jeu.mut_selection(None)
             self.attributs_jeu.mut_personnage_en_deplacement(None)
             self.attributs_jeu.mut_deplacement_en_cours(False)
+        self.jouer_monstres() #Fait jouer les monstres
 
     def deplacer_geant(self, x, y):
         '''
@@ -349,6 +355,7 @@ class Jeu() :
             geant.deplacer(n_x, n_y) # pour le personnage  
             self.terrain.mut_terrain(n_x, n_y, geant)
         self.mut_famille_coordonnees(equipe)
+        self.jouer_monstres() #Fait jouer les monstres
         
     def coordonnees_geant(self, tete_x, tete_y, nouveau_x, nouveau_y):
         '''
@@ -381,16 +388,24 @@ class Jeu() :
         '''
         Gère le fonctionnement de l'affichage des attaques dans le jeu
         '''
+        #Si le temps de l'attaque est strictement inférieur à 20 et qu'il y a une attaque en cours :
         if self.attributs_jeu.acc_attaque_temps() < 20 and self.attributs_jeu.acc_attaque_en_cours() :
-            self.attributs_jeu.mut_attaque_temps(self.attributs_jeu.acc_attaque_temps() + 1)
-        elif self.attributs_jeu.acc_attaque_temps() == 20:
-            self.attributs_jeu.mut_attaque_en_cours(False)
-            self.attributs_jeu.mut_attaque_temps(0)
-            for ligne in self.terrain.acc_grille():
-                for elt in ligne:
-                    if isinstance(elt, module_personnage.Personnage):
-                        if elt.acc_endommage():
-                            elt.mut_endommage()
+            self.attributs_jeu.mut_attaque_temps(self.attributs_jeu.acc_attaque_temps() + 1) #Ajoute 1 au temps de l'attaque
+        
+        #Sinon si le temps de l'attaque est à 20 :
+        elif self.attributs_jeu.acc_attaque_temps() == 20 :
+            self.attributs_jeu.mut_attaque_en_cours(False) #Il n'y a plus d'attaque en cours
+            self.attributs_jeu.mut_attaque_temps(0) #Le temps de l'attaque est mis à 0
+            
+            #Pour chaque personnage dans le tableau de personnages :
+            for personnage in self.attributs_jeu.acc_tab_personnages() + self.attributs_jeu.acc_tab_monstres() :
+                #Si le personnage est endommagé :
+                if personnage.acc_endommage():
+                    personnage.mut_endommage() #Change son attribut en son inverse (dans ce cas True devient False)
+                    
+                    #Si le personnage n'est pas un monstre, alors on fait jouer les monstres :
+                    if not isinstance(personnage, module_personnage.Monstre) :
+                        self.jouer_monstres() #Fait jouer les monstres
     
     ######################################################
     ### Monstres :
@@ -735,10 +750,9 @@ class Jeu() :
             else:
                 self.deplacer(position_case[0], position_case[1])
             
-            self.deplacement_console(self.attributs_jeu.acc_selection()) #Ajoute une phrase de déplacement dans la console du jeu
+            self.deplacement_console(self.attributs_jeu.acc_selection(), position_case) #Ajoute une phrase de déplacement dans la console du jeu
             self.effacer_actions()
             self.attributs_jeu.mut_nombre_action(self.attributs_jeu.acc_nombre_action() + 1) #Augmente le nombre d'action de 1
-            self.jouer_monstres() #Fait jouer les monstres
             return True
             
         return False
@@ -789,7 +803,6 @@ class Jeu() :
                 self.changer_personnage(' ') #Enlève le personnage sélectionner par le joueur (rien sélectionné)
                 self.attributs_jeu.mut_nombre_action(self.attributs_jeu.acc_nombre_action() + 1) #Augmente le nombre d'action de 1
                 self.effacer_actions()
-                self.jouer_monstres() #Fait jouer les monstres
                 return True
             
             return False
@@ -959,6 +972,9 @@ class Jeu() :
         self.attributs_jeu.mut_equipe_gagnante(None)
         self.attributs_jeu.mut_menu(False)
         
+        #Désactive un nouveau placement de monstres :
+        self.attributs_jeu.mut_monstres_deja_deplaces(True)
+        
         self.placer() #Place les personnages, monstres et coffres de la partie qui a été chargé.
         
     ######################################################
@@ -1023,7 +1039,10 @@ class Jeu() :
                 
                 #Pour chaque entrées :
                 for evenement in pygame.event.get() :
-                    self.clavier_souris.entrees_jeu(evenement) #Vérifie s'il y a eu une interaction dans le jeu
+                    
+                    #Si il n'y a pas de déplacement et/ou d'attaque de personnage en cours :
+                    if not self.attributs_jeu.acc_deplacement_en_cours() and not self.attributs_jeu.acc_attaque_en_cours() :
+                        self.clavier_souris.entrees_jeu(evenement) #Vérifie s'il y a eu une interaction dans le jeu
                 
                 ######################################################
                 ### Coffres :

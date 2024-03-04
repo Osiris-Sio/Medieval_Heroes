@@ -306,11 +306,9 @@ class Affichage():
             position_case = self.clavier_souris.acc_position_case()
             if position_case[0] >= 0 and position_case[0] <= 20 and position_case[1] >= 0 and position_case[1] <= 20:
                 police = pygame.font.Font("medias/pixelec.ttf", 17)
-                texte = police.render("Position de la ", 1, (152, 82, 51))
-                texte1 = police.render("souris :" + str(position_case) , 1, (152, 82, 51))
+                texte = police.render("Case : (" + self.attributs_jeu.acc_dic_alphabet()[position_case[0]] + ", " + str(position_case[1]) + ")", 1, (152, 82, 51))
                 
-                self.ecran.blit(texte, (10, 680))
-                self.ecran.blit(texte1, (10, 700))
+                self.ecran.blit(texte, (10, 700))
             
     ########################################
     ### Affichages Menu/Option :
@@ -671,7 +669,7 @@ class Affichage():
             
             hauteur -= 19
             
-            self.ecran.blit(texte, (1070, hauteur))
+            self.ecran.blit(texte, (1058, hauteur))
         
         #Rempile toutes les phrases (et leurs paramètres) stockés dans la pile principale
         while not stock.est_vide() :

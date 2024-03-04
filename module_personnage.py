@@ -291,13 +291,18 @@ class Personnage():
         : pas de return, modifie l'attribut pv
         '''
         if nombre is None: #autre qu'une sorcière
-            self.pv -= DIC_ATTAQUES[ennemi]
+            if self.acc_equipe() == 'bleu' : #Si le personnage est bleu
+                self.mut_pv(self.acc_pv() - DIC_ATTAQUES_ROUGE[ennemi]) #L'ennemi est forcément rouge
+            else :
+                self.mut_pv(self.acc_pv() - DIC_ATTAQUES_BLEU[ennemi]) #L'ennemi est forcément bleu
+        
         else:
             self.pv -= nombre
         
     #################################################
     ####### Déplacements + Attaques
     #################################################
+    
     def cases_valides_attaques(self, terrain):
         '''
         améliore les cases d'attaques

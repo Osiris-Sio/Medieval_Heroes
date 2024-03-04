@@ -54,6 +54,30 @@ class Attributs_Jeu() :
         self.nombre_action = 0 #Le nombre d'action qu'une équipe a faite pendant son tour
         self.nombre_tour = 0 #Le nombre de tour passé.
         
+        self.dic_alphabet = {
+            0 : 'A',
+            1 : 'B',
+            2 : 'C',
+            3 : 'D',
+            4 : 'E',
+            5 : 'F',
+            6 : 'G',
+            7 : 'H',
+            8 : 'I',
+            9 : 'J',
+            10 : 'K',
+            11 : 'L',
+            12 : 'M',
+            13 : 'N',
+            14 : 'O',
+            15 : 'P',
+            16 : 'Q',
+            17 : 'R',
+            18 : 'S',
+            19 : 'T',
+            20 : 'U'
+        }
+        
         #Console (pile) :
         self.console = module_lineaire.Pile() #Une pile où sera ajouté des tableaux contenant une phrase et sa couleur pour ensuite l'afficher.
         
@@ -149,6 +173,12 @@ class Attributs_Jeu() :
     ######################################################
     ### Accesseurs :
     ######################################################
+    
+    def acc_dic_alphabet(self):
+        '''
+        Renvoie l'attribut dic_alphabet
+        '''
+        return self.dic_alphabet
     
     def acc_sols_de_couleur(self):
         '''
@@ -1137,7 +1167,7 @@ class Attributs_Jeu() :
         ##Temps pour les monstres d'apparaître ?
         elif self.acc_nombre_tour() % 4 == 2 and self.acc_temps() == 'Jour':
             
-            #Si l'apparition des monstres est activée et qu'ils n'ont pas encore été déplacés
+            #Si l'apparition des monstres est désactivé et qu'ils n'ont pas encore été déplacés
             if not self.acc_monstres_active() and not self.acc_monstres_deja_deplaces() :
                 self.mut_monstres_active(True) #Le "placement" de monstres est activé
             #Sinon :
