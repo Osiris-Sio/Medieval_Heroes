@@ -94,6 +94,10 @@ class Affichage():
         self.image_fond = pygame.image.load("medias/fond_menu.png")
         self.fond_option = pygame.image.load("medias/menu_param.png")
         
+        #Modes :
+        self.local = pygame.image.load("medias/jeu_local.png")
+        self.robot = pygame.image.load("medias/jeu_robot.png")
+        
         #Terrain :
         self.image_terrain = pygame.image.load("medias/21x21.png")
         
@@ -283,6 +287,8 @@ class Affichage():
                               pygame.image.load("medias/cadres/cadre_options_menu1.png")],
             'charger_menu' : [pygame.image.load("medias/cadres/cadre_charger_menu0.png"),
                               pygame.image.load("medias/cadres/cadre_charger_menu1.png")],
+            'options' : [pygame.image.load("medias/cadres/cadre_options0.png"),
+                         pygame.image.load("medias/cadres/cadre_options1.png")]
         }
         
         #Menu de fin de partie :
@@ -312,7 +318,7 @@ class Affichage():
                 police = pygame.font.Font("medias/pixelec.ttf", 17)
                 texte = police.render("Case : (" + self.attributs_jeu.acc_dic_alphabet()[position_case[0]] + ", " + str(position_case[1]) + ")", 1, (152, 82, 51))
                 
-                self.ecran.blit(texte, (10, 700))
+                self.ecran.blit(texte, (10, 570))
             
     ########################################
     ### Affichages Menu/Option :
@@ -633,7 +639,7 @@ class Affichage():
         
         #Tour du Joueur :
         texte = police.render("Tour du joueur :" , 1, (152, 82, 51))
-        self.ecran.blit(texte, (10, 740))
+        self.ecran.blit(texte, (10, 600))
         
         #Si l'équipe en cours est l'équipe bleu, affiche la "phrase" en bleu :
         if self.attributs_jeu.acc_equipe_en_cours() == 'bleu':
@@ -643,7 +649,7 @@ class Affichage():
         else :
             texte = police.render('Rouge (' + str(3 - self.attributs_jeu.acc_nombre_action()) + ')' , 1, (237, 28, 36))
         
-        self.ecran.blit(texte, (10, 760))
+        self.ecran.blit(texte, (10, 620))
         
     def afficher_console(self):
         '''
@@ -710,6 +716,24 @@ class Affichage():
         '''
         police = pygame.font.Font("medias/pixelec.ttf", 21)
         bouton_clique = self.attributs_jeu.acc_bouton_clique()
+        
+        if bouton_clique == 'option':
+            bouton_option = self.boutons['options'][1]
+            texte = police.render("Option" , 1, (77, 148, 219))
+        else :
+            bouton_option = self.boutons['options'][0]
+            texte = police.render("Option" , 1, (15, 75, 117))
+        self.ecran.blit(bouton_option, (6, 655))
+        self.ecran.blit(texte, (78, 675))
+        
+        if bouton_clique == 'menu':
+            bouton_menu = self.boutons['quitter'][1]
+            texte = police.render("Menu" , 1, (224, 85, 92))
+        else :
+            bouton_menu = self.boutons['quitter'][0]
+            texte = police.render("Menu" , 1, (237, 28, 36))
+        self.ecran.blit(bouton_menu, (6, 725))
+        self.ecran.blit(texte, (92, 745))
         
         if bouton_clique == 'quitter':
             bouton_quitter = self.boutons['quitter'][1]
@@ -1054,7 +1078,14 @@ class Affichage():
         #Côté Gauche :
         self.afficher_personnage_selection()
         self.afficher_equipe_en_cours()
+        
         #Tout :
         self.afficher_filtre()
         self.afficher_annonce_coffre()
+        
+        #Si option :
+        if self.attributs_jeu.acc_option() :
+            self.afficher_fond()
+            self.afficher_option()
+        
         self.afficher_curseur()

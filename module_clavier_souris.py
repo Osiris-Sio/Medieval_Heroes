@@ -182,7 +182,7 @@ class Clavier_Souris() :
                 self.attributs_jeu.ajouter_console([phrase, "noir"])
                 
             #Sinon si le bouton est option, ouvre la fenêtre de menu options.
-            elif self.attributs_jeu.acc_bouton_clique() == 'option':
+            elif self.attributs_jeu.acc_bouton_clique() == 'option' :
                 self.attributs_jeu.mut_option(True)
                 
             #Sinon si le bouton est quitter_option, ferme la fenêtre du menu option.
@@ -266,7 +266,20 @@ class Clavier_Souris() :
         if self.attributs_jeu.acc_bouton_clique() == None :
             
             #Si le joueur clique dans la zone des boutons de gauche du jeu :
-            if 1056 <= position_curseur[0] <= 1294 : 
+            if 10 <= position_curseur[0] <= 248 : 
+                
+                #Si le joueur clique sur le bouton 'Menu' :
+                if 655 < position_curseur[1] < 720 :
+                    self.attributs_jeu.mut_bouton_clique('option')
+                    self.attributs_jeu.mut_temps_appui_bouton(time.time())
+                
+                #Si le joueur clique sur le bouton 'Menu' :
+                elif 725 < position_curseur[1] < 790 :
+                    self.attributs_jeu.mut_bouton_clique('menu')
+                    self.attributs_jeu.mut_temps_appui_bouton(time.time())
+            
+            #Si le joueur clique dans la zone des boutons de droit du jeu :
+            elif 1056 <= position_curseur[0] <= 1294 : 
                 
                 #Si le joueur clique sur le bouton 'Quitter' :
                 if 725 < position_curseur[1] < 790 :
@@ -274,12 +287,12 @@ class Clavier_Souris() :
                     self.attributs_jeu.mut_temps_appui_bouton(time.time())
                 
                 #Si le joueur clique sur le bouton 'Charger' :
-                if 655 < position_curseur[1] < 720 : 
+                elif 655 < position_curseur[1] < 720 : 
                     self.attributs_jeu.mut_bouton_clique('charger')
                     self.attributs_jeu.mut_temps_appui_bouton(time.time())
                 
                 #si le joueur clique sur le bouton 'Sauvegarder' :
-                if 585 < position_curseur[1] < 650 :
+                elif 585 < position_curseur[1] < 650 :
                     self.attributs_jeu.mut_bouton_clique('sauvegarder')
                     self.attributs_jeu.mut_temps_appui_bouton(time.time())
                     
@@ -295,7 +308,7 @@ class Clavier_Souris() :
                         self.attributs_jeu.mut_temps_appui_bouton(time.time())
                     
                     #Si le joueur clique sur le bouton 'Quitter' :
-                    if self.attributs_jeu.position_y_menu_fin + 310 < position_curseur[1] < self.attributs_jeu.position_y_menu_fin + 375 :
+                    elif self.attributs_jeu.position_y_menu_fin + 310 < position_curseur[1] < self.attributs_jeu.position_y_menu_fin + 375 :
                         self.attributs_jeu.mut_bouton_clique('quitter')
                         self.attributs_jeu.mut_temps_appui_bouton(time.time())
 
