@@ -278,7 +278,11 @@ class Affichage():
                         pygame.image.load("medias/cadres/cadre_sauvegarder1.png")],
             'on_off' : [pygame.image.load("medias/cadres/active.png"), pygame.image.load("medias/cadres/desactive.png")],
             'barre_fps' : pygame.image.load("medias/cadres/fps_barre.png"),
-            'pointeur_fps' : pygame.image.load("medias/cadres/pointeur_fps.png")
+            'pointeur_fps' : pygame.image.load("medias/cadres/pointeur_fps.png"),
+            'options_menu' : [pygame.image.load("medias/cadres/cadre_options_menu0.png"),
+                              pygame.image.load("medias/cadres/cadre_options_menu1.png")],
+            'charger_menu' : [pygame.image.load("medias/cadres/cadre_charger_menu0.png"),
+                              pygame.image.load("medias/cadres/cadre_charger_menu1.png")],
         }
         
         #Menu de fin de partie :
@@ -340,10 +344,10 @@ class Affichage():
         
         #Bouton Charger :
         if bouton_clique == 'charger':
-            bouton_charger = self.boutons['jouer'][1]
-            texte_charger = police.render("Charger" , 1, (200, 165, 80))
+            bouton_charger = self.boutons['charger_menu'][1]
+            texte_charger = police.render("Charger" , 1, (255, 171, 92))
         else :
-            bouton_charger = self.boutons['jouer'][0]
+            bouton_charger = self.boutons['charger_menu'][0]
             texte_charger = police.render("Charger" , 1, (196, 144, 4))
             
         self.ecran.blit(bouton_charger, (450, 420)) 
@@ -351,11 +355,11 @@ class Affichage():
         
         #Bouton Option :
         if bouton_clique == 'option':
-            bouton_jouer = self.boutons['jouer'][1]
-            texte_option = police.render("Options" , 1, (224, 165, 80))
+            bouton_jouer = self.boutons['options_menu'][1]
+            texte_option = police.render("Options" , 1, (77, 148, 219))
         else :
-            bouton_jouer = self.boutons['jouer'][0]
-            texte_option = police.render("Options" , 1, (196, 144, 4))   
+            bouton_jouer = self.boutons['options_menu'][0]
+            texte_option = police.render("Options" , 1, (15, 75, 117))   
             
         self.ecran.blit(bouton_jouer, (450, 500)) 
         self.ecran.blit(texte_option, (600, 520))
