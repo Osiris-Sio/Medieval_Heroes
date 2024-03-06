@@ -95,7 +95,7 @@ class Attributs_Jeu() :
         self.nouvelles_coord = None
         self.nb_actions = 0
         
-        # Attributs pour le déplacement des monstres
+        #Attributs pour le déplacement des monstres
         self.chemin_monstre = []
         self.coordonnees_monstre = None
         self.monstre_en_deplacement = None
@@ -116,6 +116,7 @@ class Attributs_Jeu() :
         self.event_coffre = 0
         
         #Potions :
+        self.cases_potions = [] #les cases où les effets de potions s'appliquent
         ####file rouge
         #potion -pv
         f1r = module_lineaire.File()

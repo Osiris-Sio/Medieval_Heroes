@@ -119,30 +119,30 @@ class Clavier_Souris() :
         if self.appuye : #si le joueur a cliqué sur quelque chose
             ##potion 1
             if 33 <= pos_cur[0] <= 121 and 286 <= pos_cur[1] <= 374 :
-                if equipe_en_cours == 'bleu' and equipe_perso == 'bleu':
+                if equipe_en_cours == 'bleu' and equipe_perso == 'bleu' and not self.attributs_jeu.acc_potions_bleues()[1].est_vide(): #bonne équipe et file non vide
                     self.attributs_jeu.mut_potion_bleue_selectionnee(1)
-                if equipe_en_cours == 'rouge' and equipe_perso == 'rouge':
+                if equipe_en_cours == 'rouge' and equipe_perso == 'rouge' and not self.attributs_jeu.acc_potions_rouges()[1].est_vide(): #bonne équipe et file non vide
                     self.attributs_jeu.mut_potion_rouge_selectionnee(1)
             
             ##potion 2
             elif 133 <= pos_cur[0] <= 220 and 286 <= pos_cur[1] <= 373 :
-                if equipe_en_cours == 'bleu' and equipe_perso == 'bleu':
+                if equipe_en_cours == 'bleu' and equipe_perso == 'bleu' and not self.attributs_jeu.acc_potions_bleues()[2].est_vide(): #bonne équipe et file non vide
                     self.attributs_jeu.mut_potion_bleue_selectionnee(2)
-                if equipe_en_cours == 'rouge' and equipe_perso == 'rouge':
+                if equipe_en_cours == 'rouge' and equipe_perso == 'rouge' and not self.attributs_jeu.acc_potions_rouges()[2].est_vide(): #bonne équipe et file non vide
                     self.attributs_jeu.mut_potion_rouge_selectionnee(2)
             
             ##potion 3
             elif 22 <= pos_cur[0] <= 117 and 400 <= pos_cur[1] <= 495 :
-                if equipe_en_cours == 'bleu' and equipe_perso == 'bleu':
+                if equipe_en_cours == 'bleu' and equipe_perso == 'bleu' and not self.attributs_jeu.acc_potions_bleues()[3].est_vide(): #bonne équipe et file non vide
                     self.attributs_jeu.mut_potion_bleue_selectionnee(3)
-                if equipe_en_cours == 'rouge' and equipe_perso == 'rouge':
+                if equipe_en_cours == 'rouge' and equipe_perso == 'rouge' and not self.attributs_jeu.acc_potions_rouges()[3].est_vide(): #bonne équipe et file non vide
                     self.attributs_jeu.mut_potion_rouge_selectionnee(3)
             
             ##potion 4
             elif 134 <= pos_cur[0] <= 230 and 400 <= pos_cur[1] <= 496 :
-                if equipe_en_cours == 'bleu' and equipe_perso == 'bleu':
+                if equipe_en_cours == 'bleu' and equipe_perso == 'bleu' and not self.attributs_jeu.acc_potions_bleues()[4].est_vide(): #bonne équipe et file non vide
                     self.attributs_jeu.mut_potion_bleue_selectionnee(4)
-                if equipe_en_cours == 'rouge' and equipe_perso == 'rouge':
+                if equipe_en_cours == 'rouge' and equipe_perso == 'rouge' and not self.attributs_jeu.acc_potions_rouges()[4].est_vide(): #bonne équipe et file non vide
                     self.attributs_jeu.mut_potion_rouge_selectionnee(4)
                     
         

@@ -10,7 +10,7 @@ Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul
 ### Importation Modules :
 ######################################################
 
-import pygame, module_attributs_jeu, module_terrain, module_afficher, module_clavier_souris, module_objets, module_personnage, random, module_sauvegarde
+import pygame, module_attributs_jeu, module_terrain, module_afficher, module_clavier_souris, module_objets, module_personnage, random, module_sauvegarde, module_musique_et_sons
 from graphe import parcourir_graphe, module_lineaire
 
 ######################################################
@@ -36,29 +36,45 @@ class Jeu() :
         self.terrain = module_terrain.Terrain(self.attributs_jeu)
         self.clavier_souris = module_clavier_souris.Clavier_Souris(self, self.attributs_jeu, self.sauvegarde, self.terrain)
         self.affichage = module_afficher.Affichage(self.attributs_jeu, self.terrain, self.ecran, self.clavier_souris)
-        
+        self.gestionnaire_son = module_musique_et_sons.GestionnaireSon()
         #Console de départ :
         self.partie_commence_console() 
         
         ###Pose des personnages (par défaut)
         
         #Géant rouge:
-        geant1r = module_personnage.Geant('rouge', 10, 0, 8, 0)
-        geant2r = module_personnage.Geant('rouge', 11, 0, 8, 1)
-        geant3r = module_personnage.Geant('rouge', 10, 1, 8, 2)
-        geant4r = module_personnage.Geant('rouge', 11, 1, 8, 3)
-        self.famille_geant_rouge = [geant1r, geant2r, geant3r, geant4r] ##La famille des géants
-        self.coordonnees_rouge = [(geant1r.acc_x(), geant1r.acc_y()), (geant2r.acc_x(), geant2r.acc_y()),
-                                   (geant3r.acc_x(), geant3r.acc_y()), (geant4r.acc_x(), geant4r.acc_y())]
+        ##n°1
+        geant1r = module_personnage.Geant('rouge', 8, 0, 8, 0)
+        geant2r = module_personnage.Geant('rouge', 9, 0, 8, 1)
+        geant3r = module_personnage.Geant('rouge', 8, 1, 8, 2)
+        geant4r = module_personnage.Geant('rouge', 9, 1, 8, 3)
+        ##n°2
+        geant5r = module_personnage.Geant('rouge', 11, 0, 8, 0)
+        geant6r = module_personnage.Geant('rouge', 12, 0, 8, 1)
+        geant7r = module_personnage.Geant('rouge', 11, 1, 8, 2)
+        geant8r = module_personnage.Geant('rouge', 12, 1, 8, 3)
+        self.famille_geant_rouge = [[geant1r, geant2r, geant3r, geant4r], [geant5r, geant6r, geant7r, geant8r]] ##La famille des géants
+        self.coordonnees_rouge = [[(geant1r.acc_x(), geant1r.acc_y()), (geant2r.acc_x(), geant2r.acc_y()),
+                                   (geant3r.acc_x(), geant3r.acc_y()), (geant4r.acc_x(), geant4r.acc_y())],
+                                  [(geant5r.acc_x(), geant5r.acc_y()), (geant6r.acc_x(), geant6r.acc_y()),
+                                   (geant7r.acc_x(), geant7r.acc_y()), (geant8r.acc_x(), geant8r.acc_y())]]
         
         #Geant bleu:
-        geant1b = module_personnage.Geant('bleu', 10, 19, 8, 0)
-        geant2b = module_personnage.Geant('bleu', 11, 19, 8, 1)
-        geant3b = module_personnage.Geant('bleu', 10, 20, 8, 2)
-        geant4b = module_personnage.Geant('bleu', 11, 20, 8, 3)
-        self.famille_geant_bleu = [geant1b, geant2b, geant3b, geant4b] ##La famille des géants    
-        self.coordonnees_bleu = [(geant1b.acc_x(), geant1b.acc_y()), (geant2b.acc_x(), geant2b.acc_y()),
-                                   (geant3b.acc_x(), geant3b.acc_y()), (geant4b.acc_x(), geant4b.acc_y())]
+        ##n°1
+        geant1b = module_personnage.Geant('bleu', 8, 19, 8, 0)
+        geant2b = module_personnage.Geant('bleu', 9, 19, 8, 1)
+        geant3b = module_personnage.Geant('bleu', 8, 20, 8, 2)
+        geant4b = module_personnage.Geant('bleu', 9, 20, 8, 3)
+        ##n°2
+        geant5b = module_personnage.Geant('bleu', 11, 19, 8, 0)
+        geant6b = module_personnage.Geant('bleu', 12, 19, 8, 1)
+        geant7b = module_personnage.Geant('bleu', 11, 20, 8, 2)
+        geant8b = module_personnage.Geant('bleu', 12, 20, 8, 3)
+        self.famille_geant_bleu = [[geant1b, geant2b, geant3b, geant4b], [geant5b, geant6b, geant7b, geant8b]] ##La famille des géants    
+        self.coordonnees_bleu = [[(geant1b.acc_x(), geant1b.acc_y()), (geant2b.acc_x(), geant2b.acc_y()),
+                                   (geant3b.acc_x(), geant3b.acc_y()), (geant4b.acc_x(), geant4b.acc_y())],
+                                 [(geant5b.acc_x(), geant5b.acc_y()), (geant6b.acc_x(), geant6b.acc_y()),
+                                   (geant7b.acc_x(), geant7b.acc_y()), (geant8b.acc_x(), geant8b.acc_y())]]
         
         
         self.attributs_jeu.mut_tab_personnages([
@@ -78,6 +94,10 @@ class Jeu() :
         geant2r,
         geant3r,
         geant4r,
+        geant5r,
+        geant6r,
+        geant7r,
+        geant8r,
         
         #bleu :
         module_personnage.Personnage('paladin', 'bleu', 6, 18, 8),#personnage, equipe, x, y, pv
@@ -94,11 +114,15 @@ class Jeu() :
         geant2b,
         geant3b,
         geant4b,
+        geant5b,
+        geant6b,
+        geant7b,
+        geant8b,
         ])
         
         ###Pose des coffres (par défaut)
         self.attributs_jeu.mut_tab_coffres([
-        module_objets.Coffre(1, 6),
+        module_objets.Coffre(10, 10), #1, 6
         module_objets.Coffre(19, 14),
         module_objets.Coffre(1, 14),
         module_objets.Coffre(19, 6),
@@ -135,12 +159,16 @@ class Jeu() :
         #code
         if equipe == 'bleu':
             famille = self.famille_geant_bleu
-            self.coordonnees_bleu = [(famille[0].acc_x(), famille[0].acc_y()), (famille[1].acc_x(), famille[1].acc_y()),
-                                   (famille[2].acc_x(), famille[2].acc_y()), (famille[3].acc_x(), famille[3].acc_y())]
+            self.coordonnees_bleu = [[(famille[0][0].acc_x(), famille[0][0].acc_y()), (famille[0][1].acc_x(), famille[0][1].acc_y()),
+                                   (famille[0][2].acc_x(), famille[0][2].acc_y()), (famille[0][3].acc_x(), famille[0][3].acc_y())],
+                                     [(famille[1][0].acc_x(), famille[1][0].acc_y()), (famille[1][1].acc_x(), famille[1][1].acc_y()),
+                                   (famille[1][2].acc_x(), famille[1][2].acc_y()), (famille[1][3].acc_x(), famille[1][3].acc_y())]]
         else : #rouge
             famille = self.famille_geant_rouge
-            self.coordonnees_rouge = [(famille[0].acc_x(), famille[0].acc_y()), (famille[1].acc_x(), famille[1].acc_y()),
-                                   (famille[2].acc_x(), famille[2].acc_y()), (famille[3].acc_x(), famille[3].acc_y())]
+            self.coordonnees_rouge = [[(famille[0][0].acc_x(), famille[0][0].acc_y()), (famille[0][1].acc_x(), famille[0][1].acc_y()),
+                                   (famille[0][2].acc_x(), famille[0][2].acc_y()), (famille[0][3].acc_x(), famille[0][3].acc_y())],
+                                     [(famille[1][0].acc_x(), famille[1][0].acc_y()), (famille[1][1].acc_x(), famille[1][1].acc_y()),
+                                   (famille[1][2].acc_x(), famille[1][2].acc_y()), (famille[1][3].acc_x(), famille[1][3].acc_y())]]
             
     def mut_attributs_jeu(self, valeur) :
         '''
@@ -338,12 +366,8 @@ class Jeu() :
             x, y (int)
         '''
         position = (self.attributs_jeu.acc_selection().acc_x(), self.attributs_jeu.acc_selection().acc_y())
-        if position in self.coordonnees_bleu : #le géant bleu
-            famille = self.famille_geant_bleu
-            equipe = 'bleu'
-        else: #le géant rouge
-            famille = self.famille_geant_rouge
-            equipe = 'rouge'
+        famille, equipe = self.famille_geant(position)
+        
         deplacement = self.coordonnees_geant(famille[0].acc_x(), famille[0].acc_y(), x, y)
         ##vide l'ancien emplacement
         for geant in famille:
@@ -379,6 +403,34 @@ class Jeu() :
         else:
             ou = 'b'    
         return dic_directions[ou]
+    
+    def famille_geant(self, coordo):
+        '''
+        renvoie la bonne famille de géant selon l'équipe et les coordonnées du géant voulu
+        : params
+            equipe (str)
+            coordo (tuple)
+        : return (list), la famille géant
+        '''
+        #assertion
+        assert isinstance(coordo, tuple), "les coordonnées doivent être dans un tuple"
+        #code
+        ###bleu
+        if coordo in self.coordonnees_bleu[0]:
+            famille = self.famille_geant_bleu[0]
+            e = 'bleu'
+        elif coordo in self.coordonnees_bleu[1]:
+            famille = self.famille_geant_bleu[1]
+            e = 'bleu'
+        ###rouge
+        elif coordo in self.coordonnees_rouge[0]:
+            famille = self.famille_geant_rouge[0]
+            e = 'rouge'
+        else:
+            famille = self.famille_geant_rouge[1]
+            e = 'rouge'
+        return famille, e
+        
 
     ######################################################
     ### Attaques :
@@ -402,10 +454,6 @@ class Jeu() :
                 #Si le personnage est endommagé :
                 if personnage.acc_endommage():
                     personnage.mut_endommage() #Change son attribut en son inverse (dans ce cas True devient False)
-                    
-                    #Si le personnage n'est pas un monstre, alors on fait jouer les monstres :
-                    if not isinstance(personnage, module_personnage.Monstre) :
-                        self.jouer_monstres() #Fait jouer les monstres
     
     ######################################################
     ### Monstres :
@@ -466,11 +514,7 @@ class Jeu() :
         #Si la victime est le Géant :
             if victime.acc_personnage() == 'geant':
                 #Si le Géant est rouge :
-                if victime.acc_equipe() == 'rouge' :
-                    famille = self.famille_geant_rouge
-                #Sinon, le Géant est bleu
-                else:
-                    famille = self.famille_geant_bleu
+                famille = self.famille_geant((victime.acc_x(), victime.acc_y()))[0] #détermine la famille du géant
                 #Pour chaque partie du geant :
                 for geant in famille :
                     geant.est_attaque('monstre')
@@ -503,6 +547,8 @@ class Jeu() :
             else :
                 if not self.attaquer_monstre(monstre) :
                     self.deplacer_monstre(monstre)
+            #self.attributs_jeu.mut_monstres_deja_deplaces(True)
+        
                     
     ########################################################
     #### Fonction Coffre :
@@ -579,7 +625,12 @@ class Jeu() :
         
         if coffre.acc_contenu() == 1 :
             perso = self.attributs_jeu.acc_selection() #le personnage sélectionné
-            perso.mut_pv(perso.acc_pv() + 10) #on augmente de 10 les pv du personnage
+            if perso.acc_personnage() == 'geant' : #un géant
+                famille = self.famille_geant((perso.acc_x(), perso.acc_y()))[0]
+                for elt in famille:
+                    elt.mut_pv(perso.acc_pv() + 10)
+            else : #personnage "normal"
+                perso.mut_pv(perso.acc_pv() + 10) #on augmente de 10 les pv du personnage
             
         ########################################################
         #### CHANGEMENT DE PERSONNAGE (aléatoire pour l'instant)
@@ -589,6 +640,11 @@ class Jeu() :
             perso = self.attributs_jeu.acc_selection()
             personnages_plateau = ['monstre', 'mage', 'paladin', 'sorciere', 'valkyrie', 'archere', 'poulet', 'cavalier', 'cracheur de feu', 'ivrogne', 'barbare']
             personnages_plateau.remove(perso.acc_personnage()) #il ne faut pas que le nouveau personnage soit l'ancien
+            if perso.acc_personnage() == 'geant' : #un géant
+                famille = self.famille_geant((perso.acc_x(), perso.acc_y()))[0] #la bonne famille de géant
+                for i in range(1, 4):
+                    famille[i].mut_pv(0) #on les tue
+                perso = famille[0] #le géant en haut à gauche
             perso.mut_personnage(random.choice(personnages_plateau)) #on remplace au hasard le personnage
         
         ########################################################
@@ -596,31 +652,45 @@ class Jeu() :
         ########################################################
             
         elif coffre.acc_contenu() == 3 :
-            perso = self.attributs_jeu.acc_selection().acc_personnage() #le personnage sélectionné
-            if self.attributs_jeu.acc_equipe_en_cours() == 'bleu' :
-                nouvelle_attaque = module_personnage.DIC_ATTAQUES_BLEU[perso] + 5 #les nouveaux pv de dommage du personnage
-                module_personnage.mut_dic_attaques_bleu(perso, nouvelle_attaque) #on change dans le dictionnaire
+            perso = self.attributs_jeu.acc_selection() #le personnage sélectionné
+            if perso.acc_equipe() == 'bleu' :
+                ##géant
+                if perso.acc_personnage() == 'geant':
+                    famille = self.famille_geant((perso.acc_x(), perso.acc_y()))[0]
+                    for elt in famille:
+                        nouvelle_attaque = module_personnage.DIC_ATTAQUES_BLEU['geant'] + 5 #les nouveaux pv de dommage du personnage
+                        module_personnage.mut_dic_attaques('geant', 'bleu', nouvelle_attaque) #on change dans le dictionnaire
+                ##personnage "normal"
+                nouvelle_attaque = module_personnage.DIC_ATTAQUES_BLEU[perso.acc_personnage()] + 5 #les nouveaux pv de dommage du personnage
+                module_personnage.mut_dic_attaques(perso.acc_personnage(), 'bleu', nouvelle_attaque) #on change dans le dictionnaire
+                
             else:
-                nouvelle_attaque = module_personnage.DIC_ATTAQUES_ROUGE[perso] + 5 #les nouveaux pv de dommage du personnage
-                module_personnage.mut_dic_attaques_rouge(perso, nouvelle_attaque) #on change dans le dictionnaire
+                ##géant
+                if perso.acc_personnage() == 'geant':
+                    famille = self.famille_geant((perso.acc_x(), perso.acc_y()))[0]
+                    for elt in famille:
+                        nouvelle_attaque = module_personnage.DIC_ATTAQUES_ROUGE['geant'] + 5 #les nouveaux pv de dommage du personnage
+                        module_personnage.mut_dic_attaques('geant', 'rouge', nouvelle_attaque) #on change dans le dictionnaire
+                ##personnage "normal"
+                nouvelle_attaque = module_personnage.DIC_ATTAQUES_ROUGE[perso.acc_personnage()] + 5 #les nouveaux pv de dommage du personnage
+                module_personnage.mut_dic_attaques(perso.acc_personnage(), 'rouge', nouvelle_attaque) #on change dans le dictionnaire
             
         #############################################################################
         #### RESUSCITATION DU DERNIER PERSONNAGE MORT DE L'EQUIPE QUI JOUE / ADVERSE
         #############################################################################
         
-        elif coffre.acc_contenu() == 4 or coffre.acc_contenu() == 5:
-            #récupération du dernier personnage mort de la bonne équipe
-            if coffre.acc_contenu() == 4 : 
-                if self.attributs_jeu.acc_equipe_en_cours() == 'bleu':
+        elif coffre.acc_contenu() == 4 or coffre.acc_contenu() == 5:        
+            if self.attributs_jeu.acc_equipe_en_cours() == 'bleu':
+                if coffre.acc_contenu() == 4 : #bonne équipe
                     perso = self.attributs_jeu.acc_dernier_personnage_mort_bleu()
-                else:
+                else : #équipe adverse
                     perso = self.attributs_jeu.acc_dernier_personnage_mort_rouge()
-            #récupération du dernier personnage mort de l'équipe adverse
             else :
-                if self.attributs_jeu.acc_equipe_en_cours() == 'bleu':
+                if coffre.acc_contenu() == 4 : #bonne équipe
                     perso = self.attributs_jeu.acc_dernier_personnage_mort_rouge()
-                else:
+                else : #équipe adverse
                     perso = self.attributs_jeu.acc_dernier_personnage_mort_bleu()
+            
             #ressuscitation du personnage
             if not perso == None : #si il y a quelqu'un à ressusciter
                 ##si géant
@@ -669,10 +739,10 @@ class Jeu() :
             for perso in ['monstre', 'mage', 'paladin', 'geant', 'sorciere', 'valkyrie', 'archere', 'poulet', 'cavalier', 'cracheur de feu', 'ivrogne', 'barbare'] :
                 if equipe == 'bleu' :
                     nouvelle_attaque = module_personnage.DIC_ATTAQUES_ROUGE[perso] + 1 #les nouveaux pv de dommage du personnage
-                    module_personnage.mut_dic_attaques_rouge(perso, nouvelle_attaque) #on change dans le dictionnaire
+                    module_personnage.mut_dic_attaques(perso, 'rouge', nouvelle_attaque) #on change dans le dictionnaire
                 else :
                     nouvelle_attaque = module_personnage.DIC_ATTAQUES_BLEU[perso] + 1 #les nouveaux pv de dommage du personnage
-                    module_personnage.mut_dic_attaques_bleu(perso, nouvelle_attaque) #on change dans le dictionnaire
+                    module_personnage.mut_dic_attaques(perso, 'bleu', nouvelle_attaque) #on change dans le dictionnaire
         
     ########################################################
     #### Fonction Potion :
@@ -686,9 +756,9 @@ class Jeu() :
         '''
         equipe = self.attributs_jeu.acc_equipe_en_cours()
         if equipe == 'bleu':
-            potion = self.attributs_jeu.acc_potion_bleue_selectionnee().defiler() #la première de la file
+            potion = self.attributs_jeu.acc_potions_bleues()[self.attributs_jeu.acc_potion_bleue_selectionnee()].defiler() #la première de la file
         else:
-            potion = self.attributs_jeu.acc_potion_bleue_selectionnee().defiler() #la première de la file
+            potion = self.attributs_jeu.acc_potions_rouges()[self.attributs_jeu.acc_potion_rouge_selectionnee()].defiler() #la première de la file
             
         ########################################################
         #### ATTAQUE PERSONNAGE
@@ -699,34 +769,72 @@ class Jeu() :
             for cases in case: #chaque case de l'étendu
                 perso = self.terrain.acc_terrain(cases[0], cases[1])
                 if isinstance(perso, module_personnage.Personnage) and not perso.acc_equipe() == self.attributs_jeu.acc_equipe_en_cours():
-                    perso.est_attaque('sorciere', pv) #on retire le bon nombre de pv
+                    ###géant
+                    if perso.acc_personnage() == 'geant':
+                        famille = self.famille_geant((perso.acc_x(), perso.acc_y()))[0]
+                        for elt in famille:
+                            elt.est_attaque('sorciere', pv) #on retire le bon nombre de pv
+                            elt.mut_endommage()
+                    ###personnage "normal"
+                    else :
+                        perso.est_attaque('sorciere', pv) #on retire le bon nombre de pv
+                        perso.mut_endommage()
             if equipe == 'bleu':
                 self.attributs_jeu.mut_ajoute_potions_bleues(module_objets.Potion(1)) #la file ne doit pas être vide
             else:
                 self.attributs_jeu.mut_ajoute_potions_rouges(module_objets.Potion(1)) #la file ne doit pas être vide
-
+            ###Attributs attaques
+            self.attributs_jeu.mut_attaque_en_cours(True)
+            self.attributs_jeu.mut_attaque_temps(0)
+            
         ########################################################
-        #### GUERISION PERSONNAGE
+        #### GUERISON PERSONNAGE
         ########################################################
         if potion.acc_contenu() == 2:
             for cases in module_objets.Potion.definir_cases_atteintes(x, y, potion.acc_etendue()): #chaque case de l'étendu
                 perso = self.terrain.acc_terrain(cases[0], cases[1])
                 if isinstance(perso, module_personnage.Personnage) and perso.acc_equipe() == self.attributs_jeu.acc_equipe_en_cours():
-                    perso.est_attaque('sorciere', -10) #on ajoute 10 pv
+                    ###géant
+                    if perso.acc_personnage() == 'geant':
+                        famille = self.famille_geant((perso.acc_x(), perso.acc_y()))[0]
+                        for elt in famille:
+                            elt.est_attaque('sorciere', -10) #on ajoute 10 pv
+                    ###personnage "normal"
+                    else :
+                        perso.est_attaque('sorciere', -10) #on ajoute 10 pv
             
         ########################################################
         #### MORT INSTANTANNEE
         ########################################################
         if potion.acc_contenu() == 3:
             perso = self.terrain.acc_terrain(x, y)
-            perso.est_attaque('sorciere', perso.acc_pv()) #on retire tous les pv
+            ###géant
+            if perso.acc_personnage() == 'geant':
+                famille = self.famille_geant((perso.acc_x(), perso.acc_y()))[0]
+                for elt in famille:
+                    elt.est_attaque('sorciere', elt.acc_pv()) #on retire tous les pv
+                    elt.mut_endommage()
+            ###personnage "normal"
+            else :
+                perso.est_attaque('sorciere', perso.acc_pv()) #on retire tous les pv
+                perso.mut_endommage()
+            ###Attributs attaques
+            self.attributs_jeu.mut_attaque_en_cours(True)
+            self.attributs_jeu.mut_attaque_temps(0)
             
         ########################################################
         #### CHANGEMENT D'EQUIPE
         ########################################################
         if potion.acc_contenu() == 4:
             perso = self.terrain.acc_terrain(x, y)
-            perso.mut_equipe() #le personnage change d'équipe
+            ###géant
+            if perso.acc_personnage() == 'geant':
+                famille = self.famille_geant((perso.acc_x(), perso.acc_y()))[0]
+                for elt in famille:
+                    elt.mut_equipe() #le personnage change d'équipe
+            ###personnage "normal"
+            else :
+                perso.mut_equipe() #le personnage change d'équipe
           
     ######################################################
     ### Fonctions de Clique :
@@ -769,22 +877,14 @@ class Jeu() :
             personnage_qui_subit = self.terrain.acc_terrain(position_case[0], position_case[1]) #Sélectionne le personnage qui va subir les attaques
             
             #Si la souris est dans une case d'attaque :
-            if position_case in self.attributs_jeu.acc_attaques() and personnage_qui_subit.acc_equipe() != self.attributs_jeu.acc_equipe_en_cours():
+            if position_case in self.attributs_jeu.acc_attaques():
                 #Si la sorcière attaque
                 if self.attributs_jeu.acc_selection().acc_personnage() == 'sorciere' :
                     self.ouverture_potion(position_case[0], position_case[1])
                 
                 #Si le personnage_qui_subit est le Géant :
-                if personnage_qui_subit.acc_personnage() == 'geant':
-                    
-                    #Si le Géant est rouge :
-                    if personnage_qui_subit.acc_equipe() == 'rouge' :
-                        famille = self.famille_geant_rouge
-                        
-                    #Sinon, le Géant est bleu
-                    else:
-                        famille = self.famille_geant_bleu
-                        
+                elif personnage_qui_subit.acc_personnage() == 'geant':
+                    famille = self.famille_geant((personnage_qui_subit.acc_x(), personnage_qui_subit.acc_y()))[0]
                     #Pour chaque partie du geant :
                     for geant in famille :
                         geant.est_attaque(self.attributs_jeu.acc_selection().acc_personnage())
@@ -803,6 +903,7 @@ class Jeu() :
                 self.changer_personnage(' ') #Enlève le personnage sélectionner par le joueur (rien sélectionné)
                 self.attributs_jeu.mut_nombre_action(self.attributs_jeu.acc_nombre_action() + 1) #Augmente le nombre d'action de 1
                 self.effacer_actions()
+                self.jouer_monstres()
                 return True
             
             return False
@@ -824,6 +925,10 @@ class Jeu() :
                 
         if not self.attributs_jeu.acc_annonce_coffre() :
             self.attributs_jeu.mut_annonce_coffre_console(True)
+           
+        self.jouer_monstres()
+        self.attributs_jeu.mut_nombre_action(self.attributs_jeu.acc_nombre_action() + 1)
+        
     
     ######################################################
     ### Événements pendant une partie :
@@ -985,6 +1090,7 @@ class Jeu() :
         '''
         Ici on effectue tous les calculs et affichages nécessaires au jeu.
         '''
+        self.gestionnaire_son.boucle_musique()
         #Tant que l'attribut continuer est True, alors la boucle continue et le jeu aussi :
         while self.attributs_jeu.acc_continuer() :
             

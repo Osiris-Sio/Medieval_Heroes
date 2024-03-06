@@ -117,6 +117,7 @@ class Coffre():
             9 : 'ajoute une potion de mort à la réserve de la sorcière ennemie' (6%)
             10 : "augmente de 1 les dégâts d'attaque de tous les personnages de l'équipe adverse" (6%)
         '''
+        '''
         nombre = random.randint(0, 100)
         if 0 <= nombre <= 13 : #bonus de vie pour le personnage
             reponse = 1
@@ -138,7 +139,8 @@ class Coffre():
             reponse = 9
         else : #augmente de 1 les dégâts d'attaque de tous les personnages de l'équipe adverse
             reponse = 10
-        return reponse
+        '''
+        return 4
     
     def alentour(self):
         '''

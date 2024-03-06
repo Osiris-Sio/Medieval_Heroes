@@ -59,7 +59,7 @@ DIC_ATTAQUES_ROUGE = {'archere' : 7,
                 'monstre' : 3
                 }
 
-def mut_dic_attaques_bleu(personnage, val):
+def mut_dic_attaques(personnage, equipe, val):
     '''
     modifie le DIC_ATTAQUES_BLEU
     : params
@@ -68,22 +68,14 @@ def mut_dic_attaques_bleu(personnage, val):
     '''
     #assertions
     assert personnage in ['monstre', 'mage', 'paladin', 'geant', 'sorciere', 'valkyrie', 'archere', 'poulet', 'cavalier', 'cracheur de feu', 'ivrogne', 'barbare'], 'le personnage doit exister !' 
+    assert equipe in ['bleu', 'rouge'], "l'équipe doit être rouge ou bleu !"
     assert isinstance(val, int), 'la nouvelle valeur à entrer dans le dictionnaire doit être un entier !'
     #code
-    DIC_ATTAQUES_BLEU[personnage] = val
+    if equipe == 'bleu':
+        DIC_ATTAQUES_BLEU[personnage] = val
+    else :
+        DIC_ATTAQUES_ROUGE[personnage] = val
     
-def mut_dic_attaques_rouge(personnage, val):
-    '''
-    modifie le DIC_ATTAQUES_ROUGE
-    : params
-        personnage (str), le personnage du dic pour lequel il y a un changement
-        val (int), la nouvelle valeur
-    '''
-    #assertions
-    assert personnage in ['monstre', 'mage', 'paladin', 'geant', 'sorciere', 'valkyrie', 'archere', 'poulet', 'cavalier', 'cracheur de feu', 'ivrogne', 'barbare'], 'le personnage doit exister !' 
-    assert isinstance(val, int), 'la nouvelle valeur à entrer dans le dictionnaire doit être un entier !'
-    #code
-    DIC_ATTAQUES_ROUGE[personnage] = val
 
 class Personnage():
     '''
@@ -315,7 +307,7 @@ class Personnage():
         attaques_valides = [] #les cases valides finales
         for attaque in cases: #on regarde chaque case
             perso = terrain.acc_terrain(attaque[0], attaque[1])
-            if isinstance(perso, Personnage) and not perso.acc_equipe() == self.equipe : #on vérifie que c'est un personnage de l'équipe adverse
+            if isinstance(perso, Personnage) and (not perso.acc_equipe() == self.equipe or self.personnage == 'sorciere') : #on vérifie que c'est un personnage de l'équipe adverse
                 ##si c'est un monstre
                 if isinstance(perso, Monstre):
                     if not perso.acc_etat() == 1: #si le monstre n'est pas sous-terre

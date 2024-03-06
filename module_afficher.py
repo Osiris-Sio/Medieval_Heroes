@@ -90,9 +90,9 @@ class Affichage():
         pygame.display.set_icon(pygame.image.load('medias/img_jeu.png'))
         
         #Menu/Option :
-        self.menu = pygame.image.load("medias/menu4.png")
-        self.image_fond = pygame.image.load("medias/fond_menu.png")
-        self.fond_option = pygame.image.load("medias/menu_param.png")
+        self.menu = pygame.image.load("medias/menu/menu4.png")
+        self.image_fond = pygame.image.load("medias/menu/fond_menu.png")
+        self.fond_option = pygame.image.load("medias/menu/menu_param.png")
         
         #Modes :
         self.local = pygame.image.load("medias/jeu_local.png")
@@ -118,12 +118,13 @@ class Affichage():
         self.image_tombe = pygame.image.load("medias/tombe1.png")
         
         # Curseur :
-        self.curseur_normal = pygame.image.load("medias/curseur0.png")
-        self.curseur_appuye = pygame.image.load("medias/curseur1.png")
+        self.curseur_normal = pygame.image.load("medias/curseurs/curseur0.png")
+        self.curseur_appuye = pygame.image.load("medias/curseurs/curseur1.png")
 
         #Déplacements/Attaques :
-        self.deplacements = pygame.image.load("medias/deplacement.png")
-        self.attaques = pygame.image.load("medias/attaque_possible.png")
+        self.deplacements = pygame.image.load("medias/attaque_deplacement/deplacement.png")
+        self.attaques = [pygame.image.load("medias/attaque_deplacement/attaque_possible.png"),
+                         pygame.image.load("medias/attaque_deplacement/guerison_possible.png")]
         
         #Cerisiers :
         self.cerisier = pygame.image.load("medias/cerisier.png")
@@ -262,8 +263,8 @@ class Affichage():
             'monstre' : [pygame.image.load("medias/en_deplacement/m.png")]
         }
         #potions :
-        self.potions = [pygame.image.load("medias/potions/retirer.png"), pygame.image.load("medias/potions/soin.png"), pygame.image.load("medias/potions/tuer.png"), pygame.image.load("medias/potions/changer.png")]
-        
+        self.potions = [pygame.image.load("medias/potions/retirer.png"), pygame.image.load("medias/potions/soin.png"), pygame.image.load("medias/potions/tuer.png"), pygame.image.load("medias/potions/changer.png"),
+                        pygame.image.load("medias/potions/soin_vide.png"), pygame.image.load("medias/potions/tuer_vide.png"), pygame.image.load("medias/potions/changer_vide.png")]
         #Boutons :
         self.boutons = {
             'jouer' : [pygame.image.load("medias/cadres/cadre_jouer0.png"), 
@@ -292,7 +293,7 @@ class Affichage():
         }
         
         #Menu de fin de partie :
-        self.menu_fin = pygame.image.load("medias/menu_fin.png")
+        self.menu_fin = pygame.image.load("medias/menu/menu_fin.png")
         
     ########################################
     ### Affichages Principale :
@@ -586,13 +587,22 @@ class Affichage():
                     infini = pygame.image.load("medias/potions/infini.png")
                     self.ecran.blit(infini,(70, 350))
                     ##en haut à droite
-                    self.ecran.blit(self.potions[1], (156, 290))
+                    if l == '0' :
+                        self.ecran.blit(self.potions[4], (156, 290)) #grisatre pour montrer que c'est vide
+                    else :
+                        self.ecran.blit(self.potions[1], (156, 290))
                     self.ecran.blit(police.render(l , 1, (0, 0, 0)), (195, 372))
                     ##en bas à gauche
-                    self.ecran.blit(self.potions[2], (40, 404))
+                    if l2 == '0':
+                        self.ecran.blit(self.potions[5], (40, 404)) #grisatre pour montrer que c'est vide
+                    else:
+                        self.ecran.blit(self.potions[2], (40, 404))
                     self.ecran.blit(police.render(l2 , 1, (0, 0, 0)), (90, 495))
                     ##en bas à droite
-                    self.ecran.blit(self.potions[3], (154, 404))
+                    if l3 == '0':
+                        self.ecran.blit(self.potions[6], (154, 404)) #grisatre pour montrer que c'est vide
+                    else :
+                        self.ecran.blit(self.potions[3], (154, 404))
                     self.ecran.blit(police.render(l3 , 1, (0, 0, 0)), (200, 495))
                     
                     ###potion séléctionnée
@@ -603,7 +613,11 @@ class Affichage():
                                         }
                     if selection.acc_equipe() == self.attributs_jeu.acc_equipe_en_cours() : #le joueur ne peut regarder que ses personnages
                         rectangle = pygame.Rect(dic_position_rec[potion_s][0], dic_position_rec[potion_s][1], dic_position_rec[potion_s][2], dic_position_rec[potion_s][2])
-                        pygame.draw.rect(self.ecran, (0, 0, 0), rectangle, 2) #(surface, couleur, figure (x, y, longueur, hauteur), si contour → épaisseur)
+                        if 0 <= self.attributs_jeu.acc_compteur() <= 48:
+                            couleur = (0, 0, 0) #noir
+                        else :
+                            couleur = (224, 209, 146) #couleur de fond
+                        pygame.draw.rect(self.ecran, couleur, rectangle, 2) #(surface, couleur, figure (x, y, longueur, hauteur), si contour → épaisseur)
                         ####INFOBULLE
                         dic_phrase = {1 : 'inflige des dégâts',
                                             2 : 'soigne',
@@ -961,7 +975,22 @@ class Affichage():
         for coordonnees in self.attributs_jeu.acc_attaques():
             case_x = coordonnees[0] * 38 + 250
             case_y = coordonnees[1] * 38
-            self.ecran.blit(self.attaques, (case_x, case_y, 38, 38))
+            perso = self.terrain.acc_terrain(coordonnees[0], coordonnees[1])
+            if perso.acc_equipe() == self.attributs_jeu.acc_equipe_en_cours():
+                image = self.attaques[1] #guérison
+            else:
+                image = self.attaques[0] #attaque
+            ##géant
+            if perso.acc_personnage() == 'geant':
+                #ajustement pour atteindre la case en haut à droite
+                if perso.acc_numero_geant() == 0:
+                    case_x += 38
+                elif perso.acc_numero_geant() == 2:
+                    case_x += 38
+                    case_y -= 38
+                elif perso.acc_numero_geant() == 3:
+                    case_y -= 38
+            self.ecran.blit(image, (case_x, case_y, 38, 38)) #attaque
             
     def afficher_tombes(self):
         '''
