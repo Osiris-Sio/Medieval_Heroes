@@ -1189,7 +1189,19 @@ class Attributs_Jeu() :
         #Précondition :
         assert isinstance(tab, list) and len(tab) == 2 and isinstance(tab[0], str) and tab[1] in ['rouge', 'bleu', 'noir'], 'Le paramètre doit être un tableau (list) comprenant deux chaînes de caractères (str) comme éléments (phrase et equipe) !'
         #Code :
-        self.console.empiler(tab)
+        if len(tab[0]) > 28 : 
+            chaine = tab[0]
+            i = len(chaine) - (len(chaine) - 28)
+            est_espace = False
+            while i != 0 and not est_espace :
+                if chaine[i] == ' ' :
+                    est_espace = True
+                else :
+                    i -= 1
+            self.console.empiler([chaine[:i], tab[1]])
+            self.console.empiler([chaine[i + 1:], tab[1]])
+        else :
+            self.console.empiler(tab)
         
     def enlever_console(self) :
         '''

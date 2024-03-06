@@ -1,7 +1,7 @@
 import pygame
 
 class GestionnaireSon:
-    def __init__(self, volume=0.5):
+    def __init__(self, volume=0.1):
         '''
         initialise le gestionnaire de sons
         '''

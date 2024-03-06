@@ -37,96 +37,6 @@ class Jeu() :
         self.clavier_souris = module_clavier_souris.Clavier_Souris(self, self.attributs_jeu, self.sauvegarde, self.terrain)
         self.affichage = module_afficher.Affichage(self.attributs_jeu, self.terrain, self.ecran, self.clavier_souris)
         self.gestionnaire_son = module_musique_et_sons.GestionnaireSon()
-        #Console de départ :
-        self.partie_commence_console() 
-        
-        ###Pose des personnages (par défaut)
-        
-        #Géant rouge:
-        ##n°1
-        geant1r = module_personnage.Geant('rouge', 8, 0, 8, 0)
-        geant2r = module_personnage.Geant('rouge', 9, 0, 8, 1)
-        geant3r = module_personnage.Geant('rouge', 8, 1, 8, 2)
-        geant4r = module_personnage.Geant('rouge', 9, 1, 8, 3)
-        ##n°2
-        geant5r = module_personnage.Geant('rouge', 11, 0, 8, 0)
-        geant6r = module_personnage.Geant('rouge', 12, 0, 8, 1)
-        geant7r = module_personnage.Geant('rouge', 11, 1, 8, 2)
-        geant8r = module_personnage.Geant('rouge', 12, 1, 8, 3)
-        self.famille_geant_rouge = [[geant1r, geant2r, geant3r, geant4r], [geant5r, geant6r, geant7r, geant8r]] ##La famille des géants
-        self.coordonnees_rouge = [[(geant1r.acc_x(), geant1r.acc_y()), (geant2r.acc_x(), geant2r.acc_y()),
-                                   (geant3r.acc_x(), geant3r.acc_y()), (geant4r.acc_x(), geant4r.acc_y())],
-                                  [(geant5r.acc_x(), geant5r.acc_y()), (geant6r.acc_x(), geant6r.acc_y()),
-                                   (geant7r.acc_x(), geant7r.acc_y()), (geant8r.acc_x(), geant8r.acc_y())]]
-        
-        #Geant bleu:
-        ##n°1
-        geant1b = module_personnage.Geant('bleu', 8, 19, 8, 0)
-        geant2b = module_personnage.Geant('bleu', 9, 19, 8, 1)
-        geant3b = module_personnage.Geant('bleu', 8, 20, 8, 2)
-        geant4b = module_personnage.Geant('bleu', 9, 20, 8, 3)
-        ##n°2
-        geant5b = module_personnage.Geant('bleu', 11, 19, 8, 0)
-        geant6b = module_personnage.Geant('bleu', 12, 19, 8, 1)
-        geant7b = module_personnage.Geant('bleu', 11, 20, 8, 2)
-        geant8b = module_personnage.Geant('bleu', 12, 20, 8, 3)
-        self.famille_geant_bleu = [[geant1b, geant2b, geant3b, geant4b], [geant5b, geant6b, geant7b, geant8b]] ##La famille des géants    
-        self.coordonnees_bleu = [[(geant1b.acc_x(), geant1b.acc_y()), (geant2b.acc_x(), geant2b.acc_y()),
-                                   (geant3b.acc_x(), geant3b.acc_y()), (geant4b.acc_x(), geant4b.acc_y())],
-                                 [(geant5b.acc_x(), geant5b.acc_y()), (geant6b.acc_x(), geant6b.acc_y()),
-                                   (geant7b.acc_x(), geant7b.acc_y()), (geant8b.acc_x(), geant8b.acc_y())]]
-        
-        
-        self.attributs_jeu.mut_tab_personnages([
-            
-        #rouge :
-        module_personnage.Personnage('paladin', 'rouge', 6, 2, 8),#personnage, equipe, x, y, pv
-        module_personnage.Cavalier('rouge', 8, 2, 8),
-        module_personnage.Personnage('ivrogne', 'rouge', 7, 2, 8),
-        module_personnage.Personnage('poulet', 'rouge', 10, 3, 8),
-        module_personnage.Personnage('valkyrie', 'rouge', 9, 2, 8),
-        module_personnage.Personnage('sorciere', 'rouge', 10, 2, 8),
-        module_personnage.Personnage('archere', 'rouge', 11, 2, 8),
-        module_personnage.Personnage('barbare', 'rouge', 12, 2, 8),
-        module_personnage.Personnage('mage', 'rouge', 13, 2, 8),
-        module_personnage.Personnage('cracheur de feu', 'rouge', 14, 2, 8),
-        geant1r,
-        geant2r,
-        geant3r,
-        geant4r,
-        geant5r,
-        geant6r,
-        geant7r,
-        geant8r,
-        
-        #bleu :
-        module_personnage.Personnage('paladin', 'bleu', 6, 18, 8),#personnage, equipe, x, y, pv
-        module_personnage.Cavalier('bleu', 8, 18, 8),
-        module_personnage.Personnage('ivrogne', 'bleu', 7, 18, 8),
-        module_personnage.Personnage('poulet', 'bleu', 10, 17, 8),
-        module_personnage.Personnage('valkyrie', 'bleu', 9, 18, 8),
-        module_personnage.Personnage('sorciere', 'bleu', 10, 18, 8),
-        module_personnage.Personnage('archere', 'bleu', 11, 18, 8),
-        module_personnage.Personnage('barbare', 'bleu', 12, 18, 8),
-        module_personnage.Personnage('mage', 'bleu', 13, 18, 8),
-        module_personnage.Personnage('cracheur de feu', 'bleu', 14, 18, 8),
-        geant1b,
-        geant2b,
-        geant3b,
-        geant4b,
-        geant5b,
-        geant6b,
-        geant7b,
-        geant8b,
-        ])
-        
-        ###Pose des coffres (par défaut)
-        self.attributs_jeu.mut_tab_coffres([
-        module_objets.Coffre(10, 10), #1, 6
-        module_objets.Coffre(19, 14),
-        module_objets.Coffre(1, 14),
-        module_objets.Coffre(19, 6),
-        ])
                                             
     ######################################################
     ### Accesseurs :
@@ -228,9 +138,102 @@ class Jeu() :
         '''
         Place les personnages, monstres et coffres sur le terrain
         '''
-        #self.attributs_jeu.mut_tab_monstres([module_personnage.Monstre(0, 0, 2, 0), module_personnage.Monstre(1, 0, 2, 3)])
         for elt in self.attributs_jeu.acc_tab_personnages() + self.attributs_jeu.acc_tab_monstres() + self.attributs_jeu.acc_tab_coffres() :
             self.terrain.mut_terrain(elt.acc_x(), elt.acc_y(), elt)
+    
+    def placer_par_defaut(self) :
+        '''
+        Place les personnages, monstres et coffres sur le terrain (modèle par défaut)
+        '''
+        
+        ###Pose des personnages (par défaut)
+        
+        #Géant rouge:
+        ##n°1
+        geant1r = module_personnage.Geant('rouge', 8, 0, 8, 0)
+        geant2r = module_personnage.Geant('rouge', 9, 0, 8, 1)
+        geant3r = module_personnage.Geant('rouge', 8, 1, 8, 2)
+        geant4r = module_personnage.Geant('rouge', 9, 1, 8, 3)
+        ##n°2
+        geant5r = module_personnage.Geant('rouge', 11, 0, 8, 0)
+        geant6r = module_personnage.Geant('rouge', 12, 0, 8, 1)
+        geant7r = module_personnage.Geant('rouge', 11, 1, 8, 2)
+        geant8r = module_personnage.Geant('rouge', 12, 1, 8, 3)
+        self.famille_geant_rouge = [[geant1r, geant2r, geant3r, geant4r], [geant5r, geant6r, geant7r, geant8r]] ##La famille des géants
+        self.coordonnees_rouge = [[(geant1r.acc_x(), geant1r.acc_y()), (geant2r.acc_x(), geant2r.acc_y()),
+                                   (geant3r.acc_x(), geant3r.acc_y()), (geant4r.acc_x(), geant4r.acc_y())],
+                                  [(geant5r.acc_x(), geant5r.acc_y()), (geant6r.acc_x(), geant6r.acc_y()),
+                                   (geant7r.acc_x(), geant7r.acc_y()), (geant8r.acc_x(), geant8r.acc_y())]]
+        
+        #Geant bleu:
+        ##n°1
+        geant1b = module_personnage.Geant('bleu', 8, 19, 8, 0)
+        geant2b = module_personnage.Geant('bleu', 9, 19, 8, 1)
+        geant3b = module_personnage.Geant('bleu', 8, 20, 8, 2)
+        geant4b = module_personnage.Geant('bleu', 9, 20, 8, 3)
+        ##n°2
+        geant5b = module_personnage.Geant('bleu', 11, 19, 8, 0)
+        geant6b = module_personnage.Geant('bleu', 12, 19, 8, 1)
+        geant7b = module_personnage.Geant('bleu', 11, 20, 8, 2)
+        geant8b = module_personnage.Geant('bleu', 12, 20, 8, 3)
+        self.famille_geant_bleu = [[geant1b, geant2b, geant3b, geant4b], [geant5b, geant6b, geant7b, geant8b]] ##La famille des géants    
+        self.coordonnees_bleu = [[(geant1b.acc_x(), geant1b.acc_y()), (geant2b.acc_x(), geant2b.acc_y()),
+                                   (geant3b.acc_x(), geant3b.acc_y()), (geant4b.acc_x(), geant4b.acc_y())],
+                                 [(geant5b.acc_x(), geant5b.acc_y()), (geant6b.acc_x(), geant6b.acc_y()),
+                                   (geant7b.acc_x(), geant7b.acc_y()), (geant8b.acc_x(), geant8b.acc_y())]]
+        
+        
+        self.attributs_jeu.mut_tab_personnages([
+            
+        #rouge :
+        module_personnage.Personnage('paladin', 'rouge', 6, 2, 8),#personnage, equipe, x, y, pv
+        module_personnage.Cavalier('rouge', 8, 2, 8),
+        module_personnage.Personnage('ivrogne', 'rouge', 7, 2, 8),
+        module_personnage.Personnage('poulet', 'rouge', 10, 3, 8),
+        module_personnage.Personnage('valkyrie', 'rouge', 9, 2, 8),
+        module_personnage.Personnage('sorciere', 'rouge', 10, 2, 8),
+        module_personnage.Personnage('archere', 'rouge', 11, 2, 8),
+        module_personnage.Personnage('barbare', 'rouge', 12, 2, 8),
+        module_personnage.Personnage('mage', 'rouge', 13, 2, 8),
+        module_personnage.Personnage('cracheur de feu', 'rouge', 14, 2, 8),
+        geant1r,
+        geant2r,
+        geant3r,
+        geant4r,
+        geant5r,
+        geant6r,
+        geant7r,
+        geant8r,
+        
+        #bleu :
+        module_personnage.Personnage('paladin', 'bleu', 6, 18, 8),#personnage, equipe, x, y, pv
+        module_personnage.Cavalier('bleu', 8, 18, 8),
+        module_personnage.Personnage('ivrogne', 'bleu', 7, 18, 8),
+        module_personnage.Personnage('poulet', 'bleu', 10, 17, 8),
+        module_personnage.Personnage('valkyrie', 'bleu', 9, 18, 8),
+        module_personnage.Personnage('sorciere', 'bleu', 10, 18, 8),
+        module_personnage.Personnage('archere', 'bleu', 11, 18, 8),
+        module_personnage.Personnage('barbare', 'bleu', 12, 18, 8),
+        module_personnage.Personnage('mage', 'bleu', 13, 18, 8),
+        module_personnage.Personnage('cracheur de feu', 'bleu', 14, 18, 8),
+        geant1b,
+        geant2b,
+        geant3b,
+        geant4b,
+        geant5b,
+        geant6b,
+        geant7b,
+        geant8b,
+        ])
+        
+        ###Pose des coffres (par défaut)
+        self.attributs_jeu.mut_tab_coffres([
+        module_objets.Coffre(10, 10), #1, 6
+        module_objets.Coffre(19, 14),
+        module_objets.Coffre(1, 14),
+        module_objets.Coffre(19, 6),
+        ])
+        self.placer()
             
     ######################################################
     ### Fonctions Console :
@@ -240,7 +243,7 @@ class Jeu() :
         '''
         Ajoute dans la console que l'équipe a changé.
         '''
-        self.attributs_jeu.ajouter_console(['La partie commence !', 'noir'])
+        self.attributs_jeu.ajouter_console(['·La partie commence !', 'noir'])
     
     def equipe_console(self, equipe) :
         '''
@@ -250,7 +253,7 @@ class Jeu() :
         #Assertion :
         assert isinstance(equipe, str), 'le paramètre doit être une chaîne de caractères (str) !'
         #Code :
-        self.attributs_jeu.ajouter_console(['À l\'équipe ' + equipe + ' de jouer !', 'noir'])
+        self.attributs_jeu.ajouter_console(['·À l\'équipe ' + equipe + ' de jouer !', 'noir'])
     
     def deplacement_console(self, personnage, position_deplacement) :
         '''
@@ -263,10 +266,7 @@ class Jeu() :
         assert isinstance(personnage, module_personnage.Personnage), 'personnage_qui_attaque doit être un personnage de la classe Personnage (module_personnage) !'
         assert isinstance(position_deplacement, tuple) and 0 <= position_deplacement[0] <= 20 and 0 <= position_deplacement[1] <= 20, 'position_deplacement doit être un tuple de coordonnées (x, y) du terrain (compris entre 0 et 20) !'
         #Code :
-        if personnage.acc_personnage() == 'cracheur de feu' : 
-            self.attributs_jeu.ajouter_console(['cracheur d.f. s\'est déplacé (' + self.attributs_jeu.acc_dic_alphabet()[position_deplacement[0]] + ", " + str(position_deplacement[1]) + ")" , personnage.acc_equipe()])
-        else :
-            self.attributs_jeu.ajouter_console([personnage.acc_personnage() + ' s\'est déplacé (' + self.attributs_jeu.acc_dic_alphabet()[position_deplacement[0]] + ", " + str(position_deplacement[1]) + ")" , personnage.acc_equipe()])
+        self.attributs_jeu.ajouter_console(['·' + personnage.acc_personnage() + ' s\'est déplacé (' + self.attributs_jeu.acc_dic_alphabet()[position_deplacement[0]] + "," + str(position_deplacement[1]) + ")" , personnage.acc_equipe()])
         
     def attaque_console(self, personnage_qui_attaque, personnage_qui_subit) :
         '''
@@ -279,8 +279,19 @@ class Jeu() :
         assert isinstance(personnage_qui_attaque, module_personnage.Personnage), 'personnage_qui_attaque doit être un personnage de la classe Personnage (module_personnage) !'
         assert isinstance(personnage_qui_subit, module_personnage.Personnage), 'personnage_qui_subit doit être un personnage de la classe Personnage (module_personnage) !'
         #Code :
-        self.attributs_jeu.ajouter_console([personnage_qui_attaque.acc_personnage() + ' a attaqué ' + personnage_qui_subit.acc_personnage() + '.', personnage_qui_attaque.acc_equipe()])
-        
+        self.attributs_jeu.ajouter_console(['·' + personnage_qui_attaque.acc_personnage() + ' a attaqué ' + personnage_qui_subit.acc_personnage() + '.', personnage_qui_attaque.acc_equipe()])
+    
+    def attaque_sorciere_console(self, equipe) :
+        '''
+        Ajoute dans la console qu'une sorciere a lancé une potion d'attaque.
+        :param equipe (str), 'bleu' or 'rouge'
+        '''
+        #Assertions :
+        assert equipe in ['bleu', 'rouge'], "Le paramètre doit être soit 'bleu' soit 'rouge' !"
+        #Code :
+        self.attributs_jeu.ajouter_console(["·sorciere a lancé une potion d'attaque", equipe])
+
+       
     def coffre_console(self, numero_contenu) :
         '''
         Ajoute dans la console le contenu du coffre ouvert.
@@ -301,7 +312,40 @@ class Jeu() :
                                 10 : "Bonus de dégâts adverse"
                                     }
         
-        self.attributs_jeu.ajouter_console(['Coffre : ' + dictionnaire_contenu[numero_contenu], 'noir'])
+        self.attributs_jeu.ajouter_console(['·Coffre : ' + dictionnaire_contenu[numero_contenu], 'noir'])
+        
+    def guerison_console(self, personnage) :
+        '''
+        Ajoute dans la console que le personnage a été guérit.
+        :params
+            personnage (module_personnage.Personnage)
+        '''
+        #Assertions :
+        assert isinstance(personnage, module_personnage.Personnage), 'Le paramètre doit être un personnage de la classe Personnage (module_personnage) !'
+        #Code :
+        self.attributs_jeu.ajouter_console([personnage.acc_personnage() + ' a été soigné.', personnage.acc_equipe()])
+        
+    def changement_equipe_personnage_console(self, personnage) :
+        '''
+        Ajoute dans la console que le personnage a changé d'équipe.
+        :params
+            personnage (module_personnage.Personnage)
+        '''
+        #Assertions :
+        assert isinstance(personnage, module_personnage.Personnage), 'Le paramètre doit être un personnage de la classe Personnage (module_personnage) !'
+        #Code :
+        self.attributs_jeu.ajouter_console(["·" + personnage.acc_personnage() + " a changé d'équipe.", personnage.acc_equipe()])
+        
+    def mort_personnage_console(self, personnage) :
+        '''
+        Ajoute dans la console qu'un personnage est mort.
+        :params
+            personnage (module_personnage.Personnage)
+        '''
+        #Assertions :
+        assert isinstance(personnage, module_personnage.Personnage), 'Le paramètre doit être un personnage de la classe Personnage (module_personnage) !'
+        #Code :
+        self.attributs_jeu.ajouter_console(["·" + personnage.acc_personnage() + " " + personnage.acc_equipe() + " est mort.", 'noir'])
     
     ######################################################
     ### Déplacements :
@@ -747,6 +791,7 @@ class Jeu() :
     ########################################################
     #### Fonction Potion :
     ########################################################   
+    
     def ouverture_potion(self, x, y):
         '''
         réalise la bonne action en fonction du contenu de la potion
@@ -786,6 +831,8 @@ class Jeu() :
             ###Attributs attaques
             self.attributs_jeu.mut_attaque_en_cours(True)
             self.attributs_jeu.mut_attaque_temps(0)
+            self.attaque_sorciere_console(equipe)
+            
             
         ########################################################
         #### GUERISON PERSONNAGE
@@ -802,6 +849,7 @@ class Jeu() :
                     ###personnage "normal"
                     else :
                         perso.est_attaque('sorciere', -10) #on ajoute 10 pv
+                    self.guerison_console(perso)
             
         ########################################################
         #### MORT INSTANTANNEE
@@ -835,6 +883,8 @@ class Jeu() :
             ###personnage "normal"
             else :
                 perso.mut_equipe() #le personnage change d'équipe
+                
+            self.changement_equipe_personnage_console(perso)
           
     ######################################################
     ### Fonctions de Clique :
@@ -878,28 +928,31 @@ class Jeu() :
             
             #Si la souris est dans une case d'attaque :
             if position_case in self.attributs_jeu.acc_attaques():
+                
                 #Si la sorcière attaque
                 if self.attributs_jeu.acc_selection().acc_personnage() == 'sorciere' :
                     self.ouverture_potion(position_case[0], position_case[1])
                 
-                #Si le personnage_qui_subit est le Géant :
-                elif personnage_qui_subit.acc_personnage() == 'geant':
-                    famille = self.famille_geant((personnage_qui_subit.acc_x(), personnage_qui_subit.acc_y()))[0]
-                    #Pour chaque partie du geant :
-                    for geant in famille :
-                        geant.est_attaque(self.attributs_jeu.acc_selection().acc_personnage())
-                        geant.mut_endommage()
+                else :
+                    #Si le personnage_qui_subit est le Géant :
+                    if personnage_qui_subit.acc_personnage() == 'geant':
+                        famille = self.famille_geant((personnage_qui_subit.acc_x(), personnage_qui_subit.acc_y()))[0]
+                        #Pour chaque partie du geant :
+                        for geant in famille :
+                            geant.est_attaque(self.attributs_jeu.acc_selection().acc_personnage())
+                            geant.mut_endommage()
+                            self.attributs_jeu.mut_attaque_en_cours(True)
+                            self.attributs_jeu.mut_attaque_temps(0)
+                            
+                    #Sinon, le personnage est "classique" :
+                    else :
+                        personnage_qui_subit.est_attaque(self.attributs_jeu.acc_selection().acc_personnage())
+                        personnage_qui_subit.mut_endommage()
                         self.attributs_jeu.mut_attaque_en_cours(True)
                         self.attributs_jeu.mut_attaque_temps(0)
                         
-                #Sinon, le personnage est "classique" :
-                else :
-                    personnage_qui_subit.est_attaque(self.attributs_jeu.acc_selection().acc_personnage())
-                    personnage_qui_subit.mut_endommage()
-                    self.attributs_jeu.mut_attaque_en_cours(True)
-                    self.attributs_jeu.mut_attaque_temps(0)
+                    self.attaque_console(self.attributs_jeu.acc_selection(), personnage_qui_subit) #Ajoute une phrase d'attaque dans la console du jeu
                 
-                self.attaque_console(self.attributs_jeu.acc_selection(), personnage_qui_subit) #Ajoute une phrase d'attaque dans la console du jeu
                 self.changer_personnage(' ') #Enlève le personnage sélectionner par le joueur (rien sélectionné)
                 self.attributs_jeu.mut_nombre_action(self.attributs_jeu.acc_nombre_action() + 1) #Augmente le nombre d'action de 1
                 self.effacer_actions()
@@ -928,7 +981,6 @@ class Jeu() :
            
         self.jouer_monstres()
         self.attributs_jeu.mut_nombre_action(self.attributs_jeu.acc_nombre_action() + 1)
-        
     
     ######################################################
     ### Événements pendant une partie :
@@ -1012,6 +1064,7 @@ class Jeu() :
                     self.attributs_jeu.supprimer_monstre(personnage)
                 
                 self.terrain.mut_terrain(personnage.acc_x(), personnage.acc_y(), ' ') #Place une case vide sur la case où le personnage est mort.
+                self.mort_personnage_console(personnage)
                     
     def qui_gagne(self, bleu_present, rouge_present) :
         '''
@@ -1062,8 +1115,8 @@ class Jeu() :
     ######################################################
     ### Fonction Réinitialiser :
     ######################################################
-    
-    def reinitialiser_attributs(self) :
+        
+    def reinitialiser_attributs(self, par_defaut = False) :
         '''
         Réinitialise quelques attributs du jeu quand le joueur charge une partie.
         '''
@@ -1080,7 +1133,14 @@ class Jeu() :
         #Désactive un nouveau placement de monstres :
         self.attributs_jeu.mut_monstres_deja_deplaces(True)
         
-        self.placer() #Place les personnages, monstres et coffres de la partie qui a été chargé.
+        if not par_defaut :
+            self.placer() #Place les personnages, monstres et coffres de la partie qui a été chargé.
+        else :
+            self.partie_commence_console()
+            self.attributs_jeu.mut_equipe_en_cours('bleu')
+            self.attributs_jeu.mut_nombre_action(0)
+            self.attributs_jeu.mut_nombre_tour(0)
+            self.placer_par_defaut()
         
     ######################################################
     ### Fonction Boucle :

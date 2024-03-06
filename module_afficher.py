@@ -312,14 +312,6 @@ class Affichage():
         #Sinon, affiche le curseur non appuyé :
         else :
             self.ecran.blit(self.curseur_normal, position_souris)
-        #affichage de la position de la souris
-        if not self.attributs_jeu.acc_menu():
-            position_case = self.clavier_souris.acc_position_case()
-            if position_case[0] >= 0 and position_case[0] <= 20 and position_case[1] >= 0 and position_case[1] <= 20:
-                police = pygame.font.Font("medias/pixelec.ttf", 17)
-                texte = police.render("Case : (" + self.attributs_jeu.acc_dic_alphabet()[position_case[0]] + ", " + str(position_case[1]) + ")", 1, (152, 82, 51))
-                
-                self.ecran.blit(texte, (10, 570))
             
     ########################################
     ### Affichages Menu/Option :
@@ -669,7 +661,7 @@ class Affichage():
         '''
         affiche le console où sera écrit chaque action des équipes.
         '''
-        police = pygame.font.Font("medias/police_console.ttf", 16)
+        police = pygame.font.Font("medias/police_console.ttf", 13)
         pile = self.attributs_jeu.acc_console()
         stock = module_lineaire.Pile()
         hauteur = 570 #Hauteur où s'affiche la phrase sur la fenêtre pygame
@@ -1053,6 +1045,17 @@ class Affichage():
         self.ecran.blit(bouton_quitter, (515, self.attributs_jeu.acc_position_y_menu_fin() + 310)) # 5 d'écart avec charger
         self.ecran.blit(texte2, (580, self.attributs_jeu.acc_position_y_menu_fin() + 330))
         
+    def afficher_position_souris(self) :
+        '''
+        Affiche les coordonnées de la case à la position de la souris.
+        '''
+        position_case = self.clavier_souris.acc_position_case()
+        if position_case[0] >= 0 and position_case[0] <= 20 and position_case[1] >= 0 and position_case[1] <= 20:
+            police = pygame.font.Font("medias/pixelec.ttf", 17)
+            texte = police.render("Case : (" + self.attributs_jeu.acc_dic_alphabet()[position_case[0]] + ", " + str(position_case[1]) + ")", 1, (152, 82, 51))
+            
+            self.ecran.blit(texte, (10, 570))
+        
     ######################################################
     ### Affichages Globales :
     ######################################################
@@ -1107,6 +1110,7 @@ class Affichage():
         #Côté Gauche :
         self.afficher_personnage_selection()
         self.afficher_equipe_en_cours()
+        self.afficher_position_souris()
         
         #Tout :
         self.afficher_filtre()

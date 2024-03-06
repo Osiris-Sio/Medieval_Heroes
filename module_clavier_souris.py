@@ -160,8 +160,7 @@ class Clavier_Souris() :
             
             #Si le bouton est jouer, place les personnage et lance la partie
             if self.attributs_jeu.acc_bouton_clique() == 'jouer':
-                self.jeu.placer()
-                self.attributs_jeu.mut_menu(False)
+                self.jeu.reinitialiser_attributs(True)
                 
             #Sinon si le bouton est quitter, ferme la fenêtre pygame en "désactivant" la boucle.
             elif self.attributs_jeu.acc_bouton_clique() == 'quitter':
@@ -188,6 +187,10 @@ class Clavier_Souris() :
             #Sinon si le bouton est quitter_option, ferme la fenêtre du menu option.
             elif self.attributs_jeu.acc_bouton_clique() == 'retour_menu':
                 self.attributs_jeu.mut_option(False)
+                
+            #Sinon si le bouton est quitter_option, ferme la fenêtre du menu option.
+            elif self.attributs_jeu.acc_bouton_clique() == 'menu':
+                self.attributs_jeu.mut_menu(True)
                 
             self.attributs_jeu.mut_bouton_clique(None) #Enlève le bouton sélectionné/cliqué
     
@@ -387,8 +390,13 @@ class Clavier_Souris() :
             if evenement.button == 1 :
                 
                 self.mut_appuye(True) #Appuyé est "activé"
-                self.boutons_jeu() #Vérifie si c'est un bouton du jeu
-                self.entrees_deroulement_jeu()
+                    
+                if not self.attributs_jeu.acc_option() :
+                    self.boutons_jeu() #Vérifie si c'est un bouton du jeu
+                    self.entrees_deroulement_jeu()
+                    
+                else :
+                    self.boutons_option()
                 
         # Sinon, les boutons de la souris sont relâché :
         else :
