@@ -89,10 +89,10 @@ class Affichage():
         #Ajoute l'icone à la fenêtre :
         pygame.display.set_icon(pygame.image.load('medias/img_jeu.png'))
         
-        #Menu/Option :
+        #Menu/options :
         self.menu = pygame.image.load("medias/menu/menu4.png")
         self.image_fond = pygame.image.load("medias/menu/fond_menu.png")
-        self.fond_option = pygame.image.load("medias/menu/menu_param.png")
+        self.fond_options = pygame.image.load("medias/menu/menu_param.png")
         
         #Modes :
         self.local = pygame.image.load("medias/jeu_local.png")
@@ -330,7 +330,7 @@ class Affichage():
             self.ecran.blit(self.curseur_normal, position_souris)
             
     ########################################
-    ### Affichages Menu/Option :
+    ### Affichages Menu/options :
     ########################################
     
     def afficher_fond(self):
@@ -368,16 +368,16 @@ class Affichage():
         self.ecran.blit(bouton_charger, (450, 420)) 
         self.ecran.blit(texte_charger, (600, 440))
         
-        #Bouton Option :
-        if bouton_clique == 'option':
+        #Bouton options :
+        if bouton_clique == 'options':
             bouton_jouer = self.boutons['options_menu'][1]
-            texte_option = police.render("Options" , 1, (77, 148, 219))
+            texte_options = police.render("Options" , 1, (77, 148, 219))
         else :
             bouton_jouer = self.boutons['options_menu'][0]
-            texte_option = police.render("Options" , 1, (15, 75, 117))   
+            texte_options = police.render("Options" , 1, (15, 75, 117))   
             
         self.ecran.blit(bouton_jouer, (450, 500)) 
-        self.ecran.blit(texte_option, (600, 520))
+        self.ecran.blit(texte_options, (600, 520))
         
         #Bouton Quitter (fermer la fenêtre pygame) :
         if bouton_clique == 'quitter':
@@ -390,9 +390,9 @@ class Affichage():
         self.ecran.blit(bouton_quitter, (450, 580)) 
         self.ecran.blit(texte_quitter, (597, 600))
             
-    def afficher_boutons_option(self):
+    def afficher_boutons_options(self):
         '''
-        Affiche les différents boutons du menu option
+        Affiche les différents boutons du menu options
         '''
         police = pygame.font.Font("medias/pixelec.ttf", 21)
         bouton_clique = self.attributs_jeu.acc_bouton_clique()
@@ -456,22 +456,21 @@ class Affichage():
         self.ecran.blit(bouton_quitter, (515, 650)) 
         self.ecran.blit(texte1, (580, 670))
         
-    def afficher_option(self) :
+    def afficher_menu_options(self) :
         '''
-        Affiche le menu option
+        Affiche le menu options
         '''
         police = pygame.font.Font("medias/pixelec.ttf", 21)
-        police_textes_statiques = pygame.font.Font("medias/pixelec.ttf", 21)
         
-        self.ecran.blit(self.fond_option, (455, 290)) 
+        self.ecran.blit(self.fond_options, (455, 290)) 
         self.ecran.blit(police.render("Options" , 1, (152, 82, 51)), (580, 310))
         
         #Textes statiques :
-        texte_sols_de = police_textes_statiques.render("Sols de" , 1, (152, 82, 51))
-        texte_couleur = police_textes_statiques.render("couleur" , 1, (152, 82, 51))
-        texte_deplacements = police_textes_statiques.render("Deplacements" , 1, (152, 82, 51))
-        texte_attaques = police_textes_statiques.render("/ Attaques" , 1, (152, 82, 51))
-        texte_console = police_textes_statiques.render("Console" , 1, (152, 82, 51))
+        texte_sols_de = police.render("Sols de" , 1, (152, 82, 51))
+        texte_couleur = police.render("couleur" , 1, (152, 82, 51))
+        texte_deplacements = police.render("Deplacements" , 1, (152, 82, 51))
+        texte_attaques = police.render("/ Attaques" , 1, (152, 82, 51))
+        texte_console = police.render("Console" , 1, (152, 82, 51))
         
         #Affiche les Textes statiques :
         self.ecran.blit(texte_sols_de, (470, 350))
@@ -480,7 +479,27 @@ class Affichage():
         self.ecran.blit(texte_attaques, (470, 435))
         self.ecran.blit(texte_console, (470, 485))
         
-        self.afficher_boutons_option()
+        self.afficher_boutons_options()
+        
+    def afficher_menu_modes(self) :
+        '''
+        Affiche les différents modes de jeu à la disposition des joueurs
+        '''
+        police = pygame.font.Font("medias/pixelec.ttf", 21)
+        
+        #Cadres :
+        self.ecran.blit(self.local, (250, 250))
+        self.ecran.blit(self.robot, (770, 250))
+        
+        #Textes :
+        texte_joueur_bleu = police.render('Joueur', 1, (42, 51, 176))
+        texte_joueur_rouge = police.render('Joueur', 1, (237, 28, 36))
+        texte_vs = police.render('VS', 1, (152, 82, 51))
+        texte_robot = police.render('Robot', 1, (237, 28, 36))
+        
+        self.ecran.blit(texte_joueur_bleu, (280, 410))
+        self.ecran.blit(texte_vs, (373, 440))
+        self.ecran.blit(texte_joueur_rouge, (400, 470))
         
     ########################################
     ### Affichages Jeu :
@@ -739,13 +758,13 @@ class Affichage():
         police = pygame.font.Font("medias/pixelec.ttf", 21)
         bouton_clique = self.attributs_jeu.acc_bouton_clique()
         
-        if bouton_clique == 'option':
-            bouton_option = self.boutons['options'][1]
-            texte = police.render("Option" , 1, (77, 148, 219))
+        if bouton_clique == 'options':
+            bouton_options = self.boutons['optionss'][1]
+            texte = police.render("Options" , 1, (77, 148, 219))
         else :
-            bouton_option = self.boutons['options'][0]
-            texte = police.render("Option" , 1, (15, 75, 117))
-        self.ecran.blit(bouton_option, (6, 655))
+            bouton_options = self.boutons['options'][0]
+            texte = police.render("Options" , 1, (15, 75, 117))
+        self.ecran.blit(bouton_options, (6, 655))
         self.ecran.blit(texte, (78, 675))
         
         if bouton_clique == 'menu':
@@ -1085,13 +1104,15 @@ class Affichage():
         '''
         self.afficher_fond()
         
-        #Si le menu option n'est pas "ouvert/activé" :
-        if not self.attributs_jeu.acc_option() :  
-            self.afficher_boutons_menu()
         
-        #Sinon, le menu option est "ouvert/activé" :
+        if self.attributs_jeu.acc_menu_options() :  
+            self.afficher_menu_options()
+            
+        elif self.attributs_jeu.acc_menu_modes() :
+            self.afficher_menu_modes()
+            
         else :
-            self.afficher_option()
+            self.afficher_boutons_menu()
         
         self.afficher_curseur()
             
@@ -1135,9 +1156,9 @@ class Affichage():
         self.afficher_filtre()
         self.afficher_annonce_coffre()
         
-        #Si option :
-        if self.attributs_jeu.acc_option() :
+        #Si options :
+        if self.attributs_jeu.acc_menu_options() :
             self.afficher_fond()
-            self.afficher_option()
+            self.afficher_menu_options()
         
         self.afficher_curseur()

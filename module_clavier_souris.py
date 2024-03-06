@@ -160,6 +160,12 @@ class Clavier_Souris() :
             
             #Si le bouton est jouer, place les personnage et lance la partie
             if self.attributs_jeu.acc_bouton_clique() == 'jouer':
+                self.attributs_jeu.mut_menu_modes(True)
+                                
+            elif self.attributs_jeu.acc_bouton_clique() == 'local' :
+                self.jeu.reinitialiser_attributs(True)
+                
+            elif self.attributs_jeu.acc_bouton_clique() == 'robot' :
                 self.jeu.reinitialiser_attributs(True)
                 
             #Sinon si le bouton est quitter, ferme la fenêtre pygame en "désactivant" la boucle.
@@ -180,23 +186,23 @@ class Clavier_Souris() :
                 phrase = self.sauvegarde.charger()
                 self.attributs_jeu.ajouter_console([phrase, "noir"])
                 
-            #Sinon si le bouton est option, ouvre la fenêtre de menu options.
-            elif self.attributs_jeu.acc_bouton_clique() == 'option' :
-                self.attributs_jeu.mut_option(True)
+            #Sinon si le bouton est options, ouvre la fenêtre de menu options.
+            elif self.attributs_jeu.acc_bouton_clique() == 'options' :
+                self.attributs_jeu.mut_menu_options(True)
                 
-            #Sinon si le bouton est quitter_option, ferme la fenêtre du menu option.
+            #Sinon si le bouton est quitter_options, ferme la fenêtre du menu options.
             elif self.attributs_jeu.acc_bouton_clique() == 'retour_menu':
-                self.attributs_jeu.mut_option(False)
+                self.attributs_jeu.mut_menu_options(False)
                 
-            #Sinon si le bouton est quitter_option, ferme la fenêtre du menu option.
+            #Sinon si le bouton est quitter_options, ferme la fenêtre du menu options.
             elif self.attributs_jeu.acc_bouton_clique() == 'menu':
                 self.attributs_jeu.mut_menu(True)
                 
             self.attributs_jeu.mut_bouton_clique(None) #Enlève le bouton sélectionné/cliqué
     
-    def boutons_option(self) :
+    def boutons_menu_options(self) :
         '''
-        Gère les différents boutons du menu.
+        Gère les différents boutons du menu options.
         '''
         position_curseur = self.acc_position_curseur()
         
@@ -219,6 +225,17 @@ class Clavier_Souris() :
         if 515 <= position_curseur[0] <= 753 and 650 < position_curseur[1] < 715 :
             self.attributs_jeu.mut_bouton_clique('retour_menu')
             self.attributs_jeu.mut_temps_appui_bouton(time.time())
+            
+    def boutons_menu_modes(self) :
+        '''
+        Gère les différents boutons du menu modes.
+        '''
+        position_curseur = self.acc_position_curseur()
+        
+        #Si la position de la souris est dans la zone des boutons On/Off :
+        if 675 <= position_curseur[1] <= 775 :
+            print('x est ok')
+            
     
     def boutons_menu(self) :
         '''
@@ -229,8 +246,13 @@ class Clavier_Souris() :
         #Si l'état des boutons n'est pas appuyé :
         if self.attributs_jeu.acc_bouton_clique() == None :
             
-            #Si le joueur n'est pas dans les options :
-            if not self.attributs_jeu.acc_option() :
+            if self.attributs_jeu.acc_menu_options() :
+                self.boutons_menu_options()
+            
+            elif self.attributs_jeu.acc_menu_modes() :
+                self.boutons_menu_modes()
+                
+            else :
                 
                 #Si le joueur est dans la zone verticale des boutons :
                 if 450 <= position_curseur[0] <= 850 :
@@ -240,24 +262,20 @@ class Clavier_Souris() :
                         self.attributs_jeu.mut_bouton_clique('jouer')
                         self.attributs_jeu.mut_temps_appui_bouton(time.time())
                         
-                    #Si la position de la souris est sur le bouton 'Option' :
+                    #Si la position de la souris est sur le bouton 'options' :
                     if 420 < position_curseur[1] < 485 :
                         self.attributs_jeu.mut_bouton_clique('charger')
                         self.attributs_jeu.mut_temps_appui_bouton(time.time()) 
                     
-                    #Si la position de la souris est sur le bouton 'Option' :
+                    #Si la position de la souris est sur le bouton 'options' :
                     if 500 < position_curseur[1] < 565 :
-                        self.attributs_jeu.mut_bouton_clique('option')
+                        self.attributs_jeu.mut_bouton_clique('options')
                         self.attributs_jeu.mut_temps_appui_bouton(time.time())
                     
                     #Si la position de la souris est sur le bouton 'Quitter' :
                     if 580 < position_curseur[1] < 645 :
                         self.attributs_jeu.mut_bouton_clique('quitter')
                         self.attributs_jeu.mut_temps_appui_bouton(time.time())
-            
-            #Sinon, le joueur est dans le menu option :
-            else :
-                self.boutons_option()
                 
     def boutons_jeu(self) :
         '''
@@ -273,7 +291,7 @@ class Clavier_Souris() :
                 
                 #Si le joueur clique sur le bouton 'Menu' :
                 if 655 < position_curseur[1] < 720 :
-                    self.attributs_jeu.mut_bouton_clique('option')
+                    self.attributs_jeu.mut_bouton_clique('options')
                     self.attributs_jeu.mut_temps_appui_bouton(time.time())
                 
                 #Si le joueur clique sur le bouton 'Menu' :
@@ -369,7 +387,7 @@ class Clavier_Souris() :
             if evenement.button == 1 :
                 
                 self.mut_appuye(True) #Appuyé est "activé"
-                self.boutons_menu() #Vérifie si c'est un bouton du menu (ou du menu option en particulier)      
+                self.boutons_menu() #Vérifie si c'est un bouton du menu (ou du menu options en particulier)      
                         
         # Sinon, les boutons de la souris sont relâché :
         else :
@@ -391,12 +409,12 @@ class Clavier_Souris() :
                 
                 self.mut_appuye(True) #Appuyé est "activé"
                     
-                if not self.attributs_jeu.acc_option() :
+                if not self.attributs_jeu.acc_menu_options() :
                     self.boutons_jeu() #Vérifie si c'est un bouton du jeu
                     self.entrees_deroulement_jeu()
                     
                 else :
-                    self.boutons_option()
+                    self.boutons_menu_options()
                 
         # Sinon, les boutons de la souris sont relâché :
         else :

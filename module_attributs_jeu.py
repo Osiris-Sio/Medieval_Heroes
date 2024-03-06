@@ -29,7 +29,8 @@ class Attributs_Jeu() :
         #Attributs Jeu:
         self.continuer = True #Si la boucle du jeu continue
         self.menu = True #True si on est dans le menu, False sinon
-        self.option = False #True si on est dans le menu option, False sinon
+        self.menu_modes = False 
+        self.menu_options = False #True si on est dans le menu options, False sinon
         self.compteur = 0 #Compte le nombre de boucle (de 0 à 70) (principalement pour les animations)
         self.tab_personnages = [] #Un tableau avec tous les personnages (qui sont leur pv strictement au dessus de 0)
         self.tab_monstres = [] #Un tableau avec tous les monstres (qui sont leur pv strictement au dessus de 0)
@@ -49,6 +50,9 @@ class Attributs_Jeu() :
         self.temps = 'Jour' #Le temps du jeu
         self.temps_active = False #Booléen qui permet de bloquer le Jour/Nuit pendant une condition vrai. C'est le cas dans la fonction mut_temps_jeu()
         self.monstres_active = False #True si des monstres doivent apparaître et False sinon
+        
+        #Mode Robot :
+        self.mode_robot = False
         
         #Action/Tour :
         self.nombre_action = 0 #Le nombre d'action qu'une équipe a faite pendant son tour
@@ -175,6 +179,18 @@ class Attributs_Jeu() :
     ### Accesseurs :
     ######################################################
     
+    def acc_mode_robot(self):
+        '''
+        Renvoie l'attribut mode_robot
+        '''
+        return self.mode_robot
+    
+    def acc_menu_modes(self):
+        '''
+        Renvoie l'attribut menu_modes
+        '''
+        return self.menu_modes
+    
     def acc_dic_alphabet(self):
         '''
         Renvoie l'attribut dic_alphabet
@@ -229,11 +245,11 @@ class Attributs_Jeu() :
         '''
         return self.menu
     
-    def acc_option(self):
+    def acc_menu_options(self):
         '''
-        Renvoie l'attribut option
+        Renvoie l'attribut menu_options
         '''
-        return self.option
+        return self.menu_options
     
     def acc_compteur(self):
         '''
@@ -503,6 +519,28 @@ class Attributs_Jeu() :
     ### Mutateurs :
     ######################################################
     
+    def mut_mode_robot(self, valeur) :
+        '''
+        Modifie l'attribut mode_robot
+        : param valeur (boolean)
+        : pas de return, modifie l'attribut mode_robot
+        '''
+        #Assertion :
+        assert isinstance(valeur, bool), 'Le paramètre doit être soit True, soit False !'
+        #Code :
+        self.mode_robot = valeur
+    
+    def mut_menu_modes(self, valeur) :
+        '''
+        Modifie l'attribut menu_modes
+        : param valeur (boolean)
+        : pas de return, modifie l'attribut menu_modes
+        '''
+        #Assertion :
+        assert isinstance(valeur, bool), 'Le paramètre doit être soit True, soit False !'
+        #Code :
+        self.menu_modes = valeur
+    
     def mut_potion_rouge_selectionnee(self, contenu):
         '''
         modifie l'attribut potion_rouge_selectionnee (on séléctionne une file)
@@ -620,16 +658,16 @@ class Attributs_Jeu() :
         #Code :
         self.menu = valeur
         
-    def mut_option(self, valeur) :
+    def mut_menu_options(self, valeur) :
         '''
-        Modifie l'attribut option
+        Modifie l'attribut menu_options
         : param valeur (boolean)
-        : pas de return, modifie l'attribut option
+        : pas de return, modifie l'attribut menu_options
         '''
         #Assertion :
         assert isinstance(valeur, bool), 'Le paramètre doit être soit True, soit False !'
         #Code :
-        self.option = valeur
+        self.menu_options = valeur
         
     def mut_dernier_personnage_mort_bleu(self, perso):
         '''
@@ -1158,8 +1196,8 @@ class Attributs_Jeu() :
             if not self.acc_temps_active() :
                 dic = {'Jour': 'Nuit', 'Nuit': 'Jour'}
                 phrase = {
-                    'Jour' : 'Le soleil se lève !',
-                    'Nuit' : 'Le soleil se couche !'
+                    'Jour' : '·Le soleil se lève !',
+                    'Nuit' : '·Le soleil se couche !'
                 }
                 self.mut_temps(dic[self.temps]) #Change le temps (par le contraire grâce au dictionnaire)
                 self.ajouter_console([phrase[self.acc_temps()], 'noir']) #Ajoute la phrase adapté dans la console du jeu.
