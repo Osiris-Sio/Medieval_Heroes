@@ -1270,10 +1270,20 @@ class Attributs_Jeu() :
         
     def ajouter_positions_tombes(self, coordonnees) :
         '''
-        Modifie l'attribut positions_tombes (ajouté ! (append))
+        Ajoute une tombe dans l'attribut positions_tombes 
         : param coordonnees (tuple)
         '''
         #Précondition :
         assert isinstance(coordonnees, tuple), 'Le paramètre doit être un tuple !'
         #Code :
         self.positions_tombes.append(coordonnees)
+        
+    def supprimer_positions_tombes(self, coordonnees) :
+        '''
+        Supprime une tombe dans l'attribut positions_tombes 
+        : param coordonnees (tuple)
+        '''
+        #Précondition :
+        assert isinstance(coordonnees, tuple), 'Le paramètre doit être un tuple !'
+        #Code :
+        self.positions_tombes.remove(coordonnees)

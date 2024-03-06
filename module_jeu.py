@@ -345,7 +345,7 @@ class Jeu() :
         #Assertions :
         assert isinstance(personnage, module_personnage.Personnage), 'Le paramètre doit être un personnage de la classe Personnage (module_personnage) !'
         #Code :
-        self.attributs_jeu.ajouter_console(["·" + personnage.acc_personnage() + " " + personnage.acc_equipe() + " est mort.", 'noir'])
+        self.attributs_jeu.ajouter_console(["·" + personnage.acc_personnage() + " (" + personnage.acc_equipe() + ") est mort.", 'noir'])
     
     ######################################################
     ### Déplacements :
@@ -750,6 +750,7 @@ class Jeu() :
                 self.attributs_jeu.ajouter_personnage(perso)
                 #on ajoute le personnage ressuscité au terrain
                 self.terrain.mut_terrain(perso.acc_x(), perso.acc_y(), perso)
+                self.attributs_jeu.supprimer_positions_tombes(perso.acc_x(), perso.acc_y())
                 
         ###################################################################################
         #### AJOUTE UNE POTION DE VIE/MORT/CHANGEMENT D'EQUIPE A L'EQUIPE QUI JOUE/ADVERSE
@@ -922,42 +923,39 @@ class Jeu() :
         '''
         position_case = self.clavier_souris.acc_position_case()
         
-        #Si la position de la souris est sur une case du terrain :  
-        if 0 <= position_case[0] <= 20 and 0 <= position_case[1] <= 20 :
+        #Si la souris est dans une case d'attaque :
+        if self.attributs_jeu.est_meme_equipe() and position_case in self.attributs_jeu.acc_attaques() :
             personnage_qui_subit = self.terrain.acc_terrain(position_case[0], position_case[1]) #Sélectionne le personnage qui va subir les attaques
+                
+            #Si la sorcière attaque
+            if self.attributs_jeu.acc_selection().acc_personnage() == 'sorciere' :
+                self.ouverture_potion(position_case[0], position_case[1])
             
-            #Si la souris est dans une case d'attaque :
-            if position_case in self.attributs_jeu.acc_attaques():
-                
-                #Si la sorcière attaque
-                if self.attributs_jeu.acc_selection().acc_personnage() == 'sorciere' :
-                    self.ouverture_potion(position_case[0], position_case[1])
-                
-                else :
-                    #Si le personnage_qui_subit est le Géant :
-                    if personnage_qui_subit.acc_personnage() == 'geant':
-                        famille = self.famille_geant((personnage_qui_subit.acc_x(), personnage_qui_subit.acc_y()))[0]
-                        #Pour chaque partie du geant :
-                        for geant in famille :
-                            geant.est_attaque(self.attributs_jeu.acc_selection().acc_personnage())
-                            geant.mut_endommage()
-                            self.attributs_jeu.mut_attaque_en_cours(True)
-                            self.attributs_jeu.mut_attaque_temps(0)
-                            
-                    #Sinon, le personnage est "classique" :
-                    else :
-                        personnage_qui_subit.est_attaque(self.attributs_jeu.acc_selection().acc_personnage())
-                        personnage_qui_subit.mut_endommage()
+            else :
+                #Si le personnage_qui_subit est le Géant :
+                if personnage_qui_subit.acc_personnage() == 'geant':
+                    famille = self.famille_geant((personnage_qui_subit.acc_x(), personnage_qui_subit.acc_y()))[0]
+                    #Pour chaque partie du geant :
+                    for geant in famille :
+                        geant.est_attaque(self.attributs_jeu.acc_selection().acc_personnage())
+                        geant.mut_endommage()
                         self.attributs_jeu.mut_attaque_en_cours(True)
                         self.attributs_jeu.mut_attaque_temps(0)
                         
-                    self.attaque_console(self.attributs_jeu.acc_selection(), personnage_qui_subit) #Ajoute une phrase d'attaque dans la console du jeu
-                
-                self.changer_personnage(' ') #Enlève le personnage sélectionner par le joueur (rien sélectionné)
-                self.attributs_jeu.mut_nombre_action(self.attributs_jeu.acc_nombre_action() + 1) #Augmente le nombre d'action de 1
-                self.effacer_actions()
-                self.jouer_monstres()
-                return True
+                #Sinon, le personnage est "classique" :
+                else :
+                    personnage_qui_subit.est_attaque(self.attributs_jeu.acc_selection().acc_personnage())
+                    personnage_qui_subit.mut_endommage()
+                    self.attributs_jeu.mut_attaque_en_cours(True)
+                    self.attributs_jeu.mut_attaque_temps(0)
+                    
+                self.attaque_console(self.attributs_jeu.acc_selection(), personnage_qui_subit) #Ajoute une phrase d'attaque dans la console du jeu
+            
+            self.changer_personnage(' ') #Enlève le personnage sélectionner par le joueur (rien sélectionné)
+            self.attributs_jeu.mut_nombre_action(self.attributs_jeu.acc_nombre_action() + 1) #Augmente le nombre d'action de 1
+            self.effacer_actions()
+            self.jouer_monstres()
+            return True
             
             return False
 
@@ -1132,6 +1130,8 @@ class Jeu() :
         
         #Désactive un nouveau placement de monstres :
         self.attributs_jeu.mut_monstres_deja_deplaces(True)
+        
+        self.attributs_jeu.mut_mode_robot(False)
         
         if not par_defaut :
             self.placer() #Place les personnages, monstres et coffres de la partie qui a été chargé.

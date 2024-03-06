@@ -298,8 +298,8 @@ class Affichage():
             'rejouer' : [pygame.image.load("medias/cadres/cadre_sauvegarder0.png"), 
                         pygame.image.load("medias/cadres/cadre_sauvegarder1.png")],
             'on_off' : [pygame.image.load("medias/cadres/active.png"), pygame.image.load("medias/cadres/desactive.png")],
-            'barre_fps' : pygame.image.load("medias/cadres/fps_barre.png"),
-            'pointeur_fps' : pygame.image.load("medias/cadres/pointeur_fps.png"),
+            'barre_son' : pygame.image.load("medias/cadres/son_barre.png"),
+            'pointeur_son' : pygame.image.load("medias/cadres/pointeur_son.png"),
             'options_menu' : [pygame.image.load("medias/cadres/cadre_options_menu0.png"),
                               pygame.image.load("medias/cadres/cadre_options_menu1.png")],
             'charger_menu' : [pygame.image.load("medias/cadres/cadre_charger_menu0.png"),
@@ -438,22 +438,22 @@ class Affichage():
         self.ecran.blit(bouton_sols_de_couleur, (680, 475))
         
         
-        #Barre des fps :
-        bouton_option_fps = self.boutons['barre_fps']
-        self.ecran.blit(bouton_option_fps, (475, 550))
+        #Barre son :
+        bouton_option_son = self.boutons['barre_son']
+        self.ecran.blit(bouton_option_son, (475, 550))
         
-        pointeur_barre = self.boutons['pointeur_fps']
+        pointeur_barre = self.boutons['pointeur_son']
         self.ecran.blit(pointeur_barre, (575, 550))
         
         #Retour :
         if bouton_clique == 'retour_menu':
-            bouton_quitter = self.boutons['quitter_fin'][1]
+            bouton_retour = self.boutons['quitter_fin'][1]
             texte1 = police.render("Retour" , 1, (224, 85, 92))
         else :
-            bouton_quitter = self.boutons['quitter_fin'][0]
+            bouton_retour = self.boutons['quitter_fin'][0]
             texte1 = police.render("Retour" , 1, (179, 12, 36))
             
-        self.ecran.blit(bouton_quitter, (515, 650)) 
+        self.ecran.blit(bouton_retour, (515, 650)) 
         self.ecran.blit(texte1, (580, 670))
         
     def afficher_menu_options(self) :
@@ -486,6 +486,7 @@ class Affichage():
         Affiche les différents modes de jeu à la disposition des joueurs
         '''
         police = pygame.font.Font("medias/pixelec.ttf", 21)
+        bouton_clique = self.attributs_jeu.acc_bouton_clique()
         
         #Cadres :
         self.ecran.blit(self.local, (250, 250))
@@ -500,6 +501,44 @@ class Affichage():
         self.ecran.blit(texte_joueur_bleu, (280, 410))
         self.ecran.blit(texte_vs, (373, 440))
         self.ecran.blit(texte_joueur_rouge, (400, 470))
+        
+        self.ecran.blit(texte_joueur_bleu, (800, 410))
+        self.ecran.blit(texte_vs, (895, 440))
+        self.ecran.blit(texte_robot, (930, 470))
+        
+        ###### Boutons Lancer :
+        #Local :
+        if bouton_clique == 'local':
+            bouton_local = self.boutons['sauvegarder'][1]
+            texte_lancer = police.render("Lancer" , 1, (200, 165, 80))
+        else :
+            bouton_local = self.boutons['sauvegarder'][0]
+            texte_lancer = police.render("Lancer" , 1, (196, 144, 4))
+            
+        self.ecran.blit(bouton_local, (270, 510))
+        self.ecran.blit(texte_lancer, (340, 530))
+            
+        #Robot :
+        if bouton_clique == 'robot':
+            bouton_robot = self.boutons['sauvegarder'][1]
+            texte_lancer = police.render("Lancer" , 1, (200, 165, 80))
+        else :
+            bouton_robot = self.boutons['sauvegarder'][0]
+            texte_lancer = police.render("Lancer" , 1, (196, 144, 4))
+            
+        self.ecran.blit(bouton_robot, (790, 510))
+        self.ecran.blit(texte_lancer, (865, 530))
+        
+        #Retour :
+        if bouton_clique == 'retour_menu':
+            bouton_retour = self.boutons['quitter_menu'][1]
+            texte1 = police.render("Retour" , 1, (224, 85, 92))
+        else :
+            bouton_retour = self.boutons['quitter_menu'][0]
+            texte1 = police.render("Retour" , 1, (179, 12, 36))
+            
+        self.ecran.blit(bouton_retour, (450, 650)) 
+        self.ecran.blit(texte1, (600, 670))
         
     ########################################
     ### Affichages Jeu :
@@ -759,7 +798,7 @@ class Affichage():
         bouton_clique = self.attributs_jeu.acc_bouton_clique()
         
         if bouton_clique == 'options':
-            bouton_options = self.boutons['optionss'][1]
+            bouton_options = self.boutons['options'][1]
             texte = police.render("Options" , 1, (77, 148, 219))
         else :
             bouton_options = self.boutons['options'][0]
@@ -1006,7 +1045,7 @@ class Affichage():
             case_x = coordonnees[0] * 38 + 250
             case_y = coordonnees[1] * 38
             perso = self.terrain.acc_terrain(coordonnees[0], coordonnees[1])
-            if perso.acc_equipe() == self.attributs_jeu.acc_equipe_en_cours():
+            if perso.acc_equipe() == self.attributs_jeu.acc_selection().acc_equipe():
                 image = self.attaques[1] #guérison
             else:
                 image = self.attaques[0] #attaque
@@ -1124,8 +1163,8 @@ class Affichage():
         
         #Milieu :
         self.afficher_terrain()
-        self.afficher_personnages()
         self.afficher_tombes()
+        self.afficher_personnages()
         
         #Si l'option deplacement/attaques est activé, alors on affiche l'aide de déplacements/attaques :
         if self.attributs_jeu.acc_deplacements_attaques() :
