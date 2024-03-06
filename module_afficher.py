@@ -153,7 +153,10 @@ class Affichage():
             'rouge' : pygame.image.load("medias/sol_r.png"),
             'bleu' : pygame.image.load("medias/sol_b.png"),
             }
-        
+        self.sol_geants = {
+            'rouge' : pygame.image.load("medias/sol_r_geant.png"),
+            'bleu' : pygame.image.load("medias/sol_b_geant.png")
+            }
         #Réponses coffre
         self.rep_contenu = {1 : 'Bonus de vie',
                     2 : 'Meteorite',
@@ -247,7 +250,20 @@ class Affichage():
             'mage' : [pygame.image.load("medias/degats/sr.png"), pygame.image.load("medias/degats/sb.png")],
             'monstre' : [pygame.image.load("medias/degats/m.png")]
         }
-        
+        self.personnages_soins = {
+            'paladin': [pygame.image.load("medias/soins/pr.png"), pygame.image.load("medias/soins/pb.png")],
+            'poulet': [pygame.image.load("medias/soins/por.png"), pygame.image.load("medias/soins/pob.png")],
+            'geant': [[pygame.image.load("medias/soins/gr1.png"), pygame.image.load("medias/soins/gr2.png"), pygame.image.load("medias/soins/gr3.png"), pygame.image.load("medias/soins/gr4.png")], [pygame.image.load("medias/soins/gb1.png"), pygame.image.load("medias/soins/gb2.png"), pygame.image.load("medias/soins/gb3.png"), pygame.image.load("medias/soins/gb4.png")]],
+            'cavalier': [pygame.image.load("medias/soins/cr.png"), pygame.image.load("medias/soins/cb.png")],
+            'archere': [pygame.image.load("medias/soins/ar.png"), pygame.image.load("medias/soins/ab.png")],
+            'sorciere': [pygame.image.load("medias/soins/sor.png"), pygame.image.load("medias/soins/sob.png")],
+            'cracheur de feu' : [pygame.image.load("medias/soins/crr.png"), pygame.image.load("medias/soins/crb.png")],
+            'valkyrie' : [pygame.image.load("medias/soins/vr.png"), pygame.image.load("medias/soins/vb.png")],
+            'ivrogne' : [pygame.image.load("medias/soins/ir.png"), pygame.image.load("medias/soins/ib.png")],
+            'barbare' : [pygame.image.load("medias/soins/br.png"), pygame.image.load("medias/soins/bb.png")],
+            'mage' : [pygame.image.load("medias/soins/sr.png"), pygame.image.load("medias/soins/sb.png")],
+            'monstre' : [pygame.image.load("medias/soins/m.png")]
+        }
         self.personnages_deplacement = {
             'paladin': [pygame.image.load("medias/en_deplacement/pr.png"), pygame.image.load("medias/en_deplacement/pb.png")],
             'poulet': [pygame.image.load("medias/en_deplacement/por.png"), pygame.image.load("medias/en_deplacement/pob.png")],
@@ -782,10 +798,13 @@ class Affichage():
             equipe = personnage.acc_equipe()
             endommage = personnage.acc_endommage()
             
-            
             #Contour de couleur (si l'option est activé, le personnage est de l'équipe en cours et que le personnage n'est pas en déplacement) :   
             if self.attributs_jeu.acc_sols_de_couleur() and equipe == self.attributs_jeu.acc_equipe_en_cours() and self.attributs_jeu.acc_personnage_en_deplacement() != personnage :
-                self.ecran.blit(self.sol_personnages[equipe], (x , y))
+                if nom == 'geant':
+                    if personnage.acc_numero_geant() == 0:
+                        self.ecran.blit(self.sol_geants[equipe], (x, y))
+                else :
+                    self.ecran.blit(self.sol_personnages[equipe], (x , y))
 
             #Endommagé (si le personnage est endommagé) :
             if endommage :

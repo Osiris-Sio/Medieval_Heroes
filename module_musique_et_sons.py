@@ -8,7 +8,11 @@ class GestionnaireSon:
         pygame.mixer.init()
         self.volume = volume
         self.musique_fond = [pygame.mixer.music.load("medias/musiques/1.MP3"), pygame.mixer.music.load("medias/musiques/2.MP3")]
-        self.effets_sonores = {"explosion" : pygame.mixer.Sound("medias/sons/explosion.MP3")}
+        self.effets_sonores = {"feu" : pygame.mixer.Sound("medias/sons/feu.WAV"),
+                               "lame" : pygame.mixer.Sound("medias/sons/lame.WAV"),
+                               "potion" : pygame.mixer.Sound("medias/sons/potion.WAV"),
+                               "marche" : pygame.mixer.Sound("medias/sons/marche.WAV")
+                               }
         self.regler_volume()
 
     def boucle_musique(self):
@@ -53,13 +57,15 @@ if __name__ == "__main__":
 
     # lance la boucle des musiques de fond
     gestionnaire_son.boucle_musique()
+    pygame.time.wait(500)
+    gestionnaire_son.jouer_effet_sonore("lame")
     '''
 
     # attend un certain temps pour laisser la musique jouer
-    pygame.time.wait(5000)
+   
     
     # joue un effet sonore
-    gestionnaire_son.jouer_effet_sonore("explosion")
+    gestionnaire_son.jouer_effet_sonore("lame")
     # modifie le volume du jeu
     gestionnaire_son.mut_volume(0.2)
 
