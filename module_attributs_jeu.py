@@ -89,6 +89,7 @@ class Attributs_Jeu() :
         self.sols_de_couleur = True
         self.deplacements_attaques = True
         self.option_console = True
+        self.x_pointeur = 625
         
         #Attributs pour le déplacement avec le chemin (graphe) :
         self.chemin = []
@@ -178,7 +179,12 @@ class Attributs_Jeu() :
     ######################################################
     ### Accesseurs :
     ######################################################
-    
+    def acc_x_pointeur(self):
+        '''
+        renvoie l'attribut x_pointeur
+        '''
+        return self.x_pointeur
+        
     def acc_mode_robot(self):
         '''
         Renvoie l'attribut mode_robot
@@ -518,6 +524,12 @@ class Attributs_Jeu() :
     ######################################################
     ### Mutateurs :
     ######################################################
+    
+    def mut_x_pointeur(self, x):
+        '''
+        modifie le x de l'attribut x_pointeur
+        '''
+        self.x_pointeur = x
     
     def mut_mode_robot(self, valeur) :
         '''

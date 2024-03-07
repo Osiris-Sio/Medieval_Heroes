@@ -10,7 +10,7 @@ Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul
 ### Importation Modules :
 ######################################################
 
-import pygame, module_jeu, module_attributs_jeu, module_sauvegarde, module_terrain, module_personnage, time
+import pygame, module_jeu, module_attributs_jeu, module_sauvegarde, module_terrain, module_personnage, time, module_musique_et_sons
 
 ######################################################
 ### Classe Affichage :
@@ -21,7 +21,7 @@ class Clavier_Souris() :
     Une classe Clavier_Souris qui gère les entrées du clavier et de la souris.
     '''
     
-    def __init__(self, jeu, attributs_jeu, sauvegarde, terrain) :
+    def __init__(self, jeu, attributs_jeu, sauvegarde, terrain, gestionnaire_sons) :
         '''
         Initialise les attributs pour gérer les entrées.
         :params 
@@ -34,12 +34,13 @@ class Clavier_Souris() :
         assert isinstance(attributs_jeu, module_attributs_jeu.Attributs_Jeu), 'attributs_jeu doit être de la classe Attributs_Jeu du module_attributs_jeu !'
         assert isinstance(sauvegarde, module_sauvegarde.Sauvegarde), 'terrain doit être de la classe Terrain du module_terrain !'
         assert isinstance(terrain, module_terrain.Terrain), 'terrain doit être de la classe Terrain du module_terrain !'
-        
-        #Attributs des Paramètres :
+        assert isinstance(gestionnaire_sons, module_musique_et_sons.GestionnaireSon)
+        #Attributs des paramètres :
         self.jeu = jeu
         self.attributs_jeu = attributs_jeu
         self.sauvegarde = sauvegarde
         self.terrain = terrain
+        self.musique_et_sons = gestionnaire_sons
 
         #Autres Attributs :
         self.appuye = False
@@ -229,6 +230,15 @@ class Clavier_Souris() :
         if 515 <= position_curseur[0] <= 753 and 650 < position_curseur[1] < 715 :
             self.attributs_jeu.mut_bouton_clique('retour_menu')
             self.attributs_jeu.mut_temps_appui_bouton(time.time())
+        
+        #Si la position de la souris est sur la barre de volume :
+        if 475 <= position_curseur[0] <= 775 and 550 < position_curseur[1] < 597 :
+            self.attributs_jeu.mut_x_pointeur(position_curseur[0])
+            volume_sonore = (position_curseur[0] - 490)/ 300 # la bonne valeur est de base 475 mais j'ai augmenté pour que les joueurs puissent plus facilement selectionner un volume de 0
+            if volume_sonore < 0 :
+                volume_sonore = 0
+            self.musique_et_sons.mut_volume(volume_sonore)
+            
             
     def boutons_menu_modes(self) :
         '''

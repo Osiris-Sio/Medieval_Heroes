@@ -33,10 +33,11 @@ class Jeu() :
         #Attributs des Importations :
         self.attributs_jeu = module_attributs_jeu.Attributs_Jeu()
         self.sauvegarde = module_sauvegarde.Sauvegarde(self, self.attributs_jeu)
-        self.terrain = module_terrain.Terrain(self.attributs_jeu)
-        self.clavier_souris = module_clavier_souris.Clavier_Souris(self, self.attributs_jeu, self.sauvegarde, self.terrain)
-        self.affichage = module_afficher.Affichage(self.attributs_jeu, self.terrain, self.ecran, self.clavier_souris)
         self.gestionnaire_son = module_musique_et_sons.GestionnaireSon()
+        self.terrain = module_terrain.Terrain(self.attributs_jeu)
+        self.clavier_souris = module_clavier_souris.Clavier_Souris(self, self.attributs_jeu, self.sauvegarde, self.terrain, self.gestionnaire_son)
+        self.affichage = module_afficher.Affichage(self.attributs_jeu, self.terrain, self.ecran, self.clavier_souris)
+        
                                             
     ######################################################
     ### Accesseurs :
@@ -228,7 +229,7 @@ class Jeu() :
         
         ###Pose des coffres (par défaut)
         self.attributs_jeu.mut_tab_coffres([
-        module_objets.Coffre(10, 10), #1, 6
+        module_objets.Coffre(1, 6),
         module_objets.Coffre(19, 14),
         module_objets.Coffre(1, 14),
         module_objets.Coffre(19, 6),
@@ -498,6 +499,9 @@ class Jeu() :
                 #Si le personnage est endommagé :
                 if personnage.acc_endommage():
                     personnage.mut_endommage() #Change son attribut en son inverse (dans ce cas True devient False)
+                #Si le personnage est soigné :
+                elif personnage.acc_soigne():
+                    personnage.mut_soigne()  #Change son attribut en son inverse (dans ce cas True devient False)
     
     ######################################################
     ### Monstres :
@@ -810,11 +814,13 @@ class Jeu() :
         #### ATTAQUE PERSONNAGE
         ########################################################
         if potion.acc_contenu() == 1:
+            a_attaque = False
             pv = random.randint(1, 10) #on retire des pv au hasard
             case = module_objets.Potion.definir_cases_atteintes(x, y, potion.acc_etendue())
             for cases in case: #chaque case de l'étendu
                 perso = self.terrain.acc_terrain(cases[0], cases[1])
                 if isinstance(perso, module_personnage.Personnage) and not perso.acc_equipe() == self.attributs_jeu.acc_equipe_en_cours():
+                    a_attaque = True
                     ###géant
                     if perso.acc_personnage() == 'geant':
                         famille = self.famille_geant((perso.acc_x(), perso.acc_y()))[0]
@@ -830,9 +836,10 @@ class Jeu() :
             else:
                 self.attributs_jeu.mut_ajoute_potions_rouges(module_objets.Potion(1)) #la file ne doit pas être vide
             ###Attributs attaques
-            self.attributs_jeu.mut_attaque_en_cours(True)
-            self.attributs_jeu.mut_attaque_temps(0)
-            self.attaque_sorciere_console(equipe)
+            if a_attaque : #si la sorcière a attaqué un personnage
+                self.attributs_jeu.mut_attaque_en_cours(True)
+                self.attributs_jeu.mut_attaque_temps(0)
+                self.attaque_sorciere_console(equipe)
             
             
         ########################################################
@@ -847,9 +854,14 @@ class Jeu() :
                         famille = self.famille_geant((perso.acc_x(), perso.acc_y()))[0]
                         for elt in famille:
                             elt.est_attaque('sorciere', -10) #on ajoute 10 pv
+                            elt.mut_soigne()
                     ###personnage "normal"
                     else :
                         perso.est_attaque('sorciere', -10) #on ajoute 10 pv
+                        perso.mut_soigne()
+                    ###Attributs attaques
+                    self.attributs_jeu.mut_attaque_en_cours(True)
+                    self.attributs_jeu.mut_attaque_temps(0)
                     self.guerison_console(perso)
             
         ########################################################
@@ -857,35 +869,37 @@ class Jeu() :
         ########################################################
         if potion.acc_contenu() == 3:
             perso = self.terrain.acc_terrain(x, y)
-            ###géant
-            if perso.acc_personnage() == 'geant':
-                famille = self.famille_geant((perso.acc_x(), perso.acc_y()))[0]
-                for elt in famille:
-                    elt.est_attaque('sorciere', elt.acc_pv()) #on retire tous les pv
-                    elt.mut_endommage()
-            ###personnage "normal"
-            else :
-                perso.est_attaque('sorciere', perso.acc_pv()) #on retire tous les pv
-                perso.mut_endommage()
-            ###Attributs attaques
-            self.attributs_jeu.mut_attaque_en_cours(True)
-            self.attributs_jeu.mut_attaque_temps(0)
+            if not perso.acc_equipe() == self.attributs_jeu.acc_equipe_en_cours():
+                ###géant
+                if perso.acc_personnage() == 'geant':
+                    famille = self.famille_geant((perso.acc_x(), perso.acc_y()))[0]
+                    for elt in famille:
+                        elt.est_attaque('sorciere', elt.acc_pv()) #on retire tous les pv
+                        elt.mut_endommage()
+                ###personnage "normal"
+                else :
+                    perso.est_attaque('sorciere', perso.acc_pv()) #on retire tous les pv
+                    perso.mut_endommage()
+                ###Attributs attaques
+                self.attributs_jeu.mut_attaque_en_cours(True)
+                self.attributs_jeu.mut_attaque_temps(0)
             
         ########################################################
         #### CHANGEMENT D'EQUIPE
         ########################################################
         if potion.acc_contenu() == 4:
             perso = self.terrain.acc_terrain(x, y)
-            ###géant
-            if perso.acc_personnage() == 'geant':
-                famille = self.famille_geant((perso.acc_x(), perso.acc_y()))[0]
-                for elt in famille:
-                    elt.mut_equipe() #le personnage change d'équipe
-            ###personnage "normal"
-            else :
-                perso.mut_equipe() #le personnage change d'équipe
-                
-            self.changement_equipe_personnage_console(perso)
+            if not perso.acc_equipe() == self.attributs_jeu.acc_equipe_en_cours():
+                ###géant
+                if perso.acc_personnage() == 'geant':
+                    famille = self.famille_geant((perso.acc_x(), perso.acc_y()))[0]
+                    for elt in famille:
+                        elt.mut_equipe() #le personnage change d'équipe
+                ###personnage "normal"
+                else :
+                    perso.mut_equipe() #le personnage change d'équipe
+                    
+                self.changement_equipe_personnage_console(perso)
           
     ######################################################
     ### Fonctions de Clique :
@@ -922,7 +936,6 @@ class Jeu() :
         : return (bool) True si une attaque a été effectuée, False sinon
         '''
         position_case = self.clavier_souris.acc_position_case()
-        
         #Si la souris est dans une case d'attaque :
         if self.attributs_jeu.est_meme_equipe() and position_case in self.attributs_jeu.acc_attaques() :
             personnage_qui_subit = self.terrain.acc_terrain(position_case[0], position_case[1]) #Sélectionne le personnage qui va subir les attaques
@@ -1119,7 +1132,7 @@ class Jeu() :
         Réinitialise quelques attributs du jeu quand le joueur charge une partie.
         '''
         self.mut_terrain(module_terrain.Terrain(self.attributs_jeu))
-        self.mut_clavier_souris(module_clavier_souris.Clavier_Souris(self, self.attributs_jeu, self.sauvegarde, self.terrain))
+        self.mut_clavier_souris(module_clavier_souris.Clavier_Souris(self, self.attributs_jeu, self.sauvegarde, self.terrain, self.gestionnaire_son))
         self.mut_affichage(module_afficher.Affichage(self.attributs_jeu, self.terrain, self.ecran, self.clavier_souris))
         self.attributs_jeu.mut_console(module_lineaire.Pile()) #Réinitialise la console du jeu
         

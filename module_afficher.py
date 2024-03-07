@@ -443,7 +443,7 @@ class Affichage():
         self.ecran.blit(bouton_option_son, (475, 550))
         
         pointeur_barre = self.boutons['pointeur_son']
-        self.ecran.blit(pointeur_barre, (575, 550))
+        self.ecran.blit(pointeur_barre, (self.attributs_jeu.acc_x_pointeur(), 550))
         
         #Retour :
         if bouton_clique == 'retour_menu':
@@ -855,6 +855,7 @@ class Affichage():
             y = personnage.acc_y() * 38
             equipe = personnage.acc_equipe()
             endommage = personnage.acc_endommage()
+            soigne = personnage.acc_soigne()
             
             #Contour de couleur (si l'option est activé, le personnage est de l'équipe en cours et que le personnage n'est pas en déplacement) :   
             if self.attributs_jeu.acc_sols_de_couleur() and equipe == self.attributs_jeu.acc_equipe_en_cours() and self.attributs_jeu.acc_personnage_en_deplacement() != personnage :
@@ -897,6 +898,31 @@ class Affichage():
                         #Sinon, le personnage est "classique"
                         else :
                             self.ecran.blit(endommage[1], (x , y))
+                
+            elif soigne : #si le personnage est en train d'être soigné
+                soin = self.personnages_soins[nom] #Appel les différentes images du personnage
+                
+                #Si le personnage est de l'équipe rouge :
+                if equipe == 'rouge' :
+                    
+                    #Si le personnage est un Géant :
+                    if nom == 'geant' :
+                        self.ecran.blit(soin[0][personnage.acc_numero_geant()], (x , y))
+                        
+                    #Sinon, le personnage est "classique"
+                    else :
+                        self.ecran.blit(soin[0], (x , y))
+                
+                #Sinon, le personnage est de l'équipe bleu :
+                else :
+                    
+                    #Si le personnage est un Géant :
+                    if nom == 'geant' :
+                        self.ecran.blit(soin[1][personnage.acc_numero_geant()], (x , y))
+                        
+                    #Sinon, le personnage est "classique"
+                    else :
+                        self.ecran.blit(soin[1], (x , y))
                 
             #Animations (sinon si le personnage n'est pas en déplacement):
             elif self.attributs_jeu.acc_personnage_en_deplacement() != personnage :

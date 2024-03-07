@@ -104,8 +104,9 @@ class Personnage():
         self.y = y
         self.pv = pv
         self.endommage = False
+        self.soigne = False
         self.direction_droite = False
-        
+
     def __repr__(self):
         '''
         renvoie une chaîne de caractères pour décrire le paladin
@@ -190,6 +191,13 @@ class Personnage():
         '''
         return self.endommage
     
+    def acc_soigne(self):
+        '''
+        renvoie l'attribut soigne
+        : return (bool)
+        '''
+        return self.soigne
+    
     def acc_pv(self):
         '''
         renvoie l'attribut pv
@@ -207,6 +215,13 @@ class Personnage():
         : pas de return
         '''
         self.endommage = not self.endommage
+        
+    def mut_soigne(self):
+        '''
+        modifie l'attribut soigne du personnage
+        : pas de return
+        '''
+        self.soigne = not self.soigne
         
     def mut_pv(self, valeur):
         '''
@@ -313,6 +328,12 @@ class Personnage():
                     if not perso.acc_etat() == 1: #si le monstre n'est pas sous-terre
                         attaques_valides.append(attaque) # si elle est bonne, on l'ajoute
                 ##si c'est un personnage
+                #géant
+                elif perso.acc_personnage() == 'geant':
+                    famille = self.trouve_famille_geant(perso)
+                    for elt in famille : 
+                        attaques_valides.append(elt)
+                #"normal"
                 else:
                     attaques_valides.append(attaque) # si elle est bonne, on l'ajoute
             
@@ -338,7 +359,24 @@ class Personnage():
     #################################################
     ####### Sous_fonctions
     #################################################
-    
+    def trouve_famille_geant(self, perso):
+        '''
+        renvoie la bonne famille des géants
+        : params
+            perso (Personnage)
+        : return (list)
+        '''
+        tab = []
+        dic_coordo = {0 : [(1, 0), (0, 1), (1, 1)],
+                      1 : [(-1, 0), (0, 1), (-1, 1)],
+                      2 : [(0, -1), (1, 0), (1, -1)],
+                      3 : [(0, -1), (-1, 0), (-1, -1)]}
+        
+        for case in dic_coordo[perso.acc_numero_geant()]:
+            tab.append((perso.acc_x() + case[0], perso.acc_y() + case[1]))
+        return tab
+        
+        
     def cases_deplacements(self):
         '''
         renvoie un tableau contenant les coordonnées des cases sur lesquelles le personnage pourrait éventuellement aller
