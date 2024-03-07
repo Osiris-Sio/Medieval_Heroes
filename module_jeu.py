@@ -10,7 +10,7 @@ Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul
 ### Importation Modules :
 ######################################################
 
-import pygame, module_attributs_jeu, module_terrain, module_afficher, module_clavier_souris, module_objets, module_personnage, random, module_sauvegarde, module_musique_et_sons
+import pygame, module_attributs_jeu, module_terrain, module_afficher, module_clavier_souris, module_objets, module_personnage, random, module_sauvegarde, module_musique_et_sons, module_robot
 from graphe import parcourir_graphe, module_lineaire
 
 ######################################################
@@ -37,6 +37,7 @@ class Jeu() :
         self.terrain = module_terrain.Terrain(self.attributs_jeu)
         self.clavier_souris = module_clavier_souris.Clavier_Souris(self, self.attributs_jeu, self.sauvegarde, self.terrain, self.gestionnaire_son)
         self.affichage = module_afficher.Affichage(self.attributs_jeu, self.terrain, self.ecran, self.clavier_souris)
+        self.robot = module_robot.Robot(self, self.attributs_jeu)
         
                                             
     ######################################################
@@ -754,7 +755,7 @@ class Jeu() :
                 self.attributs_jeu.ajouter_personnage(perso)
                 #on ajoute le personnage ressuscité au terrain
                 self.terrain.mut_terrain(perso.acc_x(), perso.acc_y(), perso)
-                self.attributs_jeu.supprimer_positions_tombes(perso.acc_x(), perso.acc_y())
+                self.attributs_jeu.supprimer_positions_tombes((perso.acc_x(), perso.acc_y()))
                 
         ###################################################################################
         #### AJOUTE UNE POTION DE VIE/MORT/CHANGEMENT D'EQUIPE A L'EQUIPE QUI JOUE/ADVERSE
@@ -970,7 +971,7 @@ class Jeu() :
             self.jouer_monstres()
             return True
             
-            return False
+        return False
 
     def coffre_est_clique(self):
         '''
@@ -1222,6 +1223,9 @@ class Jeu() :
                     #Si il n'y a pas de déplacement et/ou d'attaque de personnage en cours :
                     if not self.attributs_jeu.acc_deplacement_en_cours() and not self.attributs_jeu.acc_attaque_en_cours() :
                         self.clavier_souris.entrees_jeu(evenement) #Vérifie s'il y a eu une interaction dans le jeu
+                
+                if self.attributs_jeu.acc_mode_robot() :
+                    self.robot.jouer_robot(self.terrain)
                 
                 ######################################################
                 ### Coffres :

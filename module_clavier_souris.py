@@ -434,7 +434,8 @@ class Clavier_Souris() :
                     
                 if not self.attributs_jeu.acc_menu_options() :
                     self.boutons_jeu() #Vérifie si c'est un bouton du jeu
-                    self.entrees_deroulement_jeu()
+                    if not self.attributs_jeu.acc_mode_robot() or (self.attributs_jeu.acc_mode_robot() and self.attributs_jeu.acc_equipe_en_cours() == "bleu") :
+                        self.entrees_deroulement_jeu()
                     
                 else :
                     self.boutons_menu_options()

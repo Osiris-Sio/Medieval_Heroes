@@ -1071,7 +1071,7 @@ class Affichage():
             case_x = coordonnees[0] * 38 + 250
             case_y = coordonnees[1] * 38
             perso = self.terrain.acc_terrain(coordonnees[0], coordonnees[1])
-            if perso.acc_equipe() == self.attributs_jeu.acc_selection().acc_equipe():
+            if perso.acc_equipe() == self.attributs_jeu.acc_selection().acc_equipe() :
                 image = self.attaques[1] #guérison
             else:
                 image = self.attaques[0] #attaque
