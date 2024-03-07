@@ -890,6 +890,7 @@ class Jeu() :
         ########################################################
         if potion.acc_contenu() == 4:
             perso = self.terrain.acc_terrain(x, y)
+            print(4)
             if not perso.acc_equipe() == self.attributs_jeu.acc_equipe_en_cours():
                 ###géant
                 if perso.acc_personnage() == 'geant':
@@ -899,7 +900,8 @@ class Jeu() :
                 ###personnage "normal"
                 else :
                     perso.mut_equipe() #le personnage change d'équipe
-                    
+                    print(44)
+                print(444)
                 self.changement_equipe_personnage_console(perso)
           
     ######################################################
@@ -1145,7 +1147,7 @@ class Jeu() :
         #Désactive un nouveau placement de monstres :
         self.attributs_jeu.mut_monstres_deja_deplaces(True)
         
-        self.attributs_jeu.mut_mode_robot(False)
+        #self.attributs_jeu.mut_mode_robot(False)
         
         if not par_defaut :
             self.placer() #Place les personnages, monstres et coffres de la partie qui a été chargé.

@@ -10,7 +10,7 @@ Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul
 ### Importation Modules :
 ######################################################
 
-import module_jeu, module_attributs_jeu, module_terrain, module_personnage, random, time
+import module_jeu, module_attributs_jeu, module_terrain, module_personnage, random, time, module_objets
 from graphe import module_graphe_dic, parcourir_graphe
 
 ######################################################
@@ -100,7 +100,9 @@ class Robot():
                     if 0 <= x <= 20 and 0 <= y <= 20 : #si la case est dans le terrain
                         perso = terrain.acc_terrain(x, y) #on regarde le personnage
                         #regarde le contenu de la case
-                        if isinstance(perso, module_personnage.Personnage) and perso.acc_equipe() != "rouge" :
+                        if allie.acc_personnage() != 'poulet' and isinstance(perso, module_personnage.Personnage) and perso.acc_equipe() != "rouge" :
+                            ennemi = perso
+                        elif isinstance(perso, module_objets.Coffre) and not perso.acc_est_ouvert() :
                             ennemi = perso
                     hauteur += 1
                 longueur += 1
@@ -114,19 +116,20 @@ class Robot():
         Regarde pour chacun de ses personnages s'il y un ennemi pas loin.
         '''
         tab_perso_chemin = []
+        random.shuffle(self.attributs_jeu.acc_tab_personnages())
         for personnage in self.attributs_jeu.acc_tab_personnages() :
             if personnage.acc_equipe() == 'rouge' and not (personnage in self.personnage_deplace) :
-                try :
-                    ennemi = self.trouver_ennemi_proche(personnage, terrain)
-                    graphe = self.construire_graphe(personnage, (ennemi.acc_x(), ennemi.acc_y()), terrain)
-                    chemin = parcourir_graphe.depiler_chemin(graphe, (personnage.x, personnage.y), (ennemi.acc_x(), ennemi.acc_y()))
-                    if tab_perso_chemin == [] or len(chemin) < len(tab_perso_chemin[1]):
-                        tab_perso_chemin = [personnage, chemin]
-                        case = self.prochaine_coordonnees(tab_perso_chemin)
-                        if case == None :
-                            tab_perso_chemin = []
-                except :
-                    pass
+                    try :
+                        ennemi = self.trouver_ennemi_proche(personnage, terrain) #Si poulet -> trouver un coffre fermé le plus proche.
+                        graphe = self.construire_graphe(personnage, (ennemi.acc_x(), ennemi.acc_y()), terrain)
+                        chemin = parcourir_graphe.depiler_chemin(graphe, (personnage.x, personnage.y), (ennemi.acc_x(), ennemi.acc_y()))
+                        if tab_perso_chemin == [] or len(chemin) < len(tab_perso_chemin[1]) :
+                            tab_perso_chemin = [personnage, chemin]
+                            case = self.prochaine_coordonnees(tab_perso_chemin)
+                            if case == None :
+                                tab_perso_chemin = []
+                    except :
+                        pass 
                     
         return [tab_perso_chemin[0], case]
     
@@ -161,7 +164,6 @@ class Robot():
         self.jeu.effacer_actions()
         self.attributs_jeu.mut_nombre_action(self.attributs_jeu.acc_nombre_action() + 1) #Augmente le nombre d'action de 1
         self.personnage_deplace.append(tab_perso_case[0])
-        print(self.personnage_deplace)
         
     ######################################################
     ### Méthodes Attaquer Personnages :
@@ -186,18 +188,23 @@ class Robot():
         Le robot regarde s'il y a un ennemi proche de son personnage allie.
         '''
         #tableau cases
-        tab = [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]
+        tab = allie.cases_attaques()
         tab_coordo = self.tuples_en_coordonnees(allie, tab)
         
         ennemi = None
         i = 0
         while i < len(tab_coordo) and ennemi == None : 
             perso = terrain.acc_terrain(tab_coordo[i][0], tab_coordo[i][1])
-            if isinstance(perso, module_personnage.Personnage) and perso.acc_equipe() != 'rouge' :
+            
+            if allie.acc_personnage() == 'sorciere' and isinstance(perso, module_personnage.Personnage) and perso.acc_equipe() == 'rouge' and 0 < perso.acc_pv() <= 4 :
+                ennemi = perso #Pour le soigner (même équipe)
+            
+            elif isinstance(perso, module_personnage.Personnage) and perso.acc_equipe() != 'rouge' :
                 if isinstance(perso, module_personnage.Monstre) and perso.acc_etat() != 1 :
                     ennemi = perso
                 else :
                     ennemi = perso
+            
             i += 1
         return ennemi
     
@@ -213,9 +220,31 @@ class Robot():
                 tab_personnage_rouge.append(perso)
         while i < len(tab_personnage_rouge) and tab_allie_ennemi == [] :
             ennemi = self.attaquer_ennemi_proche(tab_personnage_rouge[i], terrain)
-            if ennemi != None :
+            
+            if ennemi != None and perso.acc_personnage() == 'sorciere' :
+                if ennemi.acc_equipe() == 'rouge' and not self.attributs_jeu.acc_potions_rouges()[2].est_vide():
+                    self.attributs_jeu.mut_potion_rouge_selectionnee(2)
+                elif ennemi.acc_personnage() == 'sorciere' and not self.attributs_jeu.acc_potions_rouges()[4].est_vide() :
+                    self.attributs_jeu.mut_potion_rouge_selectionnee(4)
+                elif ennemi.acc_personnage() == 'monstre' :
+                    self.attributs_jeu.mut_potion_rouge_selectionnee(1)
+                else :
+                    tab = [1, 3, 4]
+                    numero_potion = random.choice(tab)
+                    while self.attributs_jeu.acc_potions_rouges()[numero_potion].est_vide() :   
+                        tab.remove[numero_potion]
+                        numero_potion = random.choice(tab)
+                    self.jeu.attaque_sorciere_console(perso.acc_equipe())
+                    self.attributs_jeu.mut_potion_rouge_selectionnee(numero_potion)
+                    
+                self.jeu.ouverture_potion(ennemi.acc_x(), ennemi.acc_y())
+            
+            elif ennemi != None :
                 tab_allie_ennemi = [tab_personnage_rouge[i], ennemi]
             i += 1
+        
+        
+        
         return tab_allie_ennemi
     
     def attaquer_ennemi(self, terrain) :
@@ -233,12 +262,14 @@ class Robot():
                 for geant in famille :
                     geant.est_attaque(allie.acc_personnage())
                     geant.mut_endommage()
-            else :
+            elif ennemi.acc_personnage() != 'sorciere' :
                 ennemi.est_attaque(allie.acc_personnage()) 
                 ennemi.mut_endommage()
                 
             self.attributs_jeu.mut_attaque_en_cours(True)
             self.attributs_jeu.mut_attaque_temps(0)
+            if allie.acc_personnage() != "sorciere" :
+                self.jeu.attaque_console(allie, ennemi)
             self.jeu.changer_personnage(' ') #Enlève le personnage sélectionner par le joueur (rien sélectionné)
             self.attributs_jeu.mut_nombre_action(self.attributs_jeu.acc_nombre_action() + 1) #Augmente le nombre d'action de 1
             self.jeu.effacer_actions()
@@ -269,9 +300,8 @@ class Robot():
         if self.attributs_jeu.acc_equipe_en_cours() == 'rouge' :
             if self.temps_attente == None and not self.attributs_jeu.acc_deplacement_en_cours() and not self.attributs_jeu.acc_attaque_en_cours() :
                 self.temps_attente = time.time()
-            elif self.temps_attente != None and time.time() - self.temps_attente > 0.5 :
+            elif self.temps_attente != None and time.time() - self.temps_attente > 2 :
                 if not self.attaquer_ennemi(terrain) :
-                    print('ok')
                     self.deplacer_personnage(terrain)
                 self.temps_attente = None
                 
