@@ -159,14 +159,16 @@ class Affichage():
             }
         #Réponses coffre
         self.rep_contenu = {1 : 'Bonus de vie',
-                    2 : 'Meteorite',
-                    3 : 'Changement de personnage',
-                    4 : 'Nuage de fumee',
-                    5 : "Degats d'attaque",
-                    6 : "Geant allié",
-                    7 : "Geant ennemi",
-                    8 : "Necromancie",
-                    }
+                            2 : 'Changement de personnage',
+                            3 : 'Bonus de dégâts',
+                            4 : 'Nécromancie claire',
+                            5 : 'Nécromancie obscure',
+                            6 : "Potions de vie",
+                            7 : "Potion de mort",
+                            8 : "Potions changement d'équipe",
+                            9 : "Potion de mort adverse",
+                            10 : "Bonus de dégâts adverse"
+                                    }
         
         #Personnages :
         self.personnages = {
@@ -264,6 +266,11 @@ class Affichage():
             'mage' : [pygame.image.load("medias/soins/sr.png"), pygame.image.load("medias/soins/sb.png")],
             'monstre' : [pygame.image.load("medias/soins/m.png")]
         }
+            
+        self.personnages_attaque = {
+            'archere': [[pygame.image.load("medias/archere/attaque/tir1.png"), pygame.image.load("medias/archere/attaque/tir2.png"), pygame.image.load("medias/archere/attaque/tir3.png"), pygame.image.load("medias/archere/attaque/tir4.png")],
+                        [pygame.image.load("medias/archere/attaque/tirb1.png"), pygame.image.load("medias/archere/attaque/tirb2.png"), pygame.image.load("medias/archere/attaque/tirb3.png"), pygame.image.load("medias/archere/attaque/tirb4.png")]]
+        }
         self.personnages_deplacement = {
             'paladin': [pygame.image.load("medias/en_deplacement/pr.png"), pygame.image.load("medias/en_deplacement/pb.png")],
             'poulet': [pygame.image.load("medias/en_deplacement/por.png"), pygame.image.load("medias/en_deplacement/pob.png")],
@@ -281,6 +288,14 @@ class Affichage():
         #potions :
         self.potions = [pygame.image.load("medias/potions/retirer.png"), pygame.image.load("medias/potions/soin.png"), pygame.image.load("medias/potions/tuer.png"), pygame.image.load("medias/potions/changer.png"),
                         pygame.image.load("medias/potions/soin_vide.png"), pygame.image.load("medias/potions/tuer_vide.png"), pygame.image.load("medias/potions/changer_vide.png")]
+        #neuf images par bulles
+        self.bulles = {
+            'bleu' : [pygame.image.load("medias/bulles/bleu/0.png"), pygame.image.load("medias/bulles/bleu/1.png"), pygame.image.load("medias/bulles/bleu/2.png"), pygame.image.load("medias/bulles/bleu/3.png"), pygame.image.load("medias/bulles/bleu/4.png"), pygame.image.load("medias/bulles/bleu/5.png"), pygame.image.load("medias/bulles/bleu/6.png"), pygame.image.load("medias/bulles/bleu/7.png"), pygame.image.load("medias/bulles/bleu/8.png")],
+            'rouge' : [pygame.image.load("medias/bulles/rouge/0.png"), pygame.image.load("medias/bulles/rouge/1.png"), pygame.image.load("medias/bulles/rouge/2.png"), pygame.image.load("medias/bulles/rouge/3.png"), pygame.image.load("medias/bulles/rouge/4.png"), pygame.image.load("medias/bulles/rouge/5.png"), pygame.image.load("medias/bulles/rouge/6.png"), pygame.image.load("medias/bulles/rouge/7.png"), pygame.image.load("medias/bulles/rouge/8.png")],
+            'jaune' : [pygame.image.load("medias/bulles/jaune/0.png"), pygame.image.load("medias/bulles/jaune/1.png"), pygame.image.load("medias/bulles/jaune/2.png"), pygame.image.load("medias/bulles/jaune/3.png"), pygame.image.load("medias/bulles/jaune/4.png"), pygame.image.load("medias/bulles/jaune/5.png"), pygame.image.load("medias/bulles/jaune/6.png"), pygame.image.load("medias/bulles/jaune/7.png"), pygame.image.load("medias/bulles/jaune/8.png")],
+            'vert' : [pygame.image.load("medias/bulles/vert/0.png"), pygame.image.load("medias/bulles/vert/1.png"), pygame.image.load("medias/bulles/vert/2.png"), pygame.image.load("medias/bulles/vert/3.png"), pygame.image.load("medias/bulles/vert/4.png"), pygame.image.load("medias/bulles/vert/5.png"), pygame.image.load("medias/bulles/vert/6.png"), pygame.image.load("medias/bulles/vert/7.png"), pygame.image.load("medias/bulles/vert/8.png")]
+            }
+        
         #Boutons :
         self.boutons = {
             'jouer' : [pygame.image.load("medias/cadres/cadre_jouer0.png"), 
@@ -616,14 +631,16 @@ class Affichage():
                 self.ecran.blit(self.cadre, (6, 10))
             
             
-                ######### Informations concernant le para
+                ######### Informations concernant le personnage
+                ##type
                 police = pygame.font.Font("medias/pixelec.ttf", 17)
                 texte = police.render("Type : " , 1, (152, 82, 51))
                 self.ecran.blit(texte, (10, 150))
                 
-                texte = police.render(selection.personnage , 1, (152, 82, 51))
+                texte = police.render(selection.acc_personnage() , 1, (152, 82, 51))
                 self.ecran.blit(texte, (10, 175))
                 
+                ##pv
                 texte2 = police.render("Points de vie : ", 1, (152, 82, 51))
                 self.ecran.blit(texte2, (10, 200))
                 
@@ -648,36 +665,40 @@ class Affichage():
                         l2 = str(self.attributs_jeu.acc_potions_rouges()[3].acc_longueur())
                         l3 = str(self.attributs_jeu.acc_potions_rouges()[4].acc_longueur())
                         potion_s = self.attributs_jeu.acc_potion_rouge_selectionnee()
-                    ##en haut à gauche
-                    self.ecran.blit(self.potions[0], (47, 290)) 
+                    
+                    #potion 1 infinie visible par tous
                     infini = pygame.image.load("medias/potions/infini.png")
                     self.ecran.blit(infini,(70, 350))
-                    ##en haut à droite
-                    if l == '0' :
-                        self.ecran.blit(self.potions[4], (156, 290)) #grisatre pour montrer que c'est vide
-                    else :
-                        self.ecran.blit(self.potions[1], (156, 290))
-                    self.ecran.blit(police.render(l , 1, (0, 0, 0)), (195, 372))
-                    ##en bas à gauche
-                    if l2 == '0':
-                        self.ecran.blit(self.potions[5], (40, 404)) #grisatre pour montrer que c'est vide
-                    else:
-                        self.ecran.blit(self.potions[2], (40, 404))
-                    self.ecran.blit(police.render(l2 , 1, (0, 0, 0)), (90, 495))
-                    ##en bas à droite
-                    if l3 == '0':
-                        self.ecran.blit(self.potions[6], (154, 404)) #grisatre pour montrer que c'est vide
-                    else :
-                        self.ecran.blit(self.potions[3], (154, 404))
-                    self.ecran.blit(police.render(l3 , 1, (0, 0, 0)), (200, 495))
                     
-                    ###potion séléctionnée
-                    dic_position_rec = {1 : (33, 286, 88),
+                    ###SORCIERE DE L'EQUIPE QUI JOUE
+                    if selection.acc_equipe() == self.attributs_jeu.acc_equipe_en_cours() : #le joueur ne peut regarder que ses personnages
+                        ##en haut à gauche
+                        self.ecran.blit(self.potions[0], (47, 290))
+                        ##en haut à droite
+                        if l == '0' :
+                            self.ecran.blit(self.potions[4], (156, 290)) #grisatre pour montrer que c'est vide
+                        else :
+                            self.ecran.blit(self.potions[1], (156, 290))
+                        self.ecran.blit(police.render(l , 1, (0, 0, 0)), (195, 372))
+                        ##en bas à gauche
+                        if l2 == '0':
+                            self.ecran.blit(self.potions[5], (40, 404)) #grisatre pour montrer que c'est vide
+                        else:
+                            self.ecran.blit(self.potions[2], (40, 404))
+                        self.ecran.blit(police.render(l2 , 1, (0, 0, 0)), (90, 495))
+                        ##en bas à droite
+                        if l3 == '0':
+                            self.ecran.blit(self.potions[6], (154, 404)) #grisatre pour montrer que c'est vide
+                        else :
+                            self.ecran.blit(self.potions[3], (154, 404))
+                        self.ecran.blit(police.render(l3 , 1, (0, 0, 0)), (200, 495))
+                        
+                        ###POTION SELECTIONNEE
+                        dic_position_rec = {1 : (33, 286, 88),
                                         2 : (133, 286, 87),
                                         3 : (22, 400, 95),
                                         4 : (134, 400, 96)
                                         }
-                    if selection.acc_equipe() == self.attributs_jeu.acc_equipe_en_cours() : #le joueur ne peut regarder que ses personnages
                         rectangle = pygame.Rect(dic_position_rec[potion_s][0], dic_position_rec[potion_s][1], dic_position_rec[potion_s][2], dic_position_rec[potion_s][2])
                         if 0 <= self.attributs_jeu.acc_compteur() <= 48:
                             couleur = (0, 0, 0) #noir
@@ -686,10 +707,10 @@ class Affichage():
                         pygame.draw.rect(self.ecran, couleur, rectangle, 2) #(surface, couleur, figure (x, y, longueur, hauteur), si contour → épaisseur)
                         ####INFOBULLE
                         dic_phrase = {1 : 'inflige des dégâts',
-                                            2 : 'soigne',
-                                            3 : 'tue instantanément',
-                                            4 : "fais changer d'équipe"
-                                            }
+                                    2 : 'soigne',
+                                    3 : 'tue instantanément',
+                                    4 : "fais changer d'équipe"
+                                    }
                         pos_souris = self.clavier_souris.acc_position_curseur()
                         
                         if rectangle.collidepoint(pos_souris): #si la souris est sur le rectangle
@@ -699,16 +720,30 @@ class Affichage():
                             infobulle_rect.topleft = (pos_souris[0] - 4, pos_souris[1] - 18) #un peu en dessous du curseur
                             pygame.draw.rect(self.ecran, (152, 82, 51), infobulle_rect)
                             self.ecran.blit(infobulle_texte, infobulle_rect)
-                    
+                    ###SORCIERE ADVERSE
+                    else:
+                        point_interrogation = pygame.image.load("medias/potions/point_interrogation.png")
+                        self.ecran.blit(point_interrogation,(70, 350))
+                        self.ecran.blit(point_interrogation,(195, 372))
+                        self.ecran.blit(point_interrogation,(90, 495))
+                        self.ecran.blit(point_interrogation,(210, 495))
+                        ##en haut à gauche
+                        self.ecran.blit(self.potions[0], (47, 290))
+                        ##en haut à droite
+                        self.ecran.blit(self.potions[1], (156, 290))
+                        ##en bas à gauche
+                        self.ecran.blit(self.potions[2], (40, 404))
+                        ##en bas à droite
+                        self.ecran.blit(self.potions[3], (154, 404))
                     
                 else :
                     #si c'est un personnage lambda, on lui affiche ses dégats
                     texte3 = police.render("Attaque : " , 1, (152, 82, 51))
                     self.ecran.blit(texte3, (10, 250))
                     if selection.acc_equipe() == 'bleu' :
-                        texte3 = police.render(str(module_personnage.DIC_ATTAQUES_BLEU[selection.personnage]) , 1, (152, 82, 51))
+                        texte3 = police.render(str(module_personnage.DIC_ATTAQUES_BLEU[selection.acc_personnage()]) , 1, (152, 82, 51))
                     else:
-                        texte3 = police.render(str(module_personnage.DIC_ATTAQUES_ROUGE[selection.personnage]) , 1, (152, 82, 51))
+                        texte3 = police.render(str(module_personnage.DIC_ATTAQUES_ROUGE[selection.acc_personnage()]) , 1, (152, 82, 51))
                     self.ecran.blit(texte3, (10, 275))
                 
     def afficher_equipe_en_cours(self):
@@ -723,11 +758,11 @@ class Affichage():
         
         #Si l'équipe en cours est l'équipe bleu, affiche la "phrase" en bleu :
         if self.attributs_jeu.acc_equipe_en_cours() == 'bleu':
-            texte = police.render('Bleu (' + str(3 - self.attributs_jeu.acc_nombre_action()) + ')' , 1, (42, 51, 176))
+            texte = police.render('Bleu n° ' + str(self.attributs_jeu.acc_nombre_action()) + ' / 3' , 1, (42, 51, 176))
         
         #Sinon, l'équipe en cours est l'équipe rouge, affiche la "phrase" en rouge :
         else :
-            texte = police.render('Rouge (' + str(3 - self.attributs_jeu.acc_nombre_action()) + ')' , 1, (237, 28, 36))
+            texte = police.render('Rouge n° ' + str(self.attributs_jeu.acc_nombre_action()) + ' / 3' , 1, (237, 28, 36))
         
         self.ecran.blit(texte, (10, 620))
         
@@ -856,6 +891,7 @@ class Affichage():
             equipe = personnage.acc_equipe()
             endommage = personnage.acc_endommage()
             soigne = personnage.acc_soigne()
+            attaque = personnage.acc_attaque()
             
             #Contour de couleur (si l'option est activé, le personnage est de l'équipe en cours et que le personnage n'est pas en déplacement) :   
             if self.attributs_jeu.acc_sols_de_couleur() and equipe == self.attributs_jeu.acc_equipe_en_cours() and self.attributs_jeu.acc_personnage_en_deplacement() != personnage :
@@ -923,6 +959,27 @@ class Affichage():
                     #Sinon, le personnage est "classique"
                     else :
                         self.ecran.blit(soin[1], (x , y))
+                        
+            elif attaque and nom == 'archere': #si le personnage est en train d'attaque un autre personnage (seules les animations d'attaque de l'archere son disponibles)
+                attaques = self.personnages_attaque[nom] #Appel les différentes images du personnage
+                nb = self.attributs_jeu.acc_attaque_temps()
+                if nb <= 1 or nb >=17 :
+                    nb = 0
+                elif nb <= 3 or nb >= 15:
+                    nb = 1
+                elif nb <= 5 or nb >= 13:
+                    nb = 2
+                else :
+                    nb = 3
+                #Si le personnage est de l'équipe rouge :
+                if equipe == 'rouge' :
+                    
+                    self.ecran.blit(attaques[0][nb], (x , y))
+                
+                #Sinon, le personnage est de l'équipe bleu :
+                else :
+                    
+                    self.ecran.blit(attaques[1][nb], (x , y))
                 
             #Animations (sinon si le personnage n'est pas en déplacement):
             elif self.attributs_jeu.acc_personnage_en_deplacement() != personnage :
@@ -1095,6 +1152,32 @@ class Affichage():
         for tombe in self.attributs_jeu.acc_positions_tombes():
             self.ecran.blit(self.image_tombe, (tombe[0], tombe[1]))
             
+    def afficher_cases_potions(self):
+        '''
+        Affiche les cases où la potion a éclaté avec un effet de bulles
+        '''
+        equipe = self.attributs_jeu.acc_equipe_en_cours()
+        if equipe == 'bleu':
+            potion = self.attributs_jeu.acc_potion_bleue_selectionnee()
+        else:
+            potion = self.attributs_jeu.acc_potion_rouge_selectionnee()
+        attaque1 = self.attributs_jeu.acc_attaque_temps()
+        ##réglage de la rapidité de l'animation
+        attaque = attaque1 // 3
+        if attaque1 > 23:
+            attaque -= 8
+            
+        dic_couleurs = {1 : 'bleu',
+                        2 : 'vert',
+                        3 : 'rouge',
+                        4 : 'jaune'
+                        }
+        bulles = self.bulles
+        #pour chaque case atteinte dans l'attribut cases_potions
+        for case in self.attributs_jeu.acc_cases_potions():
+            new_case = (case[0] * 38 + 250, case[1] *38)
+            self.ecran.blit(bulles[dic_couleurs[potion]][attaque], new_case)
+
     def afficher_fin_jeu(self):
         '''
         affiche le menu de la fin du jeu
@@ -1191,6 +1274,7 @@ class Affichage():
         self.afficher_terrain()
         self.afficher_tombes()
         self.afficher_personnages()
+        self.afficher_cases_potions()
         
         #Si l'option deplacement/attaques est activé, alors on affiche l'aide de déplacements/attaques :
         if self.attributs_jeu.acc_deplacements_attaques() :

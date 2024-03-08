@@ -245,6 +245,13 @@ class Attributs_Jeu() :
         '''
         return self.continuer
     
+    def acc_cases_potions(self):
+        '''
+        renvoie l'attribut cases_potions
+        : return (list)
+        '''
+        return self.cases_potions
+    
     def acc_menu(self):
         '''
         Renvoie l'attribut menu
@@ -524,7 +531,17 @@ class Attributs_Jeu() :
     ######################################################
     ### Mutateurs :
     ######################################################
-    
+    def mut_cases_potions(self, tab):
+        '''
+        modifie l'attribut cases_potions
+        : param tab (list)
+        : pas de return
+        '''
+        #assertion
+        assert isinstance(tab, list), "les nouvelles cases des potions doivent être dans un tableau !"
+        #code
+        self.cases_potions = tab
+             
     def mut_x_pointeur(self, x):
         '''
         modifie le x de l'attribut x_pointeur
@@ -1043,16 +1060,6 @@ class Attributs_Jeu() :
         assert isinstance(tab, list), 'Le paramètre doit être un tableau (list) !'
         #Code :
         self.monstres_a_deplacer = tab
-        
-    def mut_positions_tombes(self, valeur) :
-        '''
-        Modifie l'attribut positions_tombes
-        : param valeur (tuple)
-        '''
-        #Précondition :
-        assert isinstance(valeur, tuple), 'Le paramètre doit être un tuple !'
-        #Code :
-        self.positions_tombes = valeur
        
     def mut_attaque_en_cours(self, valeur) :
         '''
@@ -1073,16 +1080,6 @@ class Attributs_Jeu() :
         assert isinstance(valeur, int), 'Le paramètre doit être un entier (int) !'
         #Code :
         self.attaque_temps = valeur
-       
-    def mut_positions_tombes(self, coordonnees) :
-        '''
-        Modifie l'attribut positions_tombes (ajouté ! (append))
-        : param coordonnees (tuple)
-        '''
-        #Précondition :
-        assert isinstance(coordonnees, tuple), 'Le paramètre doit être un tableau (list) !'
-        #Code :
-        self.positions_tombes.append(coordonnees)
                 
     def mut_partie_terminee(self, valeur) :
         '''

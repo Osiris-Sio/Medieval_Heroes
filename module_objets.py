@@ -90,6 +90,13 @@ class Coffre():
     ### Mutateurs :
     ######################################################
     
+    def mut_contenu(self):
+        '''
+        modifie le contenu du coffre en modifiant l'attribut contenu
+        : pas de return
+        '''
+        self.contenu = self.definir_contenu()
+        
     def mut_avancement_ouverture(self, valeur) :
         '''
         Modifie l'attribut avancement_ouverture
@@ -117,7 +124,6 @@ class Coffre():
             9 : 'ajoute une potion de mort à la réserve de la sorcière ennemie' (6%)
             10 : "augmente de 1 les dégâts d'attaque de tous les personnages de l'équipe adverse" (6%)
         '''
-        '''
         nombre = random.randint(0, 100)
         if 0 <= nombre <= 13 : #bonus de vie pour le personnage
             reponse = 1
@@ -129,18 +135,17 @@ class Coffre():
             reponse = 4
         elif 46 <= nombre <= 53 : #ressuscite le dernier personnage mort de l'équipe adverse
             reponse = 5
-        elif 54 <= nombre <= 68 : #ajoute une potion de vie à la réserve de la sorcière
+        elif 54 <= nombre <= 68 : #ajoute trois potions de vie à la réserve de la sorcière
             reponse = 6
         elif 69 <= nombre <= 76 : #ajoute une potion de mort à la réserve de la sorcière 
             reponse = 7
-        elif 77 <= nombre <= 87 : #ajoute une potion de changement d'équipe à la réserve de la sorcière
+        elif 77 <= nombre <= 87 : #ajoute deux potions de changement d'équipe à la réserve de la sorcière
             reponse = 8
         elif 88 <= nombre <= 93 : #ajoute une potion de mort à la réserve de la sorcière ennemie
             reponse = 9
-        else : #augmente de 1 les dégâts d'attaque de tous les personnages de l'équipe adverse
+        else : #augmente de 2 les dégâts d'attaque de tous les personnages de l'équipe adverse
             reponse = 10
-        '''
-        return 4
+        return 3
     
     def alentour(self):
         '''

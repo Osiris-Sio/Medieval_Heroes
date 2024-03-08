@@ -1,6 +1,22 @@
+'''
+-> Medieval Heroes
+
+Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul 
+''' 
+
+######################################################
+### Importation Modules :
+######################################################
 import pygame
 
+######################################################
+### GestionnaireSon :
+######################################################
+
 class GestionnaireSon:
+    '''
+    une classe pour la gestion du son du jeu
+    '''
     def __init__(self, volume=0.5):
         '''
         initialise le gestionnaire de sons

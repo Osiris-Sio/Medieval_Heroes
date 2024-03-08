@@ -104,6 +104,7 @@ class Personnage():
         self.y = y
         self.pv = pv
         self.endommage = False
+        self.attaque = False #par défaut, le personnage n'attaque personne
         self.soigne = False
         self.direction_droite = False
 
@@ -137,7 +138,7 @@ class Personnage():
     ######################################################
     ### Accesseurs
     ######################################################
-
+    
     def acc_personnage(self):
         '''
         renvoie l'attribut personnage
@@ -151,6 +152,13 @@ class Personnage():
         : return (str)
         '''
         return self.equipe
+    
+    def acc_attaque(self):
+        '''
+        renvoie l'attribut attaque
+        : return (bool)
+        '''
+        return self.attaque
         
     def acc_x(self):
         '''
@@ -215,6 +223,13 @@ class Personnage():
         : pas de return
         '''
         self.endommage = not self.endommage
+        
+    def mut_attaque(self):
+        '''
+        modifie l'attribut attaque du personnage
+        : pas de return
+        '''
+        self.attaque = not self.attaque
         
     def mut_soigne(self):
         '''
@@ -331,8 +346,9 @@ class Personnage():
                 #géant
                 elif perso.acc_personnage() == 'geant':
                     famille = self.trouve_famille_geant(perso)
-                    for elt in famille : 
-                        attaques_valides.append(elt)
+                    for elt in famille :
+                        if not elt in attaques_valides :
+                            attaques_valides.append(elt)
                 #"normal"
                 else:
                     attaques_valides.append(attaque) # si elle est bonne, on l'ajoute
@@ -375,8 +391,7 @@ class Personnage():
         for case in dic_coordo[perso.acc_numero_geant()]:
             tab.append((perso.acc_x() + case[0], perso.acc_y() + case[1]))
         return tab
-        
-        
+    
     def cases_deplacements(self):
         '''
         renvoie un tableau contenant les coordonnées des cases sur lesquelles le personnage pourrait éventuellement aller
@@ -429,7 +444,7 @@ class Personnage():
                          'barbare' : [(1, 0), (0, 1), (-1, 0), (0, -1)],
                          'cracheur de feu' : [(-1, 0), (1, 0), (0, -1), (0, 1), (-2, 0), (2, 0), (0, -2), (0, 2)],
                          'archere' : [(-1, -4), (0, -4), (1, -4), (-1, 4), (0, 4), (1, 4), (-4, -1), (-4, 0), (-4, 1), (4, -1), (4, 0), (4, 1), (-3, -3), (-3, 3), (3, -3), (3, 3)],
-                         'sorciere' : [(-2, -2), (-1, -2), (-2, -1), (1, -2), (2, -2), (2, -1), (-2, 1), (2, 2), (1, 2), (-1, 2), (-2, 2), (-2, 1)],
+                         'sorciere' : [(-2, -2), (-1, -2), (-2, -1), (1, -2), (2, -2), (2, -1), (-2, 1), (2, 2), (1, 2), (-1, 2), (-2, 2), (2, 1)],
                          'mage' : [(-1, -3), (0, -3), (1, -3), (-1, -2), (1, -2), (-1, 3), (0, 3), (1, 3), (-1, 2), (1, 2), (-3, -1), (-3, 0), (-3, 1), (-2, -1), (-2, 1), (3, -1), (3, 0), (3, 1), (2, -1), (2, 1)]
                           }
         
@@ -490,18 +505,18 @@ class Personnage():
                 tab_cases.append(nouveau_tuple)
         return tab_cases
     
-    def construire_graphe(self, coordo, deplacements):
+    def construire_graphe(self, coordo, terrain):
         '''
         renvoie le graphe construit à partir des déplacements possibles et des coordonnées du personnage
         : params
             coordo (tuple)
-            deplacements (list), tableau des déplacements possibles
+            terrain (list), tableau des déplacements possibles
         : return (dict)
         '''
         graphe = module_graphe_dic.Graphe_non_oriente_dic()
-        for coordo_centre in [coordo] + deplacements :
+        for coordo_centre in [coordo] + terrain :
             for coordo_voisin in self.coordonnees_autour(coordo_centre): #on regarde les voisins de la case
-                if coordo_voisin in [coordo] + deplacements : #si le voisin est atteignable par le personnage
+                if coordo_voisin in [coordo] + terrain : #si le voisin est atteignable par le personnage
                     graphe.ajouter_arete(coordo_centre, coordo_voisin) #on ajoute une arête entre les deux cases
         return graphe
     
@@ -830,11 +845,11 @@ class Monstre(Personnage):
         
         return pro_victime
          
-    def construire_graphe(self, victime, terrain):
+    def construire_graphe(self, coordo, terrain):
         '''
         renvoie le graphe construit à partir de toutes les cases du terrain
         : params
-            victime (tuple)
+            coordo (tuple), coordonnées de la victime
             terrain (Terrain)
         : return (Graphe)
         '''
@@ -842,7 +857,7 @@ class Monstre(Personnage):
         for x in range(21): #les x
             for y in range(21): #les y
                 case = (x, y) #la case
-                if terrain.est_possible(x, y) or case == victime or (self.x, self.y) == case: #si la case est vide ou si c'est la victime ou si c'est le monstre
+                if terrain.est_possible(x, y) or case == coordo or (self.x, self.y) == case: #si la case est vide ou si c'est la victime ou si c'est le monstre
                     cases_autour = self.coordonnees_autour(case)
                     for case_voisine in cases_autour :
                         if terrain.est_possible(case_voisine[0], case_voisine[1]): #si la cases est vide

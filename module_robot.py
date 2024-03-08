@@ -119,17 +119,17 @@ class Robot():
         random.shuffle(self.attributs_jeu.acc_tab_personnages())
         for personnage in self.attributs_jeu.acc_tab_personnages() :
             if personnage.acc_equipe() == 'rouge' and not (personnage in self.personnage_deplace) :
-                    try :
-                        ennemi = self.trouver_ennemi_proche(personnage, terrain) #Si poulet -> trouver un coffre fermé le plus proche.
-                        graphe = self.construire_graphe(personnage, (ennemi.acc_x(), ennemi.acc_y()), terrain)
-                        chemin = parcourir_graphe.depiler_chemin(graphe, (personnage.x, personnage.y), (ennemi.acc_x(), ennemi.acc_y()))
-                        if tab_perso_chemin == [] or len(chemin) < len(tab_perso_chemin[1]) :
-                            tab_perso_chemin = [personnage, chemin]
-                            case = self.prochaine_coordonnees(tab_perso_chemin)
-                            if case == None :
-                                tab_perso_chemin = []
-                    except :
-                        pass 
+                try :
+                    ennemi = self.trouver_ennemi_proche(personnage, terrain) #Si poulet -> trouver un coffre fermé le plus proche.
+                    graphe = self.construire_graphe(personnage, (ennemi.acc_x(), ennemi.acc_y()), terrain)
+                    chemin = parcourir_graphe.depiler_chemin(graphe, (personnage.x, personnage.y), (ennemi.acc_x(), ennemi.acc_y()))
+                    if tab_perso_chemin == [] or len(chemin) < len(tab_perso_chemin[1]) :
+                        tab_perso_chemin = [personnage, chemin]
+                        case = self.prochaine_coordonnees(tab_perso_chemin)
+                        if case == None :
+                            tab_perso_chemin = []
+                except :
+                    pass 
                     
         return [tab_perso_chemin[0], case]
     
