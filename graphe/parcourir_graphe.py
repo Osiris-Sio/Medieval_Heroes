@@ -1,20 +1,16 @@
 # -*- coding: utf-8 -*-
+
 '''
-    Module graphe avec un dictionnaire
-    : Auteur
-        LAPÔTRE Marylou
+-> Medieval Heroes : Module pour la classe Jeu
+
+Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul 
 '''
+######################################################
+### Importation Modules :
+######################################################
 
 from graphe import module_graphe_dic
 from graphe import module_lineaire
-
-G = { 0 : [3, 4, 2],
-      1 : [2],
-      2 : [1, 0],
-      3 : [0, 4],
-      4 : [3, 0],
-      5 : []
-     }
 
 def construire_graphe(dic) :
     '''
@@ -27,8 +23,6 @@ def construire_graphe(dic) :
         for voisin in dic[sommet] :
             nouveau_graphe.ajouter_arete(sommet, voisin)
     return nouveau_graphe
-
-mon_graphe = construire_graphe(G)
 
 def parcourir_largeur(graphe, sommet):
     '''
@@ -53,7 +47,7 @@ def rechercher_parent(graphe, sommet, destination):
     '''
     renvoie un dictionnaire permettant de trouver le chemin le plus court entre le sommet et la destination dans le graphe
     : params
-        graphe (Graphe...)
+        graphe (Graphe)
         sommet (?) le sommet de départ 
         destination (?) le sommet à atteindre
     : return (dict)
@@ -66,8 +60,7 @@ def rechercher_parent(graphe, sommet, destination):
         for voisin in graphe.voisins(sommet):
             if not voisin in parent : #si il n'a pas encore été visité
                 f.enfiler(voisin)
-                parent[voisin] = sommet
-                
+                parent[voisin] = sommet          
     return parent
 
 def construire_pile(parent, destination):
@@ -83,8 +76,7 @@ def construire_pile(parent, destination):
     while not parent[destination] == None:
         destination = parent[destination]
         p.empiler(destination)
-    return p
-    
+    return p  
     
 def depiler_chemin(graphe, sommet, destination):
     '''
@@ -102,5 +94,3 @@ def depiler_chemin(graphe, sommet, destination):
         elt = pile_sommets.depiler()
         chemin.append(elt)
     return chemin
-    
-    

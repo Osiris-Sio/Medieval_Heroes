@@ -10,8 +10,7 @@ Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul
 ### Importation Modules :
 ######################################################
 
-import module_jeu, module_attributs_jeu, module_terrain, module_personnage, random, time, module_objets
-from graphe import module_graphe_dic, parcourir_graphe
+import module_jeu, module_attributs_jeu, module_terrain, module_personnage, random, time
 
 ######################################################
 ### Classe Robot :
@@ -19,15 +18,14 @@ from graphe import module_graphe_dic, parcourir_graphe
 
 class Robot():
     '''
-    Une classe pour le robot.
+    Une classe pour le robot
     '''
     def __init__(self, jeu, attributs_jeu):
         '''
-        initialise le robot.
+        Initialise le robot
         : params
             jeu (module_jeu.Jeu)
             attributs_jeu (module_attributs_jeu.Attributs_Jeu)
-            terrain (module_terrain.Terrain)
         '''
         #assertions :
         assert isinstance(jeu, module_jeu.Jeu), "jeu doit venir de la classe Jeu (module_jeu) !"
@@ -47,7 +45,8 @@ class Robot():
     
     def acc_tab_personnages_rouges(self) :
         '''
-        
+        renvoie le tableau avec tous les personnages rouges dans le désordre
+        : return (list)
         '''
         tab_personnages_rouges = []
         for perso in self.attributs_jeu.acc_tab_personnages() :
@@ -62,21 +61,28 @@ class Robot():
     
     def choisir_personnage_deplacement(self, tab_personnages_rouges, terrain) :
         '''
-        Regarde pour chacun de ses personnages s'il y un ennemi pas loin.
+        Regarde pour chacun de ses personnages s'il y un ennemi pas loin
+        : params
+            tab_personnages_rouges (list)
+            terrain (module_terrain.Terrain)
+        : return (list)
         '''
+        #Assertions
+        assert isinstance(tab_personnages_rouges, list), "le tableau des personnages rouges doit être un tableau"
+        assert isinstance(terrain, module_terrain.Terrain), "le terrain doit être de la classe Terrain"
+        #Code
         tab_perso_case = []
         
-        i = 0
         for personnage in tab_personnages_rouges :
         
-            self.jeu.changer_personnage(personnage)
-            ennemi_proche = self.attaquer_ennemi_proche(personnage, terrain, True)
+            self.jeu.changer_personnage(personnage) #on essaie le personnage
+            ennemi_proche = self.attaquer_ennemi_proche(personnage, terrain, True) #on regarde si il y a un ennemi à proximité
             
-            if ennemi_proche != None :
-                case = random.choice(self.attributs_jeu.acc_deplacements())
+            if ennemi_proche != None : #si il y a un ennemi à attaquer
+                case = random.choice(self.attributs_jeu.acc_deplacements()) #on se déplace au hasard
                 tab_perso_case = [personnage, case]
                     
-        if tab_perso_case == [] :
+        if tab_perso_case == [] : #si aucun ennemu proche
             
             i_personnage = 0
             while i_personnage < len(tab_personnages_rouges) and tab_perso_case == [] :
@@ -86,13 +92,12 @@ class Robot():
                 i_case = 0
                 while i_case < len(terrain.attributs_jeu.acc_deplacements()) and tab_perso_case == [] :
                     
-                    if personnage.personnage == 'cavalier' :   
-                        perso_annexe = module_personnage.Cavalier(personnage.acc_equipe(), self.attributs_jeu.acc_deplacements_cavalier()[i_case][0], self.attributs_jeu.acc_deplacements_cavalier()[i_case][1], personnage.acc_pv())
-                        
-                        
-                        
-                        
-                    perso_annexe = module_personnage.Personnage(personnage.acc_personnage(), personnage.acc_equipe(), self.attributs_jeu.acc_deplacements()[i_case][0], self.attributs_jeu.acc_deplacements()[i_case][1], personnage.acc_pv())
+                    if personnage.acc_personnage() == 'cavalier' :   
+                        perso_annexe = module_personnage.Cavalier(personnage.acc_equipe(), self.attributs_jeu.acc_deplacements_cavalier()[i_case][0], self.attributs_jeu.acc_deplacements_cavalier()[i_case][1])
+                    elif personnage.acc_personnage() == 'geant':
+                        perso_annexe = module_personnage.Geant(personnage.acc_equipe(), self.attributs_jeu.acc_deplacements()[i_case][0], self.attributs_jeu.acc_deplacements()[i_case][1], personnage.acc_numero_geant())
+                    else:
+                        perso_annexe = module_personnage.Personnage(personnage.acc_personnage(), personnage.acc_equipe(), self.attributs_jeu.acc_deplacements()[i_case][0], self.attributs_jeu.acc_deplacements()[i_case][1])
                     
                     
                     ennemi_a_attaquer = self.attaquer_ennemi_proche(perso_annexe, terrain)
@@ -109,6 +114,10 @@ class Robot():
         if tab_perso_case == [] :
             personnage = random.choice(tab_personnages_rouges)
             self.jeu.changer_personnage(personnage)
+            ##le personnage doit pouvoir se déplacer
+            while self.attributs_jeu.acc_deplacements() == [] : 
+                personnage = random.choice(tab_personnages_rouges)
+                self.jeu.changer_personnage(personnage)
             
             if personnage.personnage == 'cavalier' :
                 case = random.choice(self.attributs_jeu.acc_deplacements_cavalier())
@@ -131,7 +140,15 @@ class Robot():
     def deplacer_personnage(self, tab_personnages_rouges, terrain) :
         '''
         Le robot choisit le meilleur personnage à deplacer et le déplace
+        : params
+            tab_personnages_rouges (list)
+            terrain (module_terrain.Terrain)
+        : pas de return
         '''
+        #Assertions
+        assert isinstance(tab_personnages_rouges, list), "le tableau des personnages rouges doit être un tableau"
+        assert isinstance(terrain, module_terrain.Terrain), "le terrain doit être de la classe Terrain"
+        #Code
         tab_perso_case = self.choisir_personnage_deplacement(tab_personnages_rouges, terrain)
         
         if self.attributs_jeu.acc_selection().acc_personnage() == 'geant':
@@ -147,35 +164,31 @@ class Robot():
     ######################################################
     ### Méthodes Attaquer Personnages :
     ######################################################
-    
-    def tuples_en_coordonnees(self, allie, cases):
-        '''
-        change les tuples composés de -1, 1 et de 0 avec des coordonnées de case
-        : return (list of tuples), le tableau avec les coordonnées des cases
-        '''
-        tab_cases = []
-        for tuples in cases:
-            x = allie.x + tuples[0]
-            y =  allie.y + tuples[1]
-            if 0 <= x <= 20 and  0 <= y <= 20 : #dans la grille
-                nouveau_tuple = (x, y)
-                tab_cases.append(nouveau_tuple)
-        return tab_cases
         
     def attaquer_ennemi_proche(self, allie, terrain, une_case_proche = False) :
         '''
-        Le robot regarde s'il y a un ennemi proche de son personnage allie (dans les cases d'attaques possibles).
+        Le robot regarde s'il y a un ennemi proche de son personnage allie (dans les cases d'attaques possibles)
+        : params
+            allie (module_personnage.Personnage)
+            terrain (module_terrain.Terrani)
+            une_case_proche (bool), par défaut vaut False
+        : return (module_personnage.Personnage)
         '''
+        #Assertions
+        assert isinstance(allie, module_personnage.Personnage), "l'allié doit être de la classe Personnage"
+        assert isinstance(terrain, module_terrain.Terrain), "le terrain doit être de la classe Terrain"
+        assert isinstance(une_case_proche, bool), "la case proche doit être soit True soit False"
+        #Code
         #tableau cases
         if not une_case_proche :
-            if allie.personnage == 'geant' :
+            if allie.acc_personnage() == 'geant' :
                 tab = [(0, -1), (-1, 0), (-1, 1), (1, -1), (0, 2), (2, 0), (2, 1), (1, 2), (-1, -1), (-1, 2), (2, -1), (2, 2)]
-                tab = self.tuples_en_coordonnees(allie, tab)
+                tab = module_terrain.Terrain.tuples_en_coordonnees((allie.acc_x(), allie.acc_y()), tab, allie.acc_numero_geant())
             else :
                 tab = allie.cases_valides_attaques(terrain)
         else :
             tab = [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]
-            tab = self.tuples_en_coordonnees(allie, tab)
+            tab = module_terrain.Terrain.tuples_en_coordonnees((allie.acc_x(), allie.acc_y()), tab)
         
         ennemi = None
         i = 0
@@ -196,8 +209,16 @@ class Robot():
     
     def choisir_personnage_attaquer(self, tab_personnages_rouges, terrain) :
         '''
-        Le robot choisit le personnage allie avec lequel il va attaquer.
+        Le robot choisit le personnage allie avec lequel il va attaquer
+        : params
+            tab_personnages_rouges (list)
+            terrain (module_terrain.Terrain)
+        : return (list)
         '''
+        #Assertions
+        assert isinstance(tab_personnages_rouges, list), "le tableau des personnages rouges doit être un tableau"
+        assert isinstance(terrain, module_terrain.Terrain), "le terrain doit être de la classe Terrain"
+        #Code
         tab_allie_ennemi = []
         
         i_personnage = 0
@@ -235,14 +256,21 @@ class Robot():
     
     def attaquer_ennemi(self, tab_personnages_rouges, terrain) :
         '''
-        Le robot attaque un ennemi proche d'un de ses personnages.
+        Le robot attaque un ennemi proche d'un de ses personnages
+        : params
+            tab_personnages_rouges (list)
+            terrain (module_terrain.Terrain)
+        : return (bool)
         '''
+        #Assertions
+        assert isinstance(tab_personnages_rouges, list), "le tableau des personnages rouges doit être un tableau"
+        assert isinstance(terrain, module_terrain.Terrain), "le terrain doit être de la classe Terrain"
+        #Code
         tab_allie_ennemi = self.choisir_personnage_attaquer(tab_personnages_rouges, terrain)
         
         if tab_allie_ennemi != [] :
             allie = tab_allie_ennemi[0]
             ennemi = tab_allie_ennemi[1]
-            
             
             if ennemi.acc_personnage() == 'geant':
                 famille = self.jeu.famille_geant((ennemi.acc_x(), ennemi.acc_y()))[0]
@@ -284,13 +312,16 @@ class Robot():
     def jouer_robot(self, terrain) :
         '''
         Fait jouer le robot quand c'est à son tour avec de pause de 5 secondes entres les actions
+        : param terrain (module_terrain.Terrain)
+        : pas de return
         '''
+        #Assertions
+        assert isinstance(terrain, module_terrain.Terrain), "le terrain doit être de la classe Terrain"
+        #Code
         if self.attributs_jeu.acc_equipe_en_cours() == 'rouge' :
             
             if self.temps_attente == None and not self.attributs_jeu.acc_deplacement_en_cours() and not self.attributs_jeu.acc_attaque_en_cours() :
                 self.temps_attente = time.time()
-            
-            
             
             elif self.temps_attente != None and time.time() - self.temps_attente > 2 :
                 tab_personnages_rouges = self.acc_tab_personnages_rouges()

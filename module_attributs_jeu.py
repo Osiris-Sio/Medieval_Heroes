@@ -14,14 +14,13 @@ import module_personnage, module_objets
 from graphe import module_lineaire
 
 ######################################################
-### Classe Jeu :
+### Classe Attributs_Jeu :
 ######################################################
 
 class Attributs_Jeu() :
     '''
     Une classe Attributs_Jeu qui gère les attributs importants pour un bon déroulement du jeu avec des accesseurs et des mutateurs principalement.
     '''
-    
     def __init__(self) :
         '''
         Initialise les attributs du jeu
@@ -101,11 +100,6 @@ class Attributs_Jeu() :
         self.nb_actions = 0
         
         #Attributs pour le déplacement des monstres
-        self.chemin_monstre = []
-        self.coordonnees_monstre = None
-        self.monstre_en_deplacement = None
-        self.deplacement_en_cours_monstre = False
-        self.nouvelles_coord = None
         self.monstres_deja_deplaces = False
         self.monstres_a_deplacer = []
         
@@ -117,7 +111,6 @@ class Attributs_Jeu() :
         self.dernier_personnage_mort_bleu = None
         self.dernier_personnage_mort_rouge = None
         self.annonce_coffre = False
-        self.annonce_coffre_console = True
         self.event_coffre = 0
         
         #Potions :
@@ -182,66 +175,63 @@ class Attributs_Jeu() :
     def acc_x_pointeur(self):
         '''
         renvoie l'attribut x_pointeur
+        : return (int)
         '''
         return self.x_pointeur
         
     def acc_mode_robot(self):
         '''
         Renvoie l'attribut mode_robot
+        : return (bool)
         '''
         return self.mode_robot
     
     def acc_menu_modes(self):
         '''
         Renvoie l'attribut menu_modes
+        : return (bool)
         '''
         return self.menu_modes
     
     def acc_dic_alphabet(self):
         '''
         Renvoie l'attribut dic_alphabet
+        : return (dic)
         '''
         return self.dic_alphabet
     
     def acc_sols_de_couleur(self):
         '''
         Renvoie l'attribut sols_de_couleur
+        : return (bool)
         '''
         return self.sols_de_couleur
     
     def acc_deplacements_attaques(self):
         '''
         Renvoie l'attribut deplacements_attaques
+        : return (bool)
         '''
         return self.deplacements_attaques
     
     def acc_option_console(self):
         '''
         Renvoie l'attribut option_console
+        : return (bool)
         '''
         return self.option_console
     
     def acc_annonce_coffre(self):
         '''
         Renvoie l'attribut annonce_coffre
+        : return (bool)
         '''
         return self.annonce_coffre
-    
-    def acc_annonce_coffre_console(self):
-        '''
-        Renvoie l'attribut annonce_coffre_console
-        '''
-        return self.annonce_coffre_console
-    
-    def temps_annonce(self):
-        '''
-        Renvoie l'attribut continuer
-        '''
-        return self.temps_annonce
     
     def acc_continuer(self):
         '''
         Renvoie l'attribut continuer
+        : return (bool)
         '''
         return self.continuer
     
@@ -255,60 +245,70 @@ class Attributs_Jeu() :
     def acc_menu(self):
         '''
         Renvoie l'attribut menu
+        : return (bool)
         '''
         return self.menu
     
     def acc_menu_options(self):
         '''
         Renvoie l'attribut menu_options
+        : return (bool)
         '''
         return self.menu_options
     
     def acc_compteur(self):
         '''
         Renvoie l'attribut compteur
+        : return (int)
         '''
         return self.compteur
     
     def acc_tab_personnages(self):
         '''
         Renvoie l'attribut tab_personnages
+        : return (tab)
         '''
         return self.tab_personnages
     
     def acc_tab_monstres(self):
         '''
         Renvoie l'attribut tab_monstres
+        : return (list)
         '''
         return self.tab_monstres
     
     def acc_tab_coffres(self):
         '''
         Renvoie l'attribut tab_coffres
+        : return (list)
         '''
         return self.tab_coffres
     
     def acc_deplacements(self):
         '''
         Renvoie l'attribut deplacements
+        : return (list)
         '''
         return self.deplacements
     
     def acc_deplacements_cavalier(self):
         '''
-        renvoie l'attribut deplacements_affichage_cavalier
+        Renvoie l'attribut deplacements_invisibles_cavalier
+        : return (list)
         '''
         return self.deplacements_invisibles_cavalier
     
     def acc_attaques(self):
         '''
         Renvoie l'attribut attaques
+        : return (list)
         '''
         return self.attaques
     
     def acc_selection(self):
         '''
         Renvoie l'attribut selection
+        : return (??), la sélection
         '''
         return self.selection
     
@@ -322,182 +322,182 @@ class Attributs_Jeu() :
     def acc_equipe_en_cours(self):
         '''
         Renvoie l'attribut equipe_en_cours
+        : return (str)
         '''
         return self.equipe_en_cours
     
     def acc_bouton_clique(self):
         '''
-        Renvoie le bouton cliqué
+        Renvoie l'attribut bouton_clique
+        : return (bool)
         '''
         return self.bouton_clique
     
     def acc_temps_appui_bouton(self):
         '''
-        Renvoie le temps appui bouton
+        Renvoie le temps_appui_bouton
+        : return (float)
         '''
         return self.temps_appui_bouton
     
     def acc_temps(self):
         '''
         Renvoie l'attribut temps
+        : return (str), 'Jour' ou 'Nuit'
         '''
         return self.temps
     
     def acc_temps_active(self):
         '''
         Renvoie l'attribut temps_active
+        : return (bool)
         '''
         return self.temps_active
     
     def acc_monstres_active(self):
         '''
         Renvoie l'attribut monstres_active
+        : return (bool)
         '''
         return self.monstres_active
     
     def acc_nombre_action(self):
         '''
         Renvoie le nombre d'action pendant le tour
+        : return (int)
         '''
         return self.nombre_action
     
     def acc_nombre_tour(self):
         '''
-        Renvoie le nombre d'action pendant le tour
+        Renvoie le nombre de tour
+        : return (int)
         '''
         return self.nombre_tour
     
     def acc_console(self):
         '''
-        Renvoie la pile qui gère la console.
+        Renvoie la pile qui gère la console
+        : return (module_lineaire.Pile)
         '''
         return self.console
     
     def acc_chemin(self):
         '''
         Renvoie l'attribut chemin
+        : return (list)
         '''
         return self.chemin
-    
-    def acc_chemin_monstre(self):
-        '''
-        Renvoie l'attribut chemin
-        '''
-        return self.chemin_monstre
-    
+
     def acc_coordonnees_personnage(self):
         '''
         Renvoie l'attribut coordonnees_personnage
+        : return (tuple or None)
         '''
         return self.coordonnees_personnage
-    
-    def acc_coordonnees_monstre(self):
-        '''
-        Renvoie l'attribut coordonnees_personnage
-        '''
-        return self.coordonnees_monstre
-    
+
     def acc_personnage_en_deplacement(self):
         '''
         Renvoie l'attribut personnage_en_deplacement
+        : return (bool)
         '''
         return self.personnage_en_deplacement
-    
-    def acc_monstre_en_deplacement(self):
-        '''
-        Renvoie l'attribut personnage_en_deplacement
-        '''
-        return self.monstre_en_deplacement
     
     def acc_indice_courant(self):
         '''
         Renvoie l'attribut indice_courant
+        : return (int)
         '''
         return self.indice_courant
     
     def acc_deplacement_en_cours(self):
         '''
         Renvoie l'attribut deplacement_en_cours
+        : return (bool)
         '''
         return self.deplacement_en_cours
-    
-    def acc_deplacement_en_cours_monstre(self):
-        '''
-        Renvoie l'attribut deplacement_en_cours_monstre
-        '''
-        return self.deplacement_en_cours_monstre
     
     def acc_dernier_personnage_mort_rouge(self):
         '''
         renvoie le dernier_personnage_mort de l'équipe rouge
-        : return (Perso)
+        : return (module_personnage.Personnage)
         '''
         return self.dernier_personnage_mort_rouge
     
     def acc_dernier_personnage_mort_bleu(self):
         '''
         renvoie le dernier_personnage_mort de l'équipe bleue
-        : return (Perso)
+        : return (module_personnage.Personnage)
         '''
         return self.dernier_personnage_mort_bleu
     
     def acc_nouvelles_coord(self):
         '''
         Renvoie l'attribut nouvelles_coord
+        : return (tuple or None)
         '''
         return self.nouvelles_coord
     
     def acc_nb_actions(self):
         '''
         Renvoie l'attribut nb_actions
+        : return (int)
         '''
         return self.nb_actions
     
     def acc_monstres_deja_deplaces(self):
         '''
         Renvoie l'attribut monstres_deja_deplaces
+        : return (bool)
         '''
         return self.monstres_deja_deplaces
     
     def acc_monstres_a_deplacer(self):
         '''
         Renvoie l'attribut monstres_a_deplacer
+        : return (list)
         '''
         return self.monstres_a_deplacer
     
     def acc_attaque_en_cours(self):
         '''
         Renvoie l'attribut attaque_en_cours
+        : return (bool)
         '''
         return self.attaque_en_cours
     
     def acc_attaque_temps(self):
         '''
         Renvoie l'attribut attaque_temps
+        : return (int)
         '''
         return self.attaque_temps
     
     def acc_positions_tombes(self):
         '''
         Renvoie l'attribut positions_tombes
+        : return (tab)
         '''
         return self.positions_tombes
     
     def acc_partie_terminee(self):
         '''
         Renvoie l'attribut partie_terminee
+        : return (bool)
         '''
         return self.partie_terminee
     
     def acc_position_y_menu_fin(self):
         '''
         Renvoie l'attribut position_y_menu_fin
+        : return (int)
         '''
         return self.position_y_menu_fin
     
     def acc_equipe_gagnante(self):
         '''
         Renvoie l'attribut equipe_gagnante
+        : return (str or None)
         '''
         return self.equipe_gagnante
     
@@ -518,19 +518,21 @@ class Attributs_Jeu() :
     def acc_potion_rouge_selectionnee(self):
         '''
         renvoie l'attribut potion_rouge_selectionnee
-        : return (module_lineaire.File)
+        : return (int)
         '''
         return self.potion_rouge_selectionnee
     
     def acc_potion_bleue_selectionnee(self):
         '''
         renvoie l'attribut potion_bleue_selectionnee
-        : return (module_lineaire.File)
+        : return (int)
         '''
         return self.potion_bleue_selectionnee
+    
     ######################################################
     ### Mutateurs :
     ######################################################
+    
     def mut_cases_potions(self, tab):
         '''
         modifie l'attribut cases_potions
@@ -545,7 +547,12 @@ class Attributs_Jeu() :
     def mut_x_pointeur(self, x):
         '''
         modifie le x de l'attribut x_pointeur
+        : param x (int)
+        : pas de return
         '''
+        #Assertion
+        assert isinstance(x, int), "x doit être un entier"
+        #Code
         self.x_pointeur = x
     
     def mut_mode_robot(self, valeur) :
@@ -572,7 +579,7 @@ class Attributs_Jeu() :
     
     def mut_potion_rouge_selectionnee(self, contenu):
         '''
-        modifie l'attribut potion_rouge_selectionnee (on séléctionne une file)
+        modifie l'attribut potion_rouge_selectionnee 
         : contenu (int), catégorie de la potion séléctionnée (1, 2, 3, ou 4)
         : pas de return
         '''
@@ -583,7 +590,7 @@ class Attributs_Jeu() :
         
     def mut_potion_bleue_selectionnee(self, contenu):
         '''
-        modifie l'attribut potion_bleue_selectionnee (on séléctionne une file)
+        modifie l'attribut potion_bleue_selectionnee
         : contenu (int), catégorie de la potion séléctionnée (1, 2, 3, ou 4)
         : pas de return
         '''
@@ -592,20 +599,20 @@ class Attributs_Jeu() :
         #code
         self.potion_bleue_selectionnee = contenu
     
-    def mut_ajoute_potions_rouges(self, potion):
+    def ajouter_potions_rouges(self, potion):
         '''
         modifie l'attribut potions_rouges en augmentant ou en baissant le nombre de potions de la potion passée en paramètre
         : params
-            potion (Potion)
+            potion (module_objets.Potion)
         : pas de return
         '''
         #assertion
-        assert isinstance(potion, module_objets.Potion), "le paramètre doit être une potion !"
+        assert isinstance(potion, module_objets.Potion), "le paramètre doit être de la classe Potion !"
         #code
         contenu = potion.acc_contenu()
         self.potions_rouges[contenu].enfiler(potion)
         
-    def mut_ajoute_potions_bleues(self, potion):
+    def ajouter_potions_bleues(self, potion):
         '''
         modifie l'attribut potions_bleues en augmentant ou en baissant le nombre de potions de la potion passée en paramètre
         : params
@@ -613,24 +620,24 @@ class Attributs_Jeu() :
         : pas de return
         '''
         #assertion
-        assert isinstance(potion, module_objets.Potion), "le paramètre doit être une potion !"
+        assert isinstance(potion, module_objets.Potion), "le paramètre doit être de la classe Potion !"
         #code
         contenu = potion.acc_contenu()
         self.potions_bleues[contenu].enfiler(potion)
         
-    def mut_enleve_potions_rouges(self):
+    def enleve_potions_rouges(self):
         '''
         modifie l'attribut potions_rouges enlevant la première potion de la file sélectionnée
-        : return (Potion)
+        : return (module_objets.Potion)
         '''
-        return self.potion_rouge_selectionnee.defiler()
+        return self.potions_rouges[self.potion_rouge_selectionnee].defiler()
         
-    def mut_enleve_potions_bleues(self):
+    def enleve_potions_bleues(self):
         '''
         modifie l'attribut potions_bleues enlevant la première potion de la file sélectionnée
-        : return (Potion)
+        : return (module_objets.Potion)
         '''
-        return self.potion_bleue_selectionnee.defiler()
+        return self.potions_bleues[self.potion_bleue_selectionnee].defiler()
 
     def mut_sols_de_couleur(self, valeur) :
         '''
@@ -701,37 +708,36 @@ class Attributs_Jeu() :
     def mut_dernier_personnage_mort_bleu(self, perso):
         '''
         modifie l'attribut dernier_personnage_mort de l'équipe bleue
+        : param perso (module_personnage.Personnage)
         : pas de return
         '''
+        #Assertion
+        assert isinstance(perso, module_personnage.Personnage), "le perso doit être de la classe Personnage"
+        #Code
         self.dernier_personnage_mort_bleu = perso
         
     def mut_dernier_personnage_mort_rouge(self, perso):
         '''
         modifie l'attribut dernier_personnage_mort de l'équipe rouge
+        : param perso (module_personnage.Personnage)
         : pas de return
         '''
+        #Assertion
+        assert isinstance(perso, module_personnage.Personnage), "le perso doit être de la classe Personnage"
+        #Code
         self.dernier_personnage_mort_rouge = perso
         
     def mut_annonce_coffre(self, etat):
         '''
         Modifie l'attribut annonce_coffre
         : param valeur (boolean)
-        : pas de return, modifie l'attribut menu
+        : pas de return
         '''
         #Assertion :
         assert isinstance(etat, bool), 'Le paramètre doit être soit True, soit False !'
+        #Code :
         self.annonce_coffre = etat
-        
-    def mut_annonce_coffre_console(self, etat):
-        '''
-        Modifie l'attribut annonce_coffre_console
-        : param valeur (boolean)
-        : pas de return, modifie l'attribut menu
-        '''
-        #Assertion :
-        assert isinstance(etat, bool), 'Le paramètre doit être soit True, soit False !'
-        self.annonce_coffre_console = etat
-        
+     
     def mut_compteur(self, valeur) :
         '''
         Modifie l'attribut compteur
@@ -754,17 +760,6 @@ class Attributs_Jeu() :
         #Code :
         self.tab_personnages = tab
         
-    def mut_tab_monstres(self, tab) :
-        '''
-        Modifie l'attribut tab_monstres
-        : param tab (list)
-        : pas de return, modifie l'attribut tab_monstres
-        '''
-        #Assertion :
-        assert isinstance(tab, list), 'Le paramètre doit être un tableau (list)'
-        #Code :
-        self.tab_monstres = tab
-        
     def mut_tab_coffres(self, tab) :
         '''
         Modifie l'attribut tab_coffres
@@ -786,7 +781,7 @@ class Attributs_Jeu() :
         #Code :
         self.tab_coffres.remove(coffre)
         
-    def ajoute_tab_coffres(self, coffre):
+    def ajouter_tab_coffres(self, coffre):
         '''
         ajoute au tableau tab_coffres le coffre passé en paramètres
         : pas de return, modifie l'attribut tab_coffres
@@ -809,7 +804,7 @@ class Attributs_Jeu() :
         
     def mut_deplacements_cavalier(self, tab):
         '''
-        modifie l'attribue deplacements_affichage_cavalier
+        modifie l'attribue deplacements_invisibles_cavalier
         : param tab (list)
         : pas de return, modifie l'attribut deplacements_affichage_cavalier
         '''
@@ -829,30 +824,33 @@ class Attributs_Jeu() :
         #Code :
         self.attaques = tab
         
-    def mut_selection(self, coordonnées) :
+    def mut_selection(self, nouvelle_selec) :
         '''
         Modifie l'attribut selection
-        : param coordonnées (???)
+        : param nouvelle_selec (?), la nouvelle sélection
         : pas de return, modifie l'attribut selection
         '''
-        self.selection = coordonnées
+        self.selection = nouvelle_selec
         
     def mut_coffre_selection(self, nouveau_coffre) :
         '''
         Modifie l'attribut coffre_selection
-        : param nouveau_coffre (Coffre)
+        : param nouveau_coffre (Coffre) ou None
         : pas de return, modifie l'attribut selection
         '''
+        #Assertion
+        assert isinstance(nouveau_coffre, module_objets.Coffre) or nouveau_coffre == None, "le nouveau coffre doit être de la classe Coffre"
+        #Code
         self.coffre_selection = nouveau_coffre
         
     def mut_equipe_en_cours(self, equipe) :
         '''
         Modifie l'attribut equipe_en_cours
-        : param equipe (str)
+        : param equipe (str), 'bleu' ou 'rouge'
         : pas de return, modifie l'attribut equipe_en_cours
         '''
         #Assertion :
-        assert isinstance(equipe, str) and equipe in ['bleu', 'rouge'], "Le paramètre doit être une chaine de caractères (str) égal à 'bleu' ou 'rouge' !"
+        assert equipe in ['bleu', 'rouge'], "Le paramètre doit être une chaine de caractères (str) égale à 'bleu' ou 'rouge' !"
         #Code :
         self.equipe_en_cours = equipe
         
@@ -869,7 +867,7 @@ class Attributs_Jeu() :
         
     def mut_temps_appui_bouton(self, valeur) :
         '''
-        Modifie l'attribut bouton_clique
+        Modifie l'attribut temps_appui_bouton
         : param valeur (float)
         : pas de return, modifie l'attribut temps_appui_bouton
         '''
@@ -880,12 +878,12 @@ class Attributs_Jeu() :
         
     def mut_temps(self, chaine) :
         '''
-        Modifie l'attribut bouton_clique
-        : param chaine (str)
-        : pas de return, modifie l'attribut bouton_clique
+        Modifie l'attribut temps
+        : param chaine (str), 'Jour' ou 'Nuit'
+        : pas de return, modifie l'attribut temps
         '''
         #Assertion :
-        assert isinstance(chaine, str), "Le paramètre doit être une chaine de caractères (str) !"
+        assert chaine in ['Jour', 'Nuit'], "Le paramètre doit être soit 'Jour' soit 'Nuit' !"
         #Code :
         self.temps = chaine
         
@@ -915,6 +913,7 @@ class Attributs_Jeu() :
         '''
         Modifie l'attribut nombre_action
         : param valeur (int)
+        : pas de return
         '''
         #Précondition :
         assert isinstance(valeur, int), 'Le paramètre doit être un entier (int) !'
@@ -925,6 +924,7 @@ class Attributs_Jeu() :
         '''
         Modifie l'attribut nombre_action
         : param valeur (int)
+        : pas de return
         '''
         #Précondition :
         assert isinstance(valeur, int), 'Le paramètre doit être un entier (int) !'
@@ -935,6 +935,7 @@ class Attributs_Jeu() :
         '''
         Modifie l'attribut console
         : param valeur (module_lineaire.Pile)
+        : pas de return
         '''
         #Précondition :
         assert isinstance(valeur, module_lineaire.Pile), 'Le paramètre doit être de la classe Pile (module_lineaire) !'
@@ -945,66 +946,40 @@ class Attributs_Jeu() :
         '''
         Modifie l'attribut chemin
         : param tab (list)
+        : pas de return
         '''
         #Précondition :
         assert isinstance(tab, list), 'Le paramètre doit être un tableau (list) !'
         #Code :
         self.chemin = tab
-        
-    def mut_chemin_monstre(self, tab) :
-        '''
-        Modifie l'attribut chemin
-        : param tab (list)
-        '''
-        #Précondition :
-        assert isinstance(tab, list), 'Le paramètre doit être un tableau (list) !'
-        #Code :
-        self.chemin_monstre = tab
-        
+    
     def mut_coordonnees_personnage(self, coordonnees) :
         '''
-        Modifie l'attribut coordonnees
+        Modifie l'attribut coordonnees_personnage
         : param coordonnees (tuple or None)
+        : pas de return
         '''
         #Précondition :
         assert isinstance(coordonnees, tuple) or coordonnees == None, 'Le paramètre doit être un tuple ou None !'
         #Code :
         self.coordonnees_personnage = coordonnees
-        
-    def mut_coordonnees_monstre(self, coordonnees) :
-        '''
-        Modifie l'attribut coordonnees
-        : param coordonnees (tuple or None)
-        '''
-        #Précondition :
-        assert isinstance(coordonnees, tuple) or coordonnees == None, 'Le paramètre doit être un tuple ou None !'
-        #Code :
-        self.coordonnees_monstre = coordonnees
     
     def mut_personnage_en_deplacement(self, personnage) :
         '''
         Modifie l'attribut personnage_en_deplacement
         : param personnage (module_personnage.Personnage or None)
+        : pas de return
         '''
         #Précondition :
         assert isinstance(personnage, module_personnage.Personnage) or personnage == None, 'Le paramètre doit être un personnage de la classe Personnage ou None !'
         #Code :
         self.personnage_en_deplacement = personnage
-        
-    def mut_monstre_en_deplacement(self, tab) :
-        '''
-        Modifie l'attribut personnage_en_deplacement
-        : param tab (list or None)
-        '''
-        #Précondition :
-        assert isinstance(tab, list) or tab == None, 'Le paramètre doit être un tableau (list) ou None !'
-        #Code :
-        self.monstre_en_deplacement = tab
     
     def mut_indice_courant(self, valeur) :
         '''
-        Modifie l'attribut current_index
+        Modifie l'attribut indice_courant
         : param valeur (int)
+        : pas de return
         '''
         #Précondition :
         assert isinstance(valeur, int), 'Le paramètre doit être un entier (int) !'
@@ -1015,6 +990,7 @@ class Attributs_Jeu() :
         '''
         Modifie l'attribut deplacement_en_cours
         : param valeur (bool)
+        : pas de return
         '''
         #Précondition :
         assert isinstance(valeur, bool), 'Le paramètre doit être un booléen (bool) !'
@@ -1025,6 +1001,7 @@ class Attributs_Jeu() :
         '''
         Modifie l'attribut nouvelles_coord
         : param coordonnees (tuple or None)
+        : pas de return
         '''
         #Précondition :
         assert isinstance(coordonnees, tuple) or coordonnees == None, 'Le paramètre doit être un tuple ou None !'
@@ -1035,6 +1012,7 @@ class Attributs_Jeu() :
         '''
         Modifie l'attribut nb_actions
         : param valeur (int)
+        : pas de return
         '''
         #Précondition :
         assert isinstance(valeur, int), 'Le paramètre doit être un entier (int) !'
@@ -1045,26 +1023,29 @@ class Attributs_Jeu() :
         '''
         Modifie l'attribut monstres_deja_deplaces
         : param valeur (bool)
+        : pas de return
         '''
         #Précondition :
         assert isinstance(valeur, bool), 'Le paramètre doit être un booléen (bool) !'
         #Code :
         self.monstres_deja_deplaces = valeur
         
-    def mut_monstres_a_deplacer(self, tab) :
+    def enleve_monstres_a_deplacer(self, monstre) :
         '''
         Modifie l'attribut monstres_a_deplacer
-        : param tab (list)
+        : param monstre (module_personnage.Personnage)
+        : pas de return
         '''
         #Précondition :
-        assert isinstance(tab, list), 'Le paramètre doit être un tableau (list) !'
+        assert isinstance(monstre, module_personnage.Personnage), 'Le paramètre doit être de la classe Personnage !'
         #Code :
-        self.monstres_a_deplacer = tab
+        self.monstres_a_deplacer.remove(monstre)
        
     def mut_attaque_en_cours(self, valeur) :
         '''
         Modifie l'attribut attaque_en_cours
         : param valeur (bool)
+        : pas de return
         '''
         #Précondition :
         assert isinstance(valeur, bool), 'Le paramètre doit être un booléen (bool) !'
@@ -1075,6 +1056,7 @@ class Attributs_Jeu() :
         '''
         Modifie l'attribut attaque_temps
         : param valeur (int)
+        : pas de return
         '''
         #Précondition :
         assert isinstance(valeur, int), 'Le paramètre doit être un entier (int) !'
@@ -1085,16 +1067,18 @@ class Attributs_Jeu() :
         '''
         Modifie l'attribut partie_terminee
         : param valeur (bool)
+        : pas de return
         '''
         #Précondition :
         assert isinstance(valeur, bool), 'Le paramètre doit être un booléen (bool) !'
         #Code :
         self.partie_terminee = valeur        
                 
-    def mut_position_y_menu_fin(self, valeur) :
+    def ajouter_position_y_menu_fin(self, valeur) :
         '''
-        Modifie l'attribut position_y_menu_fin
+        Ajoute à l'attribut position_y_menu_fin la valeur passée en paramètre
         : param valeur (int)
+        : pas de return
         '''
         #Précondition :
         assert isinstance(valeur, int), 'Le paramètre doit être un entier (int) !'
@@ -1104,7 +1088,8 @@ class Attributs_Jeu() :
     def mut_equipe_gagnante(self, valeur) :
         '''
         Modifie l'attribut equipe_gagnante
-        : param valeur (str) 'rouge' ou 'bleu' (ou None en cas de chargement d'une partie)
+        : param valeur (str) 'rouge' ou 'bleu' (ou None)
+        : pas de return
         '''
         #Précondition :
         assert valeur in ['rouge', 'bleu', None], 'Le paramètre doit être soit \'rouge\' ou \'bleu\' ou None !'
@@ -1117,8 +1102,7 @@ class Attributs_Jeu() :
                 
     def est_meme_equipe(self):
         '''
-        Renvoie True si l'équipe du personnage et l'équipe en cours sont les mêmes,
-        False sinon.
+        Renvoie True si l'équipe du personnage et l'équipe en cours sont les mêmes, False sinon
         : return (bool)
         '''
         if isinstance(self.acc_selection(), module_personnage.Personnage) :
@@ -1174,7 +1158,7 @@ class Attributs_Jeu() :
         
     def ajouter_coffre(self, coffre) :
         '''
-        Modifie l'attribut tab_coffres (ajoute !)
+        Modifie l'attribut tab_coffres (ajoute)
         : param coffre (module_objets.Coffre)
         : pas de return, modifie l'attribut tab_coffres
         '''
@@ -1230,7 +1214,7 @@ class Attributs_Jeu() :
     def ajouter_console(self, tab) :
         '''
         Ajoute dans la pile du console la chaine de caractères
-        :param tab (list of str) [str, str] -> phrase et equipe
+        : param tab (list of str) [str, str] -> phrase et equipe
         : pas de return, effet de bord sur la pile !
         '''
         #Précondition :
@@ -1253,6 +1237,7 @@ class Attributs_Jeu() :
     def enlever_console(self) :
         '''
         Si la pile dépasse 24 chaînes de caractère, enlève les premiers messages ajoutés da la pile.
+        : pas de return
         '''
         pile = self.acc_console()
         stock = module_lineaire.Pile()
@@ -1269,18 +1254,12 @@ class Attributs_Jeu() :
                 compteur -= 1
             else :
                 pile.empiler(stock.depiler())
-                
-    def augmente_nombre_tour(self) :
-        '''
-        Ajoute 1 à l'attribut nombre_tour
-        : param valeur (int)
-        '''
-        self.nombre_tour += 1
         
     def ajouter_positions_tombes(self, coordonnees) :
         '''
         Ajoute une tombe dans l'attribut positions_tombes 
         : param coordonnees (tuple)
+        : pas de return
         '''
         #Précondition :
         assert isinstance(coordonnees, tuple), 'Le paramètre doit être un tuple !'
@@ -1291,6 +1270,7 @@ class Attributs_Jeu() :
         '''
         Supprime une tombe dans l'attribut positions_tombes 
         : param coordonnees (tuple)
+        : pas de return
         '''
         #Précondition :
         assert isinstance(coordonnees, tuple), 'Le paramètre doit être un tuple !'

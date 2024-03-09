@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
+
 '''
-    Module graphe avec un dictionnaire
-    : Auteur
-        LAPÔTRE Marylou
-'''
+-> Medieval Heroes : Module pour la classe Graphe
+
+Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul 
+''' 
 
 class Graphe_oriente_dic() :
     '''
@@ -14,50 +15,6 @@ class Graphe_oriente_dic() :
         construit le graphe avec pour seul attribut un dictionnaire vide
         '''
         self.adj = {}
-        
-    def __repr__(self):
-        '''
-        renvoie une chaîne de caractères pour décrire le graphe
-        : return (str)
-        >>> g = Graphe_oriente_dic()
-        >>> g.ajouter_sommet('ella')
-        >>> g.ajouter_arete('mick', 'etta')
-        >>> g
-        Graphe orienté de 3 sommets
-        '''
-        return "Graphe orienté de " + str(len(self.adj)) + " sommets"
-    
-    def __str__(self):
-        '''
-        renvoie une chaîne de caractères pour afficher le graphe
-        : return (str)
-        >>> g = Graphe_oriente_dic()
-        >>> g.ajouter_arete('Ray', 'Mick')
-        >>> g.ajouter_arete('Mick', 'Jim')
-        >>> g.ajouter_arete('Mick', 'Ray')
-        >>> g.ajouter_arete('Jim', 'Joe')
-        >>> g.ajouter_arete('Joe', 'Etta')
-        >>> g.ajouter_arete('Joe', 'Mick')
-        >>> g.ajouter_arete('Ella', 'Ray')
-        >>> g.ajouter_arete('Ella', 'Etta')
-        >>> print(g)
-        Ray : Mick 
-        Mick : Jim Ray 
-        Jim : Joe 
-        Joe : Etta Mick 
-        Etta : 
-        Ella : Ray Etta 
-        '''
-        chaine = ''
-        i = 0
-        for sommet in self.adj :
-            chaine += str(sommet) + ' : '
-            for voisin in self.voisins(sommet):
-                chaine += str(voisin) + ' '
-            i += 1
-            if not i == len(self.adj): #si on n'est pas à la fin
-                chaine += '\n'
-        return chaine
         
     def ajouter_sommet(self, sommet):
         '''
@@ -128,18 +85,6 @@ class Graphe_non_oriente_dic(Graphe_oriente_dic) :
         '''
         super().__init__()
         
-    def __repr__(self):
-        '''
-        renvoie une chaîne de caractères pour décrire le graphe
-        : return (str)
-        >>> g = Graphe_non_oriente_dic()
-        >>> g.ajouter_sommet('ella')
-        >>> g.ajouter_arete('mick', 'etta')
-        >>> g
-        Graphe non-orienté de 3 sommets
-        '''
-        return "Graphe non-orienté de " + str(len(self.adj)) + " sommets"
-
     def ajouter_arete(self, sommet1, sommet2):
         '''
         crée les deux sommets différents via la méthode précédente puis ajoute sommet2 à la liste des suivants de sommet1
@@ -159,15 +104,3 @@ class Graphe_non_oriente_dic(Graphe_oriente_dic) :
             self.adj[sommet1].append(sommet2)
         if not sommet1 in self.adj[sommet2]: #si il n'y est pas déjà
             self.adj[sommet2].append(sommet1) #dans les deux sens
-    
-
-
-
-
-
-
-
-#######DOCTEST################
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod(verbose = False)

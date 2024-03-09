@@ -9,9 +9,11 @@ Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul
 ######################################################
 ### Importation Modules :
 ######################################################
+
 from graphe import parcourir_graphe
 from graphe import module_graphe_dic
 import random, module_terrain
+
 ######################################################
 ### Classe Personnage
 ######################################################
@@ -107,22 +109,7 @@ class Personnage():
         self.endommage = False
         self.attaque = False #par défaut, le personnage n'attaque personne
         self.soigne = False
-
-    def __repr__(self):
-        '''
-        renvoie une chaîne de caractères pour décrire le paladin
-        : return (str)
-        '''
-        return self.personnage + ' de coordonnées (' + str(self.x)+ ',' + str(self.y) + '), possédant ' + str(self.pv) + "pv et appartenant à l'équipe " + self.equipe
-        
-    def __str__(self):
-        '''
-        renvoie une chaîne de caractères représentant le personnage
-        : return (str)
-        '''
-        lettre = self.personnage[0]
-        return lettre.upper() #la première lettre du personnage en majuscule
-    
+  
     ######################################################
     ### Accesseurs
     ######################################################
@@ -384,7 +371,7 @@ class Personnage():
             cases = dic_deplacements[self.personnage]
         
         ###Les coordonnées
-        return self.tuples_en_coordonnees(cases)
+        return module_terrain.Terrain.tuples_en_coordonnees((self.x, self.y), cases)
     
     def cases_attaques(self):
         '''
@@ -411,7 +398,7 @@ class Personnage():
             cases = dic_attaques[self.personnage]
             
         ###Les coordonnées
-        return self.tuples_en_coordonnees(cases)
+        return module_terrain.Terrain.tuples_en_coordonnees((self.x, self.y), cases)
     
     def cases_sans_obstacles(self, terrain, cases):
         '''
@@ -442,21 +429,6 @@ class Personnage():
             except:
                 None
         return dep_ok
-
-    def tuples_en_coordonnees(self, cases):
-        '''
-        change les tuples composés de -1, 1 et de 0 avec des coordonnées de cases
-        : param cases (list)
-        : return (list of tuples), le tableau avec les coordonnées des cases
-        '''
-        tab_cases = []
-        for tuples in cases:
-            x = self.x + tuples[0]
-            y =  self.y + tuples[1]
-            if 0 <= x <= 20 and  0 <= y <= 20 : #dans la grille
-                nouveau_tuple = (x, y)
-                tab_cases.append(nouveau_tuple)
-        return tab_cases
     
     def construire_graphe(self, coordo, terrain):
         '''
@@ -498,7 +470,7 @@ class Cavalier(Personnage):
         '''
         tab_cavalier = [(-2, -1), (-1, -2), (1, -2), (-2, 1), (-1, 2), (2, -1), (1, 2), (2, 1)]
         #Les coordonnées
-        return self.tuples_en_coordonnees(tab_cavalier)
+        return module_terrain.Terrain.tuples_en_coordonnees((self.x, self.y), tab_cavalier)
     
     def cases_valides_deplacement(self, terrain):
         '''
@@ -548,11 +520,6 @@ class Geant(Personnage):
         #code
         super().__init__('geant', equipe, x, y)
         self.numero_geant = numero_geant
-        self.dic = {0 : (0, 0),
-                     1 : (-1, 0),
-                     2 : (0, -1),
-                     3 : (-1, -1)
-                     }
         
     #####################################
     ##### Accesseur :
@@ -577,7 +544,7 @@ class Geant(Personnage):
         ###Dictionnaire des déplacements
         tab_geant = [(0, -1), (-1, 0), (-1, 1), (1, -1), (0, 2), (2, 0), (2, 1), (1, 2)]
         ##dépend de la case sélectionnée du géant
-        return self.tuples_en_coordonnees(tab_geant)
+        return module_terrain.Terrain.tuples_en_coordonnees((self.x, self.y), tab_geant, self.numero_geant)
     
     def cases_attaques(self):
         '''
@@ -586,7 +553,7 @@ class Geant(Personnage):
         '''
         tab_geant = [(0, -1), (-1, 0), (-1, 1), (1, -1), (0, 2), (2, 0), (2, 1), (1, 2), (-1, -1), (-1, 2), (2, -1), (2, 2)]
         ##dépend de la case sélectionnée du géant
-        return self.tuples_en_coordonnees(tab_geant)
+        return module_terrain.Terrain.tuples_en_coordonnees((self.x, self.y), tab_geant, self.numero_geant)
     
     def cases_valides_deplacement(self, terrain):
         '''
@@ -635,22 +602,7 @@ class Geant(Personnage):
                         dep_deja_fait.append(case)
                         dep_deja_fait.append(case_autour)
         return tableau_couple
-    
-    def tuples_en_coordonnees(self, cases):
-        '''
-        change les tuples composés de -1, 1 et de 0 avec des coordonnées de case
-        : return (list of tuples), le tableau avec les coordonnées des cases
-        '''
-        tab_cases = []
-        for tuples in cases:
-            nouveau_tuple = (self.dic[self.numero_geant][0] + tuples[0], self.dic[self.numero_geant][1] + tuples[1])
-            x = self.x + nouveau_tuple[0]
-            y =  self.y + nouveau_tuple[1]
-            if 0 <= x <= 20 and  0 <= y <= 20 : #dans la grille
-                tab_cases.append((x, y))
-        return tab_cases
-    
-    
+      
 ########################################
 #### Monstre
 ########################################
@@ -659,17 +611,20 @@ class Monstre(Personnage):
     '''
     une classe pour un monstre
     '''
-    def __init__(self, x, y, etat):
+    def __init__(self, x, y, pv, etat):
         '''
         initialise une classe pour un monstre
         : params
             x, y (int) avec 0 <= x, y <= 20
+            0 <= pv 
             etat (int), 1 = dans la terre / 2 = hors de la terre
         '''
-        #assertion
+        #assertions
         assert etat in [1, 2], "l'état doit être soit 1 soit 2 !"
+        assert 0 <= pv, "le monstre doit avoir des pv positifs !"
         #code
         super().__init__('monstre', 'neutre', x, y)
+        self.pv = pv
         self.etat = etat
         self.tab_victime = []
         #pour l'affichage
@@ -927,7 +882,7 @@ class Monstre(Personnage):
         '''
         #tableau cases
         tab = [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]
-        tab_coordo = self.tuples_en_coordonnees(tab)
+        tab_coordo = module_terrain.Terrain.tuples_en_coordonnees((self.x, self.y), tab)
 
         #victimes
         tab_v = []
@@ -953,5 +908,3 @@ class Monstre(Personnage):
         else:
             victime = None #pas de victime à proximité
         return victime
-    
-        

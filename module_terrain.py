@@ -7,9 +7,11 @@ Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul
 '''
 
 ######################################################
-### Importation Modules :
+### Importation Module :
 ######################################################
-import module_personnage, module_objets
+
+import module_attributs_jeu
+
 ######################################################
 ### Classe Terrain :
 ######################################################
@@ -26,6 +28,10 @@ class Terrain():
             clavier_souris (Clavier_Souris) module
             niveau (int) valant par défaut 1
         '''
+        #Assertion
+        assert isinstance(attributs_jeu, module_attributs_jeu.Attributs_Jeu), 'attributs_jeu doit être de la classe Attributs_Jeu du module_attributs_jeu !'
+        assert isinstance(niveau, int) and niveau > 0, "le niveau doit être un entier strictement positif"
+        #Code
         self.attributs_jeu = attributs_jeu
         self.niveau = niveau
         self.grille = Terrain.attribuer_grille(self)
@@ -33,8 +39,9 @@ class Terrain():
     def attribuer_grille(self):
         '''
         attribue une grille en fonction du niveau demandé
+        : return (list of list)
         '''
-        grille = None
+        grille = []
         if self.niveau == 1:
             grille = [[' ', ' ', ' ', 'X', ' ', 'X', 'X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'X', 'X', ' ', 'X', ' ', ' ', ' '],
                       [' ', 'X', ' ', 'X', ' ', 'X', 'X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'X', 'X', ' ', 'X', ' ', 'X', ' '],
@@ -60,22 +67,6 @@ class Terrain():
                       ]
         return grille
     
-    def __str__(self):
-        '''
-        renvoie le terrain
-        : return (str)
-        '''
-        grille = ''
-        separation = '+' + '-+' * 21 + '\n'
-        grille += separation
-        for ligne in self.grille:
-            chaine = '|'
-            for elt in ligne:
-                chaine += str(elt) + '|'
-            grille += chaine + '\n'
-            grille += separation
-        return grille
-        
     def est_possible(self, x, y):
         '''
         renvoie True si la case de coordonnées (x,y) est vide et False sinon
@@ -84,8 +75,8 @@ class Terrain():
         : return (bool)
         '''
         #assertions
-        assert isinstance(x, int) and 0 <= x <= 20,'x doit être un entier compris entre 0 et 20 inclus'
-        assert isinstance(y, int) and 0 <= y <= 20,'y doit être un entier compris entre 0 et 20 inclus'
+        assert isinstance(x, int) and 0 <= x <= 20, 'x doit être un entier compris entre 0 et 20 inclus'
+        assert isinstance(y, int) and 0 <= y <= 20, 'y doit être un entier compris entre 0 et 20 inclus'
         #code
         return self.acc_terrain(x, y) == ' '
     
@@ -118,8 +109,8 @@ class Terrain():
         : pas de return, modifie l'attribut lab
         '''
         #assertions
-        assert isinstance(x, int) and 0 <= x <= 20,'x doit être un entier compris entre 0 et 20 inclus'
-        assert isinstance(y, int) and 0 <= y <= 20,'y doit être un entier compris entre 0 et 20 inclus'
+        assert isinstance(x, int) and 0 <= x <= 20, 'x doit être un entier compris entre 0 et 20 inclus'
+        assert isinstance(y, int) and 0 <= y <= 20, 'y doit être un entier compris entre 0 et 20 inclus'
         #code
         self.grille[y][x] = personnage
     
@@ -142,9 +133,38 @@ class Terrain():
             if 0 <= tuple_case[0] <= 20 and 0 <= tuple_case[1] <= 20: #si la case ne sort pas du terrain
                 tab.append(tuple_case) 
         return tab
+     
+    def tuples_en_coordonnees(coordo_perso, cases, numero_geant = None):
+        '''
+        change les tuples composés de -1, 1 et de 0 avec des coordonnées de cases
+        : params
+            coordo_perso (tuple)
+            cases (list)
+            numero_geant (int ou None) si int alors c'est un géant sinon personnage "normal"
+        : return (list of tuples), le tableau avec les coordonnées des cases
+        '''
+        #Assertions
+        assert isinstance(coordo_perso, tuple), "les coordonnées doivent être dans un tuple"
+        assert isinstance(cases, list), "les cases sont un tableau"
+        assert numero_geant == None or numero_geant in [0, 1, 2, 3], "le numéro du géant doit être soit None soit 0, 1, 2, 3"
+        #Code
+        dic_geant = {0 : (0, 0),
+                     1 : (-1, 0),
+                     2 : (0, -1),
+                     3 : (-1, -1)
+                    }
         
-        
-        
+        tab_cases = []
+        for tuples in cases:
+            if not numero_geant == None :
+                tuples = (dic_geant[numero_geant][0] + tuples[0], dic_geant[numero_geant][1] + tuples[1])
+            x = coordo_perso[0] + tuples[0]
+            y =  coordo_perso[1] + tuples[1]
+            if 0 <= x <= 20 and  0 <= y <= 20 : #dans la grille
+                nouveau_tuple = (x, y)
+                tab_cases.append(nouveau_tuple)
+        return tab_cases
+    
     def trouver_case_libre_proche(self, x, y, chaine):
         '''
         renvoie les coordonnées de la case libre la plus proche de la case dont les coordonnées sont ceux passés en paramètres
@@ -206,19 +226,10 @@ class Terrain():
             x, y (int)
         : return (bool)
         '''
+        #Assertions
+        assert isinstance(x, int) and 0 <= x <= 20,'x doit être un entier compris entre 0 et 20 inclus'
+        assert isinstance(y, int) and 0 <= y <= 20,'y doit être un entier compris entre 0 et 20 inclus'
+        #Code
         return (self.est_possible(x + 1, y) and
                 self.est_possible(x , y + 1) and
-                self.est_possible(x + 1, y + 1))
-    
-
-      
-    
-            
-    
-    
-    
-    
-############### DOCTEST #####################     
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod(verbose = False)       
+                self.est_possible(x + 1, y + 1))    

@@ -220,10 +220,10 @@ class Affichage():
                             3 : 'Bonus de dégâts',
                             4 : 'Nécromancie claire',
                             5 : 'Nécromancie obscure',
-                            6 : "Potions de vie",
+                            6 : "Potions de soin",
                             7 : "Potion de mort",
                             8 : "Potions changement d'équipe",
-                            9 : "Potion de mort adverse",
+                            9 : "Potions de mort adverse",
                             10 : "Bonus de dégâts adverse"
                             }
         
@@ -1149,7 +1149,7 @@ class Affichage():
             if monstre.acc_coordo_x() == monstre.acc_futur_coordo_x() and monstre.acc_coordo_y() == monstre.acc_futur_coordo_y() :
                 monstre.deplacer(monstre.acc_futur_x(), monstre.acc_futur_y()) # déplace le monstre
                 self.terrain.mut_terrain(monstre.acc_x(), monstre.acc_y(), monstre) # place le monstre à sa nouvelle position
-                self.attributs_jeu.monstres_a_deplacer.remove(monstre)
+                self.attributs_jeu.enleve_monstres_a_deplacer(monstre)
                 monstre.mut_futur_x(None)
                 monstre.mut_futur_y(None)
             
@@ -1223,7 +1223,7 @@ class Affichage():
         '''
         #Si le cadre ne descend pas trop bas (y <= 204)
         if self.attributs_jeu.acc_position_y_menu_fin() != 204 :
-            self.attributs_jeu.mut_position_y_menu_fin(3)
+            self.attributs_jeu.ajouter_position_y_menu_fin(3)
         
         #Affichage le cadre :
         self.ecran.blit(self.menu_fin, (455, self.attributs_jeu.acc_position_y_menu_fin()))
@@ -1232,7 +1232,7 @@ class Affichage():
         police = pygame.font.Font("medias/pixelec.ttf", 30)
         
         #Si l'équipe gagnante est l'équipe bleu, affiche la phrase et la couleur correspondante :
-        if self.attributs_jeu.equipe_gagnante == 'bleu':
+        if self.attributs_jeu.acc_equipe_gagnante() == 'bleu':
             annonce = police.render("L'equipe bleue" , 1, (42, 51, 176))
             annonce2 = police.render("gagne !" , 1, (42, 51, 176))
             self.ecran.blit(annonce, (470, self.attributs_jeu.acc_position_y_menu_fin() + 20))

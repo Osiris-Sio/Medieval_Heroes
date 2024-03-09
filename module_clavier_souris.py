@@ -121,7 +121,7 @@ class Clavier_Souris() :
         : pas de return
         '''
         #Assertions
-        assert equipe_en_cours in ['bleu' 'rouge'] and equipe_perso in ['bleu' 'rouge'], "les équipes doivent être soit 'rouge', soit 'bleu'"
+        assert equipe_en_cours in ['bleu', 'rouge'] and equipe_perso in ['bleu', 'rouge'], "les équipes doivent être soit 'rouge', soit 'bleu'"
         #Code
         pos_cur = self.acc_position_curseur()
         if self.appuye : #si le joueur a cliqué sur quelque chose
@@ -334,7 +334,7 @@ class Clavier_Souris() :
                         self.attributs_jeu.mut_bouton_clique('rejouer')
                         self.attributs_jeu.mut_temps_appui_bouton(time.time())
                     #Si le joueur clique sur le bouton 'Quitter' :
-                    elif self.attributs_jeu.position_y_menu_fin + 310 < position_curseur[1] < self.attributs_jeu.position_y_menu_fin + 375 :
+                    elif self.attributs_jeu.acc_position_y_menu_fin() + 310 < position_curseur[1] < self.attributs_jeu.acc_position_y_menu_fin() + 375 :
                         self.attributs_jeu.mut_bouton_clique('quitter')
                         self.attributs_jeu.mut_temps_appui_bouton(time.time())
 

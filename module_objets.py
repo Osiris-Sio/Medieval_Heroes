@@ -40,13 +40,6 @@ class Coffre():
                             10 : "augmente de 1 les dégâts d'attaque de tous les personnages de l'équipe adverse"
                             }
         
-    def __repr__(self):
-        '''
-        renvoie une chaîne de caractères pour décrire le coffre
-        : return (str)
-        '''
-        return "Un coffre de coordonnées (" + str(self.x) + ', ' + str(self.y) + ") et de contenu : " + self.dic_contenu[self.contenu]
-    
     ######################################################
     ### Accesseurs :
     ######################################################
@@ -114,35 +107,35 @@ class Coffre():
     def definir_contenu(self):
         '''
         renvoie un nombre entre 1 et 5 suivant le contenu du coffre:
-            1 : bonus de vie pour le personnage (14%)
-            2 : changement de personnage (12%)
-            3 : augmente de 5 les dégâts d'attaque du personnage (9%)
-            4 : ressuscite le dernier personnage mort de l'équipe du personnage (11%)
-            5 : ressuscite le dernier personnage mort de l'équipe adverse (8%)
-            6 : ajoute trois potion de vie à la réserve de la sorcière (15%)
+            1 : bonus de vie pour le personnage (9%)
+            2 : changement de personnage (8%)
+            3 : augmente de 5 les dégâts d'attaque du personnage (7%)
+            4 : ressuscite le dernier personnage mort de l'équipe du personnage (8%)
+            5 : ressuscite le dernier personnage mort de l'équipe adverse (18%)
+            6 : ajoute trois potions de soin à la réserve de la sorcière (14%)
             7 : ajoute une potion de mort à la réserve de la sorcière (8%)
-            8 : ajoute deux potion de changement d'équipe à la réserve de la sorcière (11%)
-            9 : ajoute une potion de mort à la réserve de la sorcière ennemie (6%)
-            10 : augmente de 1 les dégâts d'attaque de tous les personnages de l'équipe adverse (6%)
+            8 : ajoute deux potions de changement d'équipe à la réserve de la sorcière (6%)
+            9 : ajoute deux potions de mort à la réserve de la sorcière ennemie (9%)
+            10 : augmente de 1 les dégâts d'attaque de tous les personnages de l'équipe adverse (13%)
         '''
-        nombre = random.randint(0, 100)
-        if 0 <= nombre <= 13 : #bonus de vie pour le personnage
+        nombre = random.randint(0, 99)
+        if 0 <= nombre <= 8 : #bonus de vie pour le personnage
             reponse = 1
-        elif 14 <= nombre <= 25 : #changement de personnage
+        elif 9 <= nombre <= 16 : #changement de personnage
             reponse = 2
-        elif 26 <= nombre <= 34 : #augmente de 5 les dégâts d'attaque du personnage
+        elif 17 <= nombre <= 23 : #augmente de 5 les dégâts d'attaque du personnage
             reponse = 3
-        elif 35 <= nombre <= 45 : #ressuscite le dernier personnage mort de l'équipe du personnage
+        elif 24 <= nombre <= 31 : #ressuscite le dernier personnage mort de l'équipe du personnage
             reponse = 4
-        elif 46 <= nombre <= 53 : #ressuscite le dernier personnage mort de l'équipe adverse
+        elif 32 <= nombre <= 49 : #ressuscite le dernier personnage mort de l'équipe adverse
             reponse = 5
-        elif 54 <= nombre <= 68 : #ajoute trois potions de vie à la réserve de la sorcière
+        elif 50 <= nombre <= 63 : #ajoute trois potions de vie à la réserve de la sorcière
             reponse = 6
-        elif 69 <= nombre <= 76 : #ajoute une potion de mort à la réserve de la sorcière 
+        elif 64 <= nombre <= 71 : #ajoute une potion de mort à la réserve de la sorcière 
             reponse = 7
-        elif 77 <= nombre <= 87 : #ajoute deux potions de changement d'équipe à la réserve de la sorcière
+        elif 72 <= nombre <= 77 : #ajoute deux potions de changement d'équipe à la réserve de la sorcière
             reponse = 8
-        elif 88 <= nombre <= 93 : #ajoute une potion de mort à la réserve de la sorcière ennemie
+        elif 78 <= nombre <= 86 : #ajoute une potion de mort à la réserve de la sorcière ennemie
             reponse = 9
         else : #augmente de 2 les dégâts d'attaque de tous les personnages de l'équipe adverse
             reponse = 10
@@ -279,4 +272,3 @@ class Potion():
         for tuples in tuples_cases:
             tab_cases.append((x + tuples[0], y + tuples[1]))
         return tab_cases
-       
