@@ -112,7 +112,7 @@ class Jeu() :
         geant6r = module_personnage.Geant('rouge', 12, 0, 1)
         geant7r = module_personnage.Geant('rouge', 11, 1, 2)
         geant8r = module_personnage.Geant('rouge', 12, 1, 3)
-        self.famille_geant_rouge = [[geant1r, geant2r, geant3r, geant4r], [geant5r, geant6r, geant7r, geant8r]] ##La famille des géants
+        self.attributs_jeu.mut_famille_geant_rouge([[geant1r, geant2r, geant3r, geant4r], [geant5r, geant6r, geant7r, geant8r]]) ##La famille des géants
         
         #Geant bleu:
         ##n°1
@@ -125,7 +125,7 @@ class Jeu() :
         geant6b = module_personnage.Geant('bleu', 12, 19, 1) 
         geant7b = module_personnage.Geant('bleu', 11, 20, 2) 
         geant8b = module_personnage.Geant('bleu', 12, 20, 3) 
-        self.famille_geant_bleu = [[geant1b, geant2b, geant3b, geant4b], [geant5b, geant6b, geant7b, geant8b]] ##La famille des géants    
+        self.attributs_jeu.mut_famille_geant_bleu([[geant1b, geant2b, geant3b, geant4b], [geant5b, geant6b, geant7b, geant8b]]) ##La famille des géants    
         
         self.attributs_jeu.mut_tab_personnages([
             
@@ -186,7 +186,7 @@ class Jeu() :
         : param equipe (str)
         '''
         #Assertion :
-        assert equipe in ['bleu', 'rouge'], "le paramètre doit êtresoit 'rouge' soit 'bleu'"
+        assert equipe in ['bleu', 'rouge'], "le paramètre doit être soit 'rouge' soit 'bleu'"
         #Code :
         self.attributs_jeu.ajouter_console(['·À l\'équipe ' + equipe + ' de jouer !', 'noir'])
     
@@ -286,7 +286,8 @@ class Jeu() :
         #Assertions :
         assert isinstance(personnage, module_personnage.Personnage), 'Le paramètre doit être un personnage de la classe Personnage (module_personnage) !'
         #Code :
-        self.attributs_jeu.ajouter_console(["·" + personnage.acc_personnage() + " (" + personnage.acc_equipe() + ") est mort.", 'noir'])
+        if personnage.acc_personnage() != 'geant' or (personnage.acc_personnage() == 'geant' and personnage.acc_numero_geant() == 0) :
+            self.attributs_jeu.ajouter_console(["·" + personnage.acc_personnage() + " (" + personnage.acc_equipe() + ") est mort.", 'noir'])
     
     ######################################################
     ### Déplacements :
@@ -410,30 +411,30 @@ class Jeu() :
         if equipe == 'bleu':
             ##coordonnées des géants bleues
             coordo_bleu = []
-            for famille in self.famille_geant_bleu :
+            for famille in self.attributs_jeu.acc_famille_geant_bleu() :
                 fam = []
                 for geant in famille:
                     fam.append((geant.acc_x(), geant.acc_y()))
                 coordo_bleu.append(fam)
                 
             if coordo in coordo_bleu[0] :
-                famille = self.famille_geant_bleu[0]
+                famille = self.attributs_jeu.acc_famille_geant_bleu()[0]
             else :
-                famille = self.famille_geant_bleu[1]
+                famille = self.attributs_jeu.acc_famille_geant_bleu()[1]
         ###rouge        
         else:
             ##coordonnées des géants rouges
             coordo_rouge = []
-            for famille in self.famille_geant_rouge :
+            for famille in self.attributs_jeu.acc_famille_geant_rouge() :
                 fam = []
                 for geant in famille:
                     fam.append((geant.acc_x(), geant.acc_y()))
                 coordo_rouge.append(fam)
                 
             if coordo in coordo_rouge[0]:
-                famille = self.famille_geant_rouge[0]
+                famille = self.attributs_jeu.acc_famille_geant_rouge()[0]
             else:
-                famille = self.famille_geant_rouge[1]
+                famille = self.attributs_jeu.acc_famille_geant_rouge()[1]
             
         return famille
     
@@ -485,8 +486,7 @@ class Jeu() :
         '''
         #Si l'ajout de monstres est "activé" et qu'ils n'ont pas encore été ajouté alors on ajoute des monstres
         if self.attributs_jeu.acc_monstres_active() and not self.attributs_jeu.acc_monstres_deja_deplaces() :
-            nb = self.attributs_jeu.acc_nombre_tour() // 3
-            for _ in range(nb) :
+            for _ in range(self.attributs_jeu.acc_nombre_monstre_a_ajoute()) :
                 #Coordonnées au hasard
                 x = random.randint(1, 20)
                 y = random.randint(1, 20)
@@ -495,8 +495,16 @@ class Jeu() :
                     #Coordonnées au hasard
                     x = random.randint(1, 20)
                     y = random.randint(1, 20)
-                self.attributs_jeu.ajouter_monstre(module_personnage.Monstre(x, y, nb, 1)) #Ajoute le monstre dans le tableau des monstres
-            
+                self.attributs_jeu.ajouter_monstre(module_personnage.Monstre(x, y, self.attributs_jeu.acc_pv_monstre(), 1)) #Ajoute le monstre dans le tableau des monstres
+                
+            #Augmente le nombre de monstre de 1 pour la prochaine fois s'il ne dépasse pas le nombre de 5 monstres :
+            if self.attributs_jeu.acc_nombre_monstre_a_ajoute() < 5 :
+                self.attributs_jeu.mut_nombre_monstre_a_ajoute(self.attributs_jeu.acc_nombre_monstre_a_ajoute() + 1)
+                
+            #Augmente le nombre de pv des monstre de 1 pour la prochaine fois s'il ne dépasse pas le nombre de 10 pv (seulement pour les nouveaux monstres):
+            if self.attributs_jeu.acc_pv_monstre() < 5 :
+                self.attributs_jeu.mut_pv_monstre(self.attributs_jeu.acc_pv_monstre() + 1)
+                
             #Ajoute de chaque monstre du tableau des monstres sur le terrain :
             for monstre in self.attributs_jeu.acc_tab_monstres() :
                 self.terrain.mut_terrain(monstre.acc_x(), monstre.acc_y(), monstre)
@@ -804,9 +812,9 @@ class Jeu() :
         ##récupération de la potion
         equipe = self.attributs_jeu.acc_equipe_en_cours()
         if equipe == 'bleu':
-            potion = enleve_potions_bleues() #la première de la file
+            potion = self.attributs_jeu.enleve_potions_bleues() #la première de la file
         else:
-            potion = enleve_potions_rouges() #la première de la file
+            potion = self.attributs_jeu.enleve_potions_rouges() #la première de la file
           
         ##les cases atteintes par la potion
         cases = module_objets.Potion.definir_cases_atteintes(x, y, potion.acc_etendue())
@@ -1152,7 +1160,12 @@ class Jeu() :
         #Désactive un nouveau placement de monstres :
         self.attributs_jeu.mut_monstres_deja_deplaces(True)
         
-        #self.attributs_jeu.mut_mode_robot(False)
+        self.attributs_jeu.mut_dernier_personnage_mort_bleu(None)
+        self.attributs_jeu.mut_dernier_personnage_mort_rouge(None)
+        
+        #Remet le jour si jamais :
+        self.attributs_jeu.mut_temps('Jour')
+        self.attributs_jeu.mut_temps_active(False)
         
         if not par_defaut :
             self.placer() #Place les personnages, monstres et coffres de la partie qui a été chargé.

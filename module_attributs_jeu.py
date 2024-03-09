@@ -33,6 +33,8 @@ class Attributs_Jeu() :
         self.compteur = 0 #Compte le nombre de boucle (de 0 à 70) (principalement pour les animations)
         self.tab_personnages = [] #Un tableau avec tous les personnages (qui sont leur pv strictement au dessus de 0)
         self.tab_monstres = [] #Un tableau avec tous les monstres (qui sont leur pv strictement au dessus de 0)
+        self.nombre_monstre_a_ajoute = 1
+        self.pv_monstre = 3
         self.tab_coffres = [] #Un tableau avec tous les coffres (non ouvert)
         self.deplacements = [] #Tableau de tuples (x, y) pour chaque coordonnées des cases de déplacement possible
         self.deplacements_invisibles_cavalier = [] #Tableau de tuples (x, y) pour chaque coordonnées des cases de déplacement possible (seulement pour les cavaliers)
@@ -40,6 +42,10 @@ class Attributs_Jeu() :
         self.selection = ' ' #' ' = Case vide sinon si '#' = Obstacle sinon (autre caractère (str)) un personnage, monstre ou coffre
         self.equipe_en_cours = 'bleu' #Chaine de caractères de l'équipe qui joue
         self.coffre_selection = None #le coffre sélectionné
+        
+        #Famille Geant :
+        self.famille_geant_bleu = []
+        self.famille_geant_rouge = []
         
         #Bouton :
         self.bouton_clique = None #Si None, c'est que aucun bouton du jeu ou du menu a été cliqué. Sinon, prend la chaine de caractères correspondante (exemple : Le bouton 'jouer' a été cliqué, alors bouton_cliqué = 'jouer')
@@ -172,6 +178,35 @@ class Attributs_Jeu() :
     ######################################################
     ### Accesseurs :
     ######################################################
+    
+    def acc_famille_geant_rouge(self):
+        '''
+        renvoie l'attribut famille_geant_rouge
+        : return (list)
+        '''
+        return self.famille_geant_rouge
+    
+    def acc_famille_geant_bleu(self):
+        '''
+        renvoie l'attribut famille_geant_bleu
+        : return (list)
+        '''
+        return self.famille_geant_bleu
+    
+    def acc_pv_monstre(self):
+        '''
+        renvoie l'attribut pv_monstre
+        : return (int)
+        '''
+        return self.pv_monstre
+    
+    def acc_nombre_monstre_a_ajoute(self):
+        '''
+        renvoie l'attribut nombre_monstre_a_ajoute
+        : return (int)
+        '''
+        return self.nombre_monstre_a_ajoute
+    
     def acc_x_pointeur(self):
         '''
         renvoie l'attribut x_pointeur
@@ -533,6 +568,58 @@ class Attributs_Jeu() :
     ### Mutateurs :
     ######################################################
     
+    def mut_famille_geant_rouge(self, tab):
+        '''
+        modifie l'attribut famille_geant_rouge
+        : param tab (list of list of geant)
+        : pas de return
+        '''
+        #assertion
+        assert isinstance(tab, list), "Le paramètre doit être tableau de tableau contenant des geants (list of list of geant) !"
+        for elt in tab :
+            assert isinstance(elt, list), "Le paramètre doit être tableau de tableau contenant des geants (list of list of geant) !"
+            for geant in elt :
+                assert isinstance(geant, module_personnage.Geant), "Le paramètre doit être tableau de tableau contenant des geants (list of list of geant) !"
+        #code
+        self.famille_geant_rouge = tab
+    
+    def mut_famille_geant_bleu(self, tab):
+        '''
+        modifie l'attribut famille_geant_bleu
+        : param tab (list of list of geant)
+        : pas de return
+        '''
+        #assertion
+        assert isinstance(tab, list), "Le paramètre doit être tableau de tableau contenant des geants (list of list of geant) !"
+        for elt in tab :
+            assert isinstance(elt, list), "Le paramètre doit être tableau de tableau contenant des geants (list of list of geant) !"
+            for geant in elt :
+                assert isinstance(geant, module_personnage.Geant), "Le paramètre doit être tableau de tableau contenant des geants (list of list of geant) !"
+        #code
+        self.famille_geant_bleu = tab
+    
+    def mut_pv_monstre(self, nombre):
+        '''
+        modifie l'attribut pv_monstre
+        : param nombre (int), nombre > 0
+        : pas de return
+        '''
+        #assertion
+        assert isinstance(nombre, int) and nombre > 0 , "Le paramètre doit être un entier (int) supérieur à 0 !"
+        #code
+        self.pv_monstre = nombre
+    
+    def mut_nombre_monstre_a_ajoute(self, nombre):
+        '''
+        modifie l'attribut nombre_monstre_a_ajoute
+        : param nombre (int), nombre > 0
+        : pas de return
+        '''
+        #assertion
+        assert isinstance(nombre, int) and nombre > 0 , "Le paramètre doit être un entier (int) supérieur à 0 !"
+        #code
+        self.nombre_monstre_a_ajoute = nombre
+    
     def mut_cases_potions(self, tab):
         '''
         modifie l'attribut cases_potions
@@ -708,22 +795,22 @@ class Attributs_Jeu() :
     def mut_dernier_personnage_mort_bleu(self, perso):
         '''
         modifie l'attribut dernier_personnage_mort de l'équipe bleue
-        : param perso (module_personnage.Personnage)
+        : param perso (module_personnage.Personnage or None)
         : pas de return
         '''
         #Assertion
-        assert isinstance(perso, module_personnage.Personnage), "le perso doit être de la classe Personnage"
+        assert isinstance(perso, module_personnage.Personnage) or perso == None, "le perso doit être de la classe Personnage ou None"
         #Code
         self.dernier_personnage_mort_bleu = perso
         
     def mut_dernier_personnage_mort_rouge(self, perso):
         '''
         modifie l'attribut dernier_personnage_mort de l'équipe rouge
-        : param perso (module_personnage.Personnage)
+        : param perso (module_personnage.Personnage ou None)
         : pas de return
         '''
         #Assertion
-        assert isinstance(perso, module_personnage.Personnage), "le perso doit être de la classe Personnage"
+        assert isinstance(perso, module_personnage.Personnage) or perso == None, "le perso doit être de la classe Personnage ou None"
         #Code
         self.dernier_personnage_mort_rouge = perso
         
@@ -759,6 +846,17 @@ class Attributs_Jeu() :
         assert isinstance(tab, list), 'Le paramètre doit être un tableau (list)'
         #Code :
         self.tab_personnages = tab
+        
+    def mut_tab_monstres(self, tab) :
+        '''
+        Modifie l'attribut tab_monstres
+        : param tab (list)
+        : pas de return, modifie l'attribut tab_monstres
+        '''
+        #Assertion :
+        assert isinstance(tab, list), 'Le paramètre doit être un tableau (list)'
+        #Code :
+        self.tab_monstres = tab
         
     def mut_tab_coffres(self, tab) :
         '''
@@ -1276,3 +1374,29 @@ class Attributs_Jeu() :
         assert isinstance(coordonnees, tuple), 'Le paramètre doit être un tuple !'
         #Code :
         self.positions_tombes.remove(coordonnees)
+        
+    def ajouter_famille_geant_rouge(self, tab):
+        '''
+        ajoute un geant rouge complet dans l'attribut famille_geant_rouge
+        : param tab (list of geants)
+        : pas de return
+        '''
+        #assertion
+        assert isinstance(tab, list), "Le paramètre doit être tableau de geants rouges (list of geants) !"
+        for geant in tab :
+            assert isinstance(geant, module_personnage.Geant), "Le paramètre doit être tableau de geants rouges (list of geants) !"
+        #code
+        self.famille_geant_rouge.append(tab)
+        
+    def ajouter_famille_geant_bleu(self, tab):
+        '''
+        ajoute un geant bleu complet dans l'attribut famille_geant_bleu
+        : param tab (list of geants)
+        : pas de return
+        '''
+        #assertion
+        assert isinstance(tab, list), "Le paramètre doit être tableau de geants bleus (list of geants) !"
+        for geant in tab :
+            assert isinstance(geant, module_personnage.Geant), "Le paramètre doit être tableau de geants bleus (list of geants) !"
+        #code
+        self.famille_geant_bleu.append(tab)

@@ -1000,7 +1000,7 @@ class Affichage():
                 else :
                     #Si le personnage est un Géant :
                     if nom == 'geant' :
-                        self.ecran.blit(talbeau[1][personnage.acc_numero_geant()], (x , y))   
+                        self.ecran.blit(tableau[1][personnage.acc_numero_geant()], (x , y))   
                     #Sinon, le personnage est "classique"
                     else :
                         self.ecran.blit(tableau[1], (x , y))

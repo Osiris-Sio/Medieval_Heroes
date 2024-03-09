@@ -82,7 +82,7 @@ class Robot():
                 case = random.choice(self.attributs_jeu.acc_deplacements()) #on se déplace au hasard
                 tab_perso_case = [personnage, case]
                     
-        if tab_perso_case == [] : #si aucun ennemu proche
+        if tab_perso_case == [] : #si aucun ennemi proche
             
             i_personnage = 0
             while i_personnage < len(tab_personnages_rouges) and tab_perso_case == [] :
@@ -133,8 +133,7 @@ class Robot():
                     case = random.choice(self.attributs_jeu.acc_deplacements())
             
             tab_perso_case = [personnage, case]
-                                
-        #case = self.attributs_jeu.acc_deplacements()[random.randint(0, len(self.attributs_jeu.acc_deplacements()) - 1)]
+        
         return tab_perso_case
     
     def deplacer_personnage(self, tab_personnages_rouges, terrain) :
@@ -170,7 +169,7 @@ class Robot():
         Le robot regarde s'il y a un ennemi proche de son personnage allie (dans les cases d'attaques possibles)
         : params
             allie (module_personnage.Personnage)
-            terrain (module_terrain.Terrani)
+            terrain (module_terrain.Terrain)
             une_case_proche (bool), par défaut vaut False
         : return (module_personnage.Personnage)
         '''

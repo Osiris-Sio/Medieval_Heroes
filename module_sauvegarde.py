@@ -47,7 +47,7 @@ class Sauvegarde() :
         for personnage in self.attributs_jeu.acc_tab_personnages() :
             
             if isinstance(personnage, module_personnage.Geant) :
-                chaine_personnages = chaine_personnages + '[' + personnage.acc_equipe() + ',' + str(personnage.acc_x()) + ',' + str(personnage.acc_y()) + ',' + str(personnage.acc_pv()) + ',' + str(personnage.acc_numero_geant()) + ']'
+                chaine_personnages = chaine_personnages + '[' + personnage.acc_equipe() + ',' + str(personnage.acc_x()) + ',' + str(personnage.acc_y()) + ',' + str(personnage.acc_numero_geant()) + ',' + str(personnage.acc_pv()) + ']'
             
             elif isinstance(personnage, module_personnage.Cavalier) :
                 chaine_personnages = chaine_personnages + '[' + personnage.acc_equipe() + ',' + str(personnage.acc_x()) + ',' + str(personnage.acc_y()) + ',' + str(personnage.acc_pv()) + ']'
@@ -72,8 +72,8 @@ class Sauvegarde() :
         chaine_coffres += ']' 
         tab_chaines.append(chaine_coffres)  
             
-        # Equipe / Action / Tour :
-        tab_chaines.append('[' + self.attributs_jeu.acc_equipe_en_cours() + ',' + str(self.attributs_jeu.acc_nombre_action()) + ',' + str(self.attributs_jeu.acc_nombre_tour()) + ']')
+        # Equipe / Action / Tour / Robot :
+        tab_chaines.append('[' + self.attributs_jeu.acc_equipe_en_cours() + ',' + str(self.attributs_jeu.acc_nombre_action()) + ',' + str(self.attributs_jeu.acc_nombre_tour()) + ',' + str(self.attributs_jeu.acc_mode_robot()) + ']')
 
         # Tombes :
         chaine_tombes = '['
@@ -149,24 +149,49 @@ class Sauvegarde() :
             
         self.attributs_jeu.mut_selection(' ')
         self.attributs_jeu.mut_deplacements([])
+        self.attributs_jeu.mut_deplacements_cavalier([])
         self.attributs_jeu.mut_attaques([])
-            
+        
         # Personnages :
         tab_personnages = tab_converti[0]
-        self.attributs_jeu.tab_personnages = []
+        self.attributs_jeu.mut_tab_personnages([])
+        self.attributs_jeu.mut_famille_geant_bleu([])
+        self.attributs_jeu.mut_famille_geant_rouge([])
+        
+        geant_bleu = []
+        geant_rouge = []
+        
         for personnage in tab_personnages :
             
             if personnage[0] in ['bleu', 'rouge'] :
                 if len(personnage) == 5 :
-                    self.attributs_jeu.tab_personnages.append(module_personnage.Geant(personnage[0], int(personnage[1]), int(personnage[2]), int(personnage[3]), int(personnage[4])))
+                    geant = module_personnage.Geant(personnage[0], int(personnage[1]), int(personnage[2]), int(personnage[3]))
+                    geant.mut_pv(int(personnage[4]))
+                    self.attributs_jeu.ajouter_personnage(geant)
+                    if personnage[0] == 'rouge' :    
+                        geant_rouge.append(geant)
+                    else :
+                        geant_bleu.append(geant)
                 else :
-                    self.attributs_jeu.tab_personnages.append(module_personnage.Cavalier(personnage[0], int(personnage[1]), int(personnage[2]), int(personnage[3])))
+                    cavalier = module_personnage.Cavalier(personnage[0], int(personnage[1]), int(personnage[2]))
+                    cavalier.mut_pv(int(personnage[3]))
+                    self.attributs_jeu.ajouter_personnage(cavalier)
             else :
-                self.attributs_jeu.tab_personnages.append(module_personnage.Personnage(personnage[0], personnage[1], int(personnage[2]), int(personnage[3]), int(personnage[4])))
+                perso = module_personnage.Personnage(personnage[0], personnage[1], int(personnage[2]), int(personnage[3]))
+                perso.mut_pv(int(personnage[4]))
+                self.attributs_jeu.ajouter_personnage(perso)
+                
+            if len(geant_bleu) == 4 :
+                self.attributs_jeu.ajouter_famille_geant_bleu(geant_bleu)
+                geant_bleu = []
+                
+            if len(geant_rouge) == 4 :
+                self.attributs_jeu.ajouter_famille_geant_rouge(geant_rouge)
+                geant_rouge = []
         
         # Monstre :
         tab_monstres = tab_converti[1]
-        self.attributs_jeu.tab_monstres = []
+        self.attributs_jeu.mut_tab_monstres([])
         for monstre in tab_monstres :
             self.attributs_jeu.tab_monstres.append(module_personnage.Monstre(int(monstre[0]), int(monstre[1]), int(monstre[2]), int(monstre[3])))
         
@@ -176,12 +201,15 @@ class Sauvegarde() :
         for coffre in tab_coffres :
             self.attributs_jeu.tab_coffres.append(module_objets.Coffre(int(coffre[0]), int(coffre[1])))
         
-        # Equipe / Action / Tour :
+        # Equipe / Action / Tour / Robot :
         tab_param = tab_converti[3][0]
         
-        self.attributs_jeu.equipe_en_cours = tab_param[0]
-        self.attributs_jeu.nombre_action = int(tab_param[1])
-        self.attributs_jeu.nombre_tour = int(tab_param[2])
+        self.attributs_jeu.mut_equipe_en_cours(tab_param[0])
+        self.attributs_jeu.mut_nombre_action(int(tab_param[1]))
+        self.attributs_jeu.mut_nombre_tour(int(tab_param[2]))
+        
+        dic = {'True' : True, 'False' : False}
+        self.attributs_jeu.mut_mode_robot(dic[tab_param[3]])
         
         # Tombe :
         tab_tombes = tab_converti[4]
@@ -189,7 +217,7 @@ class Sauvegarde() :
         
         for tombe in tab_tombes :
             self.attributs_jeu.positions_tombes.append([int(tombe[0]), int(tombe[1])])
-             
+        
     def charger(self) :
         '''
         Charge la partie

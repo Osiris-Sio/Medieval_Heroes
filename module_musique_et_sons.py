@@ -64,11 +64,11 @@ class GestionnaireSon:
     def mut_volume(self, volume):
         '''
         modifie le volume du jeu
-        : param volume (int)
+        : param volume (int or float)
         : pas de return
         '''
         #Assertion
-        assert isinstance(volume, int), "le volume doit être un entier"
+        assert isinstance(volume, int) or isinstance(volume, float), "le volume doit être un entier ou un float"
         #Code
         self.volume = volume
         self.regler_volume()
