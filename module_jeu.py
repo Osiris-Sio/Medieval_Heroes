@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 '''
--> Medieval Heroes : Module pour la classe Jeu.
+-> Medieval Heroes : Module pour la classe Jeu
 
 Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul 
 ''' 
@@ -130,44 +130,44 @@ class Jeu() :
         
         #Géant rouge:
         ##n°1
-        geant1r = module_personnage.Geant('rouge', 8, 0, 8, 0)
-        geant2r = module_personnage.Geant('rouge', 9, 0, 8, 1)
-        geant3r = module_personnage.Geant('rouge', 8, 1, 8, 2)
-        geant4r = module_personnage.Geant('rouge', 9, 1, 8, 3)
+        geant1r = module_personnage.Geant('rouge', 8, 0, 0)
+        geant2r = module_personnage.Geant('rouge', 9, 0, 1)
+        geant3r = module_personnage.Geant('rouge', 8, 1, 2)
+        geant4r = module_personnage.Geant('rouge', 9, 1, 3)
         ##n°2
-        geant5r = module_personnage.Geant('rouge', 11, 0, 8, 0)
-        geant6r = module_personnage.Geant('rouge', 12, 0, 8, 1)
-        geant7r = module_personnage.Geant('rouge', 11, 1, 8, 2)
-        geant8r = module_personnage.Geant('rouge', 12, 1, 8, 3)
+        geant5r = module_personnage.Geant('rouge', 11, 0, 0)
+        geant6r = module_personnage.Geant('rouge', 12, 0, 1)
+        geant7r = module_personnage.Geant('rouge', 11, 1, 2)
+        geant8r = module_personnage.Geant('rouge', 12, 1, 3)
         self.famille_geant_rouge = [[geant1r, geant2r, geant3r, geant4r], [geant5r, geant6r, geant7r, geant8r]] ##La famille des géants
         
         #Geant bleu:
         ##n°1
-        geant1b = module_personnage.Geant('bleu', 8, 19, 8, 0)
-        geant2b = module_personnage.Geant('bleu', 9, 19, 8, 1)
-        geant3b = module_personnage.Geant('bleu', 8, 20, 8, 2)
-        geant4b = module_personnage.Geant('bleu', 9, 20, 8, 3)
+        geant1b = module_personnage.Geant('bleu', 8, 19, 0)
+        geant2b = module_personnage.Geant('bleu', 9, 19, 1)
+        geant3b = module_personnage.Geant('bleu', 8, 20, 2)
+        geant4b = module_personnage.Geant('bleu', 9, 20, 3)
         ##n°2
-        geant5b = module_personnage.Geant('bleu', 11, 19, 8, 0) 
-        geant6b = module_personnage.Geant('bleu', 12, 19, 8, 1) 
-        geant7b = module_personnage.Geant('bleu', 11, 20, 8, 2) 
-        geant8b = module_personnage.Geant('bleu', 12, 20, 8, 3) 
+        geant5b = module_personnage.Geant('bleu', 11, 19, 0) 
+        geant6b = module_personnage.Geant('bleu', 12, 19, 1) 
+        geant7b = module_personnage.Geant('bleu', 11, 20, 2) 
+        geant8b = module_personnage.Geant('bleu', 12, 20, 3) 
         self.famille_geant_bleu = [[geant1b, geant2b, geant3b, geant4b], [geant5b, geant6b, geant7b, geant8b]] ##La famille des géants    
         
         self.attributs_jeu.mut_tab_personnages([
             
         #rouge :
         
-        module_personnage.Personnage('paladin', 'rouge', 6, 2, 8),#personnage, equipe, x, y, pv
-        module_personnage.Cavalier('rouge', 8, 2, 8),
-        module_personnage.Personnage('ivrogne', 'rouge', 7, 2, 8),
-        module_personnage.Personnage('poulet', 'rouge', 10, 3, 8),
-        module_personnage.Personnage('valkyrie', 'rouge', 9, 2, 8),
-        module_personnage.Personnage('sorciere', 'rouge', 10, 2, 8),
-        module_personnage.Personnage('archere', 'rouge', 11, 2, 8),
-        module_personnage.Personnage('barbare', 'rouge', 12, 2, 8),
-        module_personnage.Personnage('mage', 'rouge', 13, 2, 8),
-        module_personnage.Personnage('cracheur de feu', 'rouge', 14, 2, 8),
+        module_personnage.Personnage('paladin', 'rouge', 6, 2),#personnage, equipe, x, y
+        module_personnage.Cavalier('rouge', 8, 2),
+        module_personnage.Personnage('ivrogne', 'rouge', 7, 2),
+        module_personnage.Personnage('poulet', 'rouge', 10, 3),
+        module_personnage.Personnage('valkyrie', 'rouge', 9, 2),
+        module_personnage.Personnage('sorciere', 'rouge', 10, 2),
+        module_personnage.Personnage('archere', 'rouge', 11, 2),
+        module_personnage.Personnage('barbare', 'rouge', 12, 2),
+        module_personnage.Personnage('mage', 'rouge', 13, 2),
+        module_personnage.Personnage('cracheur de feu', 'rouge', 14, 2),
         geant1r,
         geant2r,
         geant3r,
@@ -178,16 +178,16 @@ class Jeu() :
         geant8r,
         
         #bleu :
-        module_personnage.Personnage('paladin', 'bleu', 6, 18, 8),#personnage, equipe, x, y, pv
-        module_personnage.Cavalier('bleu', 8, 18, 8),
-        module_personnage.Personnage('ivrogne', 'bleu', 7, 18, 8),
-        module_personnage.Personnage('poulet', 'bleu', 10, 17, 8),
-        module_personnage.Personnage('valkyrie', 'bleu', 9, 18, 8),
-        module_personnage.Personnage('sorciere', 'bleu', 10, 18, 8),
-        module_personnage.Personnage('archere', 'bleu', 11, 18, 8),
-        module_personnage.Personnage('barbare', 'bleu', 12, 18, 8),
-        module_personnage.Personnage('mage', 'bleu', 13, 18, 8),
-        module_personnage.Personnage('cracheur de feu', 'bleu', 14, 18, 8),
+        module_personnage.Personnage('paladin', 'bleu', 6, 18),#personnage, equipe, x, y
+        module_personnage.Cavalier('bleu', 8, 18),
+        module_personnage.Personnage('ivrogne', 'bleu', 7, 18),
+        module_personnage.Personnage('poulet', 'bleu', 10, 17),
+        module_personnage.Personnage('valkyrie', 'bleu', 9, 18),
+        module_personnage.Personnage('sorciere', 'bleu', 10, 18),
+        module_personnage.Personnage('archere', 'bleu', 11, 18),
+        module_personnage.Personnage('barbare', 'bleu', 12, 18),
+        module_personnage.Personnage('mage', 'bleu', 13, 18),
+        module_personnage.Personnage('cracheur de feu', 'bleu', 14, 18),
         geant1b,
         geant2b,
         geant3b,
@@ -517,7 +517,7 @@ class Jeu() :
                     #Coordonnées au hasard
                     x = random.randint(1, 20)
                     y = random.randint(1, 20)
-                self.attributs_jeu.ajouter_monstre(module_personnage.Monstre(x, y, 2, 1)) #Ajoute le monstre dans le tableau des monstres
+                self.attributs_jeu.ajouter_monstre(module_personnage.Monstre(x, y, 1)) #Ajoute le monstre dans le tableau des monstres
             
             #Ajoute de chaque monstre du tableau des monstres sur le terrain :
             for monstre in self.attributs_jeu.acc_tab_monstres() :

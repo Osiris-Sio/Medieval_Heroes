@@ -17,9 +17,10 @@ class GestionnaireSon:
     '''
     une classe pour la gestion du son du jeu
     '''
-    def __init__(self, volume=0.5):
+    def __init__(self, volume = 0.5):
         '''
         initialise le gestionnaire de sons
+        : param volume (int), par défaut, il vaut 0.5
         '''
         pygame.mixer.init()
         self.volume = volume
@@ -34,6 +35,7 @@ class GestionnaireSon:
     def boucle_musique(self):
         '''
         lance la boucle des musiques de fond
+        : pas de return
         '''
         for musique in self.musique_fond:
             pygame.mixer.music.play()
@@ -41,13 +43,19 @@ class GestionnaireSon:
     def jouer_effet_sonore(self, nom):
         '''
         joue un effet sonore
+        : param nom (str)
+        : pas de return
         '''
+        #Assertion
+        assert isinstance(nom, str), "le nom doit être une chaîne de caractères"
+        #Code
         if nom in self.effets_sonores:
             self.effets_sonores[nom].play()
     
     def regler_volume(self):
         '''
         ajuste le volume du jeu
+        : pas de return
         '''
         pygame.mixer.music.set_volume(self.volume)
         for effet_sonore in self.effets_sonores.values():
@@ -56,13 +64,19 @@ class GestionnaireSon:
     def mut_volume(self, volume):
         '''
         modifie le volume du jeu
+        : param volume (int)
+        : pas de return
         '''
+        #Assertion
+        assert isinstance(volume, int), "le volume doit être un entier"
+        #Code
         self.volume = volume
         self.regler_volume()
     
     def arreter_tous_les_sons(self):
         '''
         arrête tous les sons du jeu
+        : pas de return
         '''
         pygame.mixer.stop()
 
@@ -93,5 +107,3 @@ if __name__ == "__main__":
 
     pygame.quit()
     '''
-
-

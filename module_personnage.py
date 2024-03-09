@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 '''
--> Medieval Fight : Module pour la classe Personnage.
+-> Medieval Fight : Module pour la classe Personnage
 
 Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul 
 ''' 
@@ -11,26 +11,27 @@ Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul
 ######################################################
 from graphe import parcourir_graphe
 from graphe import module_graphe_dic
-import random
+import random, module_terrain
 ######################################################
 ### Classe Personnage
 ######################################################
 
-##Dictionnaire des pv d'attaques
+##Dictionnaire des pv 
 DIC_PV = {'archere' : 10,
-                'paladin' : 10,
-                'cavalier' :10,
-                'geant' : 10,
-                'sorciere' : 10,
-                'poulet' : 10,
-                'ivrogne' : 10,
-                'barbare' : 10,
-                'cracheur de feu' : 10,
-                'valkyrie' : 10,
-                'mage' : 10,
-                'monstre' : 10
+         'paladin' : 8,
+         'cavalier' :8,
+         'geant' : 30,
+         'sorciere' : 15,
+         'poulet' : 5,
+         'ivrogne' : 7,
+         'barbare' : 12,
+         'cracheur de feu' : 13,
+         'valkyrie' : 9,
+         'mage' : 12,
+         'monstre' : 5
                 }
 
+#Dictionnaire des dégâts infligés
 DIC_ATTAQUES_BLEU = {'archere' : 7,
                 'paladin' : 5,
                 'cavalier' : 7,
@@ -61,10 +62,12 @@ DIC_ATTAQUES_ROUGE = {'archere' : 7,
 
 def mut_dic_attaques(personnage, equipe, val):
     '''
-    modifie le DIC_ATTAQUES_BLEU
+    modifie le DIC_ATTAQUES de la couleur passée en paramètre (equipe)
     : params
         personnage (str), le personnage du dic pour lequel il y a un changement
+        equipe (str), 'bleu' ou 'rouge'
         val (int), la nouvelle valeur
+    : pas de return
     '''
     #assertions
     assert personnage in ['monstre', 'mage', 'paladin', 'geant', 'sorciere', 'valkyrie', 'archere', 'poulet', 'cavalier', 'cracheur de feu', 'ivrogne', 'barbare'], 'le personnage doit exister !' 
@@ -81,7 +84,7 @@ class Personnage():
     '''
     une classe pour les personnages du jeu
     '''
-    def __init__(self, personnage, equipe, x, y, pv):
+    def __init__(self, personnage, equipe, x, y):
         '''
         initialise le personnage
         : params
@@ -89,35 +92,26 @@ class Personnage():
             equipe (str), une des deux équipes, 'bleu' ou 'rouge'
             x (int), 0 <= x <= 20
             y (int), 0 <= y <= 20
-            pv (int), pv <= 60
         '''
         #assertions
         assert personnage in ['monstre', 'mage', 'paladin', 'geant', 'sorciere', 'valkyrie', 'archere', 'poulet', 'cavalier', 'cracheur de feu', 'ivrogne', 'barbare'], 'le personnage doit exister !' 
         assert equipe in ['bleu','rouge', 'neutre'], "l'équipe est soit bleu, soit rouge ou neutre (monstre)"
         assert 0 <= x <= 20, "x ne doit pas être hors de la grille !"
         assert 0 <= y <= 20, "y ne doit pas être hors de la grille !"
-        assert pv <= 60, "les pv ne doivent pas dépasser 60"
         #code
         self.personnage = personnage
         self.equipe = equipe
         self.x = x
         self.y = y
-        self.pv = pv
+        self.pv = DIC_PV[personnage]
         self.endommage = False
         self.attaque = False #par défaut, le personnage n'attaque personne
         self.soigne = False
-        self.direction_droite = False
 
     def __repr__(self):
         '''
         renvoie une chaîne de caractères pour décrire le paladin
         : return (str)
-        >>> s = Personnage('sorciere', 'bleu', 12, 10, 6)
-        >>> s
-        sorciere de coordonnées (12,10), possédant 6pv et appartenant à l'équipe bleu
-        >>> a = Personnage('archere', 'rouge', 13, 4, 12)
-        >>> a
-        archere de coordonnées (13,4), possédant 12pv et appartenant à l'équipe rouge
         '''
         return self.personnage + ' de coordonnées (' + str(self.x)+ ',' + str(self.y) + '), possédant ' + str(self.pv) + "pv et appartenant à l'équipe " + self.equipe
         
@@ -125,12 +119,6 @@ class Personnage():
         '''
         renvoie une chaîne de caractères représentant le personnage
         : return (str)
-        >>> p = Personnage('paladin', 'rouge', 4, 8, 5)
-        >>> print(p)
-        P
-        >>> c = Personnage('cracheur de feu', 'rouge', 15, 15, 12)
-        >>> print(c)
-        C
         '''
         lettre = self.personnage[0]
         return lettre.upper() #la première lettre du personnage en majuscule
@@ -164,15 +152,6 @@ class Personnage():
         '''
         renvoie l'attribut x
         : return (int), 0 <= x <= 20
-        >>> p = Personnage('paladin', 'bleu', 12, 5, 12)
-        >>> p.acc_x()
-        12
-        >>> s = Personnage('sorciere', 'bleu', 20, 1, 13)
-        >>> s.acc_x()
-        20
-        >>> c = Personnage('cracheur de feu', 'rouge', 3, 10, 2)
-        >>> c.acc_x()
-        3
         '''
         return self.x
         
@@ -180,15 +159,6 @@ class Personnage():
         '''
         renvoie l'attribut y
         : return (int), 0 <= y <= 20
-        >>> c = Personnage('cavalier', 'rouge', 19, 15, 10)
-        >>> c.acc_y()
-        15
-        >>> v = Personnage('valkyrie', 'bleu', 16, 9, 5)
-        >>> v.acc_y()
-        9
-        >>> p = Personnage('poulet', 'rouge', 13, 4, 4)
-        >>> p.acc_y()
-        4
         '''
         return self.y
     
@@ -241,10 +211,11 @@ class Personnage():
     def mut_pv(self, valeur):
         '''
         modifie l'attribut pv
+        : param valeur (int)
         : pas de return
         '''
         #assertion
-        assert isinstance(valeur, int), 'la nouvelle valeur doit être un entier !'
+        assert isinstance(valeur, int) and valeur >= 0, 'la nouvelle valeur doit être un entier positif'
         #code
         self.pv = valeur
         
@@ -255,7 +226,7 @@ class Personnage():
         : pas de return
         '''
         #assertion
-        assert isinstance(nouveau_perso, str), 'le nouveau personnage doit être de type str !'
+        assert nouveau_perso in ['monstre', 'mage', 'paladin', 'geant', 'sorciere', 'valkyrie', 'archere', 'poulet', 'cavalier', 'cracheur de feu', 'ivrogne', 'barbare'], 'le personnage doit exister !' 
         #code
         self.personnage = nouveau_perso
         
@@ -276,49 +247,35 @@ class Personnage():
             nouveau_x (int), 0 <= nouveau_x <= 20
             nouveau_y (int), 0 <= nouveau_y <= 20
         : pas de return, modifie les attributs x et y
-        >>> p = Personnage('poulet', 'rouge', 12, 15, 2)
-        >>> p.acc_x()
-        12
-        >>> p.acc_y()
-        15
-        >>> p.deplacer(10, 10)
-        >>> p.acc_x()
-        10
-        >>> p.acc_y()
-        10
         '''
         self.x = nouveau_x
         self.y = nouveau_y
 
     def est_mort(self):
         '''
-        renvoie True si le personnage est mort (0 pv) et False sinon
+        renvoie True si le personnage est mort (<= 0 pv) et False sinon
         : return (bool)
-        >>> c = Personnage('cracheur de feu', 'rouge', 12, 15, -1)
-        >>> c.est_mort()
-        True
-        >>> p = Personnage('poulet', 'rouge', 8, 8, 0)
-        >>> p.est_mort()
-        True
-        >>> a = Personnage('archere', 'bleu', 11, 20, 9)
-        >>> a.est_mort()
-        False
         '''
         return self.pv <= 0
     
     def est_attaque(self, ennemi, nombre = None):
         '''
         retire le nombre de pv au personnage correspondant à l'ennemi
-        : ennemi (str)
+        : params
+            ennemi (str)
+            nombre (int), par défaut vaut None
         : pas de return, modifie l'attribut pv
         '''
+        #Assertion
+        assert ennemi in ['monstre', 'mage', 'paladin', 'geant', 'sorciere', 'valkyrie', 'archere', 'poulet', 'cavalier', 'cracheur de feu', 'ivrogne', 'barbare'], 'le personnage doit exister !' 
+        #Code
         if nombre is None: #autre qu'une sorcière
             if self.acc_equipe() == 'bleu' : #Si le personnage est bleu
-                self.mut_pv(self.acc_pv() - DIC_ATTAQUES_ROUGE[ennemi]) #L'ennemi est forcément rouge
+                self.mut_pv(self.acc_pv() - DIC_ATTAQUES_ROUGE[ennemi]) 
             else :
-                self.mut_pv(self.acc_pv() - DIC_ATTAQUES_BLEU[ennemi]) #L'ennemi est forcément bleu
+                self.mut_pv(self.acc_pv() - DIC_ATTAQUES_BLEU[ennemi]) 
         
-        else:
+        else : #une sorcière, donc dépend de la potion 
             self.pv -= nombre
         
     #################################################
@@ -328,32 +285,33 @@ class Personnage():
     def cases_valides_attaques(self, terrain):
         '''
         améliore les cases d'attaques
-        Les cases valides sont :
-        - Les cases avec un personnage dont les monstres
+        Les cases valides sont les cases avec un personnage dont les monstres
         : param terrain (Terrain)
-        : pas de return
+        : return (list)
         '''
+        #Assertion
+        assert isinstance(terrain, module_terrain.Terrain), "le terrain doit être de la classe Terrain"
+        #Code
         cases = self.cases_attaques() #les cases d'attaques par défaut
         attaques_valides = [] #les cases valides finales
         for attaque in cases: #on regarde chaque case
             perso = terrain.acc_terrain(attaque[0], attaque[1])
             if isinstance(perso, Personnage) and (not perso.acc_equipe() == self.equipe or self.personnage == 'sorciere') : #on vérifie que c'est un personnage de l'équipe adverse
-                ##si c'est un monstre
-                if isinstance(perso, Monstre):
-                    if not perso.acc_etat() == 1: #si le monstre n'est pas sous-terre
-                        attaques_valides.append(attaque) # si elle est bonne, on l'ajoute
-                ##si c'est un personnage
+                #si c'est un monstre
+                if isinstance(perso, Monstre) and not perso.acc_etat() == 1 :#si le monstre n'est pas sous-terre
+                    attaques_valides.append(attaque) # si elle est bonne, on l'ajoute
                 #géant
                 elif perso.acc_personnage() == 'geant':
-                    famille = self.trouve_famille_geant(perso)
+                    famille = self.trouve_famille_geant(perso) #tous les membres du géant
                     for elt in famille :
                         if not elt in attaques_valides :
                             attaques_valides.append(elt)
-                #"normal"
+                #"classique"
                 else:
-                    attaques_valides.append(attaque) # si elle est bonne, on l'ajoute
+                    attaques_valides.append(attaque)
             
         terrain.attributs_jeu.mut_attaques(attaques_valides)
+        return attaques_valides
 
     def cases_valides_deplacement(self, terrain):
         '''
@@ -396,9 +354,6 @@ class Personnage():
         '''
         renvoie un tableau contenant les coordonnées des cases sur lesquelles le personnage pourrait éventuellement aller
         : return (list of tuple)
-        >>> p = Personnage('paladin', 'bleu', 12, 8, 5)
-        >>> p.cases_deplacements()
-        [(11, 7), (13, 7), (11, 9), (13, 9), (11, 8), (13, 8), (12, 7), (12, 9), (10, 8), (14, 8), (12, 6), (12, 10)]
         '''
         ###Dictionnaire des déplacements
         dic_deplacements = { 'archere' : [(-1, -1), (1, -1), (-1, 1), (1, 1), (-2, -2), (2, -2), (-2, 2), (2, 2)],
@@ -435,9 +390,6 @@ class Personnage():
         '''
         renvoie un tableau contenant les coordonnées des cases sur lesquelles le personnage peut attaquer
         : return (list of tuples)
-        >>> v = Personnage('valkyrie', 'bleu', 15, 6, 3)
-        >>> v.cases_attaques()
-        [(14, 5), (16, 5), (14, 7), (16, 7), (16, 6), (15, 7), (14, 6), (15, 5)]
         '''
         ###Dictionnaire des attaques
         dic_attaques = { 'ivrogne' : [(-1, -1), (1, -1), (-1, 1), (1, 1)],
@@ -478,14 +430,14 @@ class Personnage():
     def cases_finales(self, cases):
         '''
         finalise les cases déplacements en ne gardant que les cases atteignables par un chemin
-        : params
+        : param cases (list)
         : return (list of tuples)
         '''
         dep_ok = []  
         graphe = self.construire_graphe((self.x, self.y), cases)
         for elt in cases :
-            try:
-                parcourir_graphe.depiler_chemin(graphe, (self.x, self.y), elt) #on regarde si la case est atteignable par un chemin
+            try: #on essaie de trouver un chemin
+                parcourir_graphe.depiler_chemin(graphe, (self.x, self.y), elt) 
                 dep_ok.append(elt)
             except:
                 None
@@ -493,7 +445,8 @@ class Personnage():
 
     def tuples_en_coordonnees(self, cases):
         '''
-        change les tuples composés de -1, 1 et de 0 avec des coordonnées de case
+        change les tuples composés de -1, 1 et de 0 avec des coordonnées de cases
+        : param cases (list)
         : return (list of tuples), le tableau avec les coordonnées des cases
         '''
         tab_cases = []
@@ -515,25 +468,10 @@ class Personnage():
         '''
         graphe = module_graphe_dic.Graphe_non_oriente_dic()
         for coordo_centre in [coordo] + terrain :
-            for coordo_voisin in self.coordonnees_autour(coordo_centre): #on regarde les voisins de la case
+            for coordo_voisin in module_terrain.Terrain.cases_autour(coordo_centre): #on regarde les voisins de la case
                 if coordo_voisin in [coordo] + terrain : #si le voisin est atteignable par le personnage
                     graphe.ajouter_arete(coordo_centre, coordo_voisin) #on ajoute une arête entre les deux cases
         return graphe
-    
-    def coordonnees_autour(self, coordo):
-        '''
-        renvoie les 8 coordonnées se situant juste à côté de la case de coordonnées (x, y)
-        met en premier les cases en haut, en bas, à droite et à gauche
-        : params
-            cordo (tuple of int), coordonnées de la case centrale
-        : return (list)
-        '''
-        tab = []
-        for tuples in [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]: #haut, bas, gauche, droite en premier
-            tuple_case = (coordo[0] + tuples[0],coordo[1] + tuples[1])
-            if 0 <= tuple_case[0] <= 20 and 0 <= tuple_case[1] <= 20: #si la case ne sort pas du terrain
-                tab.append(tuple_case) 
-        return tab
     
 ########################################
 #### Cavalier
@@ -543,29 +481,22 @@ class Cavalier(Personnage):
     '''
     une classe pour un cavalier
     '''
-    def __init__(self, equipe, x, y, pv):
+    def __init__(self, equipe, x, y):
         '''
         initialise une classe pour un cavalier, hérite de la classe Personnage
         : params
-            personnage (str)
             equipe (str), une des deux équipes, 'bleu' ou 'rouge'
             x (int), 0 <= x <= 20
             y (int), 0 <= y <= 20
-            pv (int), pv <= 60
-            numero_geant (int), 0 <= numero_geant <= 3
         '''
-        super().__init__('cavalier', equipe, x, y, pv)
+        super().__init__('cavalier', equipe, x, y)
         
     def cases_deplacements(self):
         '''
         renvoie un tableau contenant les coordonnées des cases sur lesquelles le personnage pourrait éventuellement aller
         : return (list of tuple)
-        >>> p = Cavalier('rouge', 15, 10, 10)
-        >>> p.cases_deplacements()
-        [(13, 9), (14, 8), (16, 8), (13, 11), (14, 12), (17, 9), (16, 12), (17, 11)]
         '''
         tab_cavalier = [(-2, -1), (-1, -2), (1, -2), (-2, 1), (-1, 2), (2, -1), (1, 2), (2, 1)]
-        
         #Les coordonnées
         return self.tuples_en_coordonnees(tab_cavalier)
     
@@ -578,8 +509,10 @@ class Cavalier(Personnage):
         : param terrain (Terrain)
         : pas de return
         '''
+        #Assertion
+        assert isinstance(terrain, module_terrain.Terrain), "le terrain doit être de la classe Terrain"
         #Déplacements pour bouger
-        perso = Personnage('paladin', 'bleu', self.x, self.y, 10) #déplacements des paladins
+        perso = Personnage('paladin', 'bleu', self.x, self.y) #déplacements des paladins
         deplacements_cavalier = self.cases_deplacements()
         dep_bouger =  deplacements_cavalier + perso.cases_deplacements() #déplacements invisibles
         #Déplacements sans obstacles
@@ -601,21 +534,19 @@ class Geant(Personnage):
     '''
     une classe pour un géant
     '''
-    def __init__(self, equipe, x, y, pv, numero_geant):
+    def __init__(self, equipe, x, y, numero_geant):
         '''
         initialise une classe pour un géant, hérite de la classe Personnage
         : params
-            personnage (str)
             equipe (str), une des deux équipes, 'bleu' ou 'rouge'
             x (int), 0 <= x <= 20
             y (int), 0 <= y <= 20
-            pv (int), pv <= 60
             numero_geant (int), 0 <= numero_geant <= 3
         '''
         #assertion
         assert isinstance(numero_geant, int) and -1 <= numero_geant <= 3 , 'le numéro du géant doit être 0, 1, 2 ou 3 !'
         #code
-        super().__init__('geant', equipe, x, y, pv)
+        super().__init__('geant', equipe, x, y)
         self.numero_geant = numero_geant
         self.dic = {0 : (0, 0),
                      1 : (-1, 0),
@@ -624,8 +555,9 @@ class Geant(Personnage):
                      }
         
     #####################################
-    ##### Accesseurs :
+    ##### Accesseur :
     #####################################
+    
     def acc_numero_geant(self):
         '''
         renvoie l'attribut numero_geant
@@ -641,13 +573,9 @@ class Geant(Personnage):
         '''
         renvoie un tableau contenant les coordonnées des cases sur lesquelles le personnage pourrait éventuellement aller
         : return (list of tuple)
-        >>> g = Geant('rouge', 0, 12, 15, 2)
-        >>> g.cases_deplacements()
-        [(0, 10), (1, 10), (0, 13), (2, 11), (2, 12), (1, 13)]
         '''
         ###Dictionnaire des déplacements
         tab_geant = [(0, -1), (-1, 0), (-1, 1), (1, -1), (0, 2), (2, 0), (2, 1), (1, 2)]
-        
         ##dépend de la case sélectionnée du géant
         return self.tuples_en_coordonnees(tab_geant)
     
@@ -655,12 +583,8 @@ class Geant(Personnage):
         '''
         renvoie un tableau contenant les coordonnées des cases sur lesquelles le personnage peut attaquer
         : return (list of tuples)
-        >>> g = Geant('rouge', 20, 15, 5, 3)
-        >>> g.cases_attaques()
-        [(19, 13), (18, 14), (18, 15), (20, 13), (19, 16), (20, 16), (18, 13), (18, 16)]
         '''
         tab_geant = [(0, -1), (-1, 0), (-1, 1), (1, -1), (0, 2), (2, 0), (2, 1), (1, 2), (-1, -1), (-1, 2), (2, -1), (2, 2)]
-        
         ##dépend de la case sélectionnée du géant
         return self.tuples_en_coordonnees(tab_geant)
     
@@ -673,6 +597,9 @@ class Geant(Personnage):
         : param terrain (Terrain)
         : pas de return
         '''
+        #Assertion
+        assert isinstance(terrain, module_terrain.Terrain), "le terrain doit être de la classe Terrain"
+        #Code
         deplacements = self.cases_deplacements() #les déplacements accessibles par défaut
         dep_valides = self.cases_sans_obstacles(terrain, deplacements) #cases sans obstacles
         
@@ -697,7 +624,7 @@ class Geant(Personnage):
         for case in deplacements:
             if not case in dep_deja_fait: #si ce couple n'a pas déjà été fait
                 couple = []
-                for case_autour in self.coordonnees_autour(case)[:4] :#seulement à droite, à gauche, en haut ou en bas
+                for case_autour in module_terrain.Terrain.cases_autour(case)[:4] :#seulement à droite, à gauche, en haut ou en bas
                     if case_autour in deplacements:
                         #création du nouveau couple
                         couple.append(case)
@@ -732,31 +659,31 @@ class Monstre(Personnage):
     '''
     une classe pour un monstre
     '''
-    def __init__(self, x, y, pv, etat):
+    def __init__(self, x, y, etat):
         '''
         initialise une classe pour un monstre
         : params
             x, y (int) avec 0 <= x, y <= 20
-            pv (int)
-            etat (int), 1 = dans la terre / ??? = hors de la terre
+            etat (int), 1 = dans la terre / 2 = hors de la terre
         '''
         #assertion
-        assert isinstance(etat, int), "l'état doit être un entier !"
+        assert etat in [1, 2], "l'état doit être soit 1 soit 2 !"
         #code
-        super().__init__('monstre', 'neutre', x, y, pv)
+        super().__init__('monstre', 'neutre', x, y)
         self.etat = etat
         self.tab_victime = []
         #pour l'affichage
-        self.coord_x = x * 38 + 250
-        self.coord_y = y * 38
-        self.futur_coord_x = None
-        self.futur_coord_y = None
+        self.coordo_x = x * 38 + 250
+        self.coordo_y = y * 38
+        self.futur_coordo_x = None
+        self.futur_coordo_y = None
         self.futur_x = None
         self.futur_y = None
         
     ####################################
     ####### Accesseurs
     ####################################
+        
     def acc_etat(self):
         '''
         renvoie l'attribut etat
@@ -764,9 +691,52 @@ class Monstre(Personnage):
         '''
         return self.etat
     
+    def acc_futur_x(self):
+        '''
+        renvoie l'attribut futur_x
+        : return (int)
+        '''
+        return self.futur_x
+    
+    def acc_futur_y(self):
+        '''
+        renvoie l'attribut futur_y
+        : return (int)
+        '''
+        return self.futur_y
+    
+    def acc_coordo_x(self):
+        '''
+        renvoie l'attribut coordo_x
+        : return (int)
+        '''
+        return self.coordo_x
+    
+    def acc_coordo_y(self):
+        '''
+        renvoie l'attribut coordo_y
+        : return (int)
+        '''
+        return self.coordo_y
+    
+    def acc_futur_coordo_x(self):
+        '''
+        renvoie l'attribut futur_coordo_x
+        : return (int)
+        '''
+        return self.futur_coordo_x
+    
+    def acc_futur_coordo_y(self):
+        '''
+        renvoie l'attribut futur_coordo_y
+        : return (int)
+        '''
+        return self.futur_coordo_y
+    
     ####################################
     ####### Mutateurs
     ####################################
+    
     def mut_etat(self, nouvel_etat):
         '''
         modifie l'attribut etat du monstre
@@ -777,6 +747,72 @@ class Monstre(Personnage):
         assert isinstance(nouvel_etat, int) and nouvel_etat in [1, 2], "le nouvel état doit être un entier ! (1 ou 2)"
         #code
         self.etat = nouvel_etat
+        
+    def mut_coordo_x(self, val):
+        '''
+        modifie l'attribut coordo_x
+        : param val (int)
+        : pas de return
+        '''
+        #Assertion
+        assert isinstance(val, int), "la valeur doit être un entier"
+        #Code
+        self.coordo_x = val
+        
+    def mut_coordo_y(self, val):
+        '''
+        modifie l'attribut coordo_y
+        : param val (int)
+        : pas de return
+        '''
+        #Assertion
+        assert isinstance(val, int), "la valeur doit être un entier"
+        #Code
+        self.coordo_y = val
+        
+    def mut_futur_x(self, val):
+        '''
+        modifie l'attribut futur_x
+        : param val (int)
+        : pas de return
+        '''
+        #Assertion
+        assert isinstance(val, int), "la valeur doit être un entier"
+        #Code
+        self.futur_x = val
+        
+    def mut_futur_y(self, val):
+        '''
+        modifie l'attribut futur_y
+        : param val (int)
+        : pas de return
+        '''
+        #Assertion
+        assert isinstance(val, int), "la valeur doit être un entier"
+        #Code
+        self.futur_y = val
+        
+    def mut_futur_coordo_x(self, val):
+        '''
+        modifie l'attribut futur_coordo_x
+        : param val (int)
+        : pas de return
+        '''
+        #Assertion
+        assert isinstance(val, int), "la valeur doit être un entier"
+        #Code
+        self.futur_coordo_x = val
+        
+    def mut_futur_coordo_y(self, val):
+        '''
+        modifie l'attribut futur_coordo_y
+        : param val (int)
+        : pas de return
+        '''
+        #Assertion
+        assert isinstance(val, int), "la valeur doit être un entier"
+        #Code
+        self.futur_coordo_y = val
         
     ####################################
     ####### Méthodes
@@ -858,7 +894,7 @@ class Monstre(Personnage):
             for y in range(21): #les y
                 case = (x, y) #la case
                 if terrain.est_possible(x, y) or case == coordo or (self.x, self.y) == case: #si la case est vide ou si c'est la victime ou si c'est le monstre
-                    cases_autour = self.coordonnees_autour(case)
+                    cases_autour = module_terrain.Terrain.cases_autour(case)
                     for case_voisine in cases_autour :
                         if terrain.est_possible(case_voisine[0], case_voisine[1]): #si la cases est vide
                             graphe.ajouter_arete(case, case_voisine) #on ajoute une arête entre les deux cases
@@ -919,8 +955,3 @@ class Monstre(Personnage):
         return victime
     
         
-
-############### DOCTEST #####################  
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod(verbose = False)

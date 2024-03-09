@@ -7,7 +7,7 @@ Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul
 ''' 
 
 ######################################################
-### Importation Modules :
+### Importation Module :
 ######################################################
 
 import module_jeu

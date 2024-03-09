@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 '''
--> Medieval Fight : Module pour les Sauvegardes et les Chargements de partie.
+-> Medieval Fight : Module pour les Sauvegardes et les Chargements de partie
 
 Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul 
 ''' 
@@ -19,27 +19,26 @@ from tkinter import filedialog
 
 class Sauvegarde() :
     '''
-    Une classe Sauvegarde qui gère le chargement et la sauvegarde d'une partie dans un fichier texte.
+    Une classe Sauvegarde qui gère le chargement et la sauvegarde d'une partie dans un fichier texte
     '''
-    
     def __init__(self, jeu, attributs_jeu) :
         '''
         Initialise la classe
-        :params
+        : params
             jeu (module_jeu.Jeu)
             attributs_jeu (module.attributs_jeu.Attributs_Jeu)
         '''
         #Assertions :
         assert isinstance(jeu, module_jeu.Jeu), 'jeu doit être de la classe Jeu du module_jeu !'
         assert isinstance(attributs_jeu, module_attributs_jeu.Attributs_Jeu), 'attributs_jeu doit être de la classe Attributs_Jeu du module_attributs_jeu !'
-        
         #Attributs des Paramètres :
         self.jeu = jeu
         self.attributs_jeu = attributs_jeu
         
     def generer_chaines(self) :
         '''
-        Renvoie un tableau de chaînes de caractères qui sera sauvegarder dans le fichier texte.
+        Renvoie un tableau de chaînes de caractères qui sera sauvegarder dans le fichier texte
+        : return (list of str)
         '''
         tab_chaines = []
         
@@ -48,13 +47,13 @@ class Sauvegarde() :
         for personnage in self.attributs_jeu.acc_tab_personnages() :
             
             if isinstance(personnage, module_personnage.Geant) :
-                chaine_personnages = chaine_personnages + '[' + personnage.acc_equipe() + ',' + str(personnage.acc_x()) + ',' + str(personnage.acc_y()) + ',' + str(personnage.pv) + ',' + str(personnage.numero_geant) + ']'
+                chaine_personnages = chaine_personnages + '[' + personnage.acc_equipe() + ',' + str(personnage.acc_x()) + ',' + str(personnage.acc_y()) + ',' + str(personnage.acc_pv()) + ',' + str(personnage.acc_numero_geant()) + ']'
             
             elif isinstance(personnage, module_personnage.Cavalier) :
-                chaine_personnages = chaine_personnages + '[' + personnage.acc_equipe() + ',' + str(personnage.acc_x()) + ',' + str(personnage.acc_y()) + ',' + str(personnage.pv) + ']'
+                chaine_personnages = chaine_personnages + '[' + personnage.acc_equipe() + ',' + str(personnage.acc_x()) + ',' + str(personnage.acc_y()) + ',' + str(personnage.acc_pv()) + ']'
             
             else :
-                chaine_personnages = chaine_personnages + '[' + personnage.acc_personnage() + ',' + personnage.acc_equipe() + ',' + str(personnage.acc_x()) + ',' + str(personnage.acc_y()) + ',' + str(personnage.pv) + ']'
+                chaine_personnages = chaine_personnages + '[' + personnage.acc_personnage() + ',' + personnage.acc_equipe() + ',' + str(personnage.acc_x()) + ',' + str(personnage.acc_y()) + ',' + str(personnage.acc_pv()) + ']'
         
         chaine_personnages += ']'
         tab_chaines.append(chaine_personnages)
@@ -85,10 +84,9 @@ class Sauvegarde() :
         
         return tab_chaines
         
-        
     def sauvegarder(self) :
         '''
-        Sauvegarde la partie.
+        Sauvegarde la partie
         : return (str), une phrase qui sera ajouté dans la console du jeu.
         '''
         #Demande le chemin où sera sauvegardé le fichier :
@@ -99,7 +97,6 @@ class Sauvegarde() :
         
         if not fichier :
             return "Aucun fichier sélectionné."
-        
         
         tab_chaines = self.generer_chaines()
         try :
@@ -114,8 +111,13 @@ class Sauvegarde() :
         
     def convertir_chaine_list(self, chaine) :
         '''
-        Converti la chaine de caractère passé en paramètre en tableau.
+        Convertit la chaîne de caractères passé en paramètre en tableau
+        : param chaine (str)
+        : return (list)
         '''
+        #Assertion
+        assert isinstance(chaine, str), "la chaîne doit être de type str"
+        #Code
         elt_important = ''
         tab_important = []
         tab_complet = []
@@ -135,9 +137,12 @@ class Sauvegarde() :
         
     def restorer_partie(self, tab) :
         '''
-        Restore la partie grâce à la chaine passé en paramètre.
+        Restaure la partie grâce au tableau passé en paramètre
+        : param tab (list)
         '''
+        #Assertion
         assert isinstance(tab, list), 'Le paramètre doit être un tableau (list) !'
+        #Code
         tab_converti = []
         for chaine in tab :
             tab_converti.append(self.convertir_chaine_list(chaine[:-1]))
@@ -184,13 +189,11 @@ class Sauvegarde() :
         
         for tombe in tab_tombes :
             self.attributs_jeu.positions_tombes.append([int(tombe[0]), int(tombe[1])])
-            
-        
-        
+             
     def charger(self) :
         '''
-        Charge la partie.
-        : return (str), une phrase qui sera ajouté dans la console du jeu.
+        Charge la partie
+        : return (str), une phrase qui sera ajouté dans la console du jeu
         '''
         #Demande le chemin du fichier qui sera chargé :
         fichier = filedialog.askopenfilename(
@@ -206,7 +209,6 @@ class Sauvegarde() :
             lecture.close()
             self.restorer_partie(tab)
             self.jeu.reinitialiser_attributs() #Réinitialise les attributs du jeu
-            return "Partie Chargé !"
-            
+            return "Partie Chargé !" 
         except :
             return "Erreur de Chargement !" 

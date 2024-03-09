@@ -6,9 +6,9 @@
 Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul 
 '''
 ######################################################
-### Importation
+### Importations
 ######################################################
-import random, module_personnage
+import random, module_personnage, module_terrain
 
 ######################################################
 ### Coffres
@@ -27,7 +27,7 @@ class Coffre():
         self.y = y
         self.contenu = self.definir_contenu()
         self.est_ouvert = False
-        self.avancement_ouverture = 1
+        self.avancement_ouverture = 1 
         self.dic_contenu = {1 : 'bonus de vie pour le personnage',
                             2 : 'changement de personnage',
                             3 : "augmente de 5 les dégâts d'attaque du personnage",
@@ -50,7 +50,6 @@ class Coffre():
     ######################################################
     ### Accesseurs :
     ######################################################
-    
     def acc_x(self):
         '''
         renvoie l'attribut x
@@ -100,10 +99,12 @@ class Coffre():
     def mut_avancement_ouverture(self, valeur) :
         '''
         Modifie l'attribut avancement_ouverture
-        :param valeur (int)
-        :pas de return
+        : param valeur (int)
+        : pas de return
         '''
+        #Assertion
         assert isinstance(valeur, int), 'Le paramètre doit être un entier (int) !'
+        #Code
         self.avancement_ouverture = valeur
     
     ######################################################
@@ -113,16 +114,16 @@ class Coffre():
     def definir_contenu(self):
         '''
         renvoie un nombre entre 1 et 5 suivant le contenu du coffre:
-            1 : 'bonus de vie pour le personnage' (14%)
-            2 : 'changement de personnage' (12%)
-            3 : "augmente de 5 les dégâts d'attaque du personnage" (9%)
-            4 : "ressuscite le dernier personnage mort de l'équipe du personnage" (11%)
-            5 : "ressuscite le dernier personnage mort de l'équipe adverse" (8%)
-            6 : 'ajoute trois potion de vie à la réserve de la sorcière' (15%)
-            7 : 'ajoute une potion de mort à la réserve de la sorcière' (8%)
-            8 : "ajoute deux potion de changement d'équipe à la réserve de la sorcière" (11%)
-            9 : 'ajoute une potion de mort à la réserve de la sorcière ennemie' (6%)
-            10 : "augmente de 1 les dégâts d'attaque de tous les personnages de l'équipe adverse" (6%)
+            1 : bonus de vie pour le personnage (14%)
+            2 : changement de personnage (12%)
+            3 : augmente de 5 les dégâts d'attaque du personnage (9%)
+            4 : ressuscite le dernier personnage mort de l'équipe du personnage (11%)
+            5 : ressuscite le dernier personnage mort de l'équipe adverse (8%)
+            6 : ajoute trois potion de vie à la réserve de la sorcière (15%)
+            7 : ajoute une potion de mort à la réserve de la sorcière (8%)
+            8 : ajoute deux potion de changement d'équipe à la réserve de la sorcière (11%)
+            9 : ajoute une potion de mort à la réserve de la sorcière ennemie (6%)
+            10 : augmente de 1 les dégâts d'attaque de tous les personnages de l'équipe adverse (6%)
         '''
         nombre = random.randint(0, 100)
         if 0 <= nombre <= 13 : #bonus de vie pour le personnage
@@ -145,29 +146,21 @@ class Coffre():
             reponse = 9
         else : #augmente de 2 les dégâts d'attaque de tous les personnages de l'équipe adverse
             reponse = 10
-        return 3
-    
-    def alentour(self):
-        '''
-        renvoie les coordonnées des cases autour du coffre
-        : return (list)
-        '''
-        tab = []
-        for i in range(-1, 2):
-            for j in range(-1, 2):
-                n_x = self.x + i
-                n_y = self.y + j
-                if 0 <= n_x <= 20 and 0 <= n_y <= 20: #la case est dans le terrain
-                    tab.append((n_x, n_y))
-        return tab
+        return reponse
     
     def est_present_autour(self, terrain, equipe_en_cours):
         '''
         renvoie True si il y a un personnage de l'équipe qui joue autour du coffre et False sinon
-        : param terrain (module_terrain.Terrain)
+        : params
+            terrain (module_terrain.Terrain)
+            equipe_en_cours (str)
         : return (bool)
         '''
-        alentour = self.alentour() #on regarde les cases autour du coffre
+        #Assertions
+        assert isinstance(terrain, module_terrain.Terrain), "le terrain doit être de la classe Terrain"
+        assert isinstance(equipe_en_cours, str) and equipe_en_cours in ['bleu', 'rouge'], "l'équipe en cours doit être 'bleu' ou 'rouge"
+        #Code
+        alentour = module_terrain.Terrain.cases_autour((self.x, self.y)) #on regarde les cases autour du coffre
         present = False
         i = 0
         while not present and i < len(alentour): #tant qu'on n'a pas trouvé ou qu'on n'a pas tout regardé
@@ -184,7 +177,6 @@ class Coffre():
         '''
         self.est_ouvert = True
         self.avancement_ouverture = 2
-
            
 ######################################################
 ### Potions
@@ -274,13 +266,13 @@ class Potion():
         ##Intermédiaire
         tuples_cases_2 = [(-1, 0), (1, 0), (0, -1), (0, 1)]
         tuples_cases = [(0, 0)]
-        if not etendu == 1: #2, 3 et 4
-            if etendu == 2: #2
+        if not etendu == 1: #2, 3 et 4 
+            if etendu == 2: #2 cases
                 tuples_cases.append(random.choice(tuples_cases_2))
-            else: #3 et 4
+            else: #3 et 4 (5 ou 9 cases)
                 for tuples in tuples_cases_2 :
                     tuples_cases.append(tuples)
-                if etendu == 4: #4
+                if etendu == 4: #9 cases
                     for tuples in [(-1, -1), (1, 1), (-1, 1), (1, -1)]:
                         tuples_cases.append(tuples)
         #Finalité                            
@@ -288,15 +280,3 @@ class Potion():
             tab_cases.append((x + tuples[0], y + tuples[1]))
         return tab_cases
        
-        
-        
-            
-            
-            
-            
-            
-            
-            
-            
-            
-        

@@ -67,6 +67,7 @@ def rechercher_parent(graphe, sommet, destination):
             if not voisin in parent : #si il n'a pas encore été visité
                 f.enfiler(voisin)
                 parent[voisin] = sommet
+                
     return parent
 
 def construire_pile(parent, destination):

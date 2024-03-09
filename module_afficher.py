@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 '''
--> Medieval Heroes : Module pour la classe Affichage.
+-> Medieval Heroes : Module pour la classe Affichage
 
 Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul 
 '''
@@ -19,12 +19,12 @@ from graphe import module_lineaire
 
 class Petale():
     '''
-    Une classe Petale qui gère les petites pétales des cerisiers.
+    Une classe Petale qui gère les petites pétales des cerisiers
     '''
     def __init__(self, position):
         '''
-        
-        :param position (str), 'haut_gauche' or 'haut_droit' or 'bas_gauche' or 'bas_droit'
+        Initialise la classe
+        : param position (str), 'haut_gauche' ou 'haut_droit' ou 'bas_gauche' ou 'bas_droit'
         '''
         #Assertion :
         assert position in ['haut_gauche', 'haut_droit', 'bas_gauche', 'bas_droit'], "Le paramètre doit être soit 'haut_gauche' ou 'haut_droit' ou 'bas_gauche' ou 'bas_droit' !"
@@ -36,23 +36,81 @@ class Petale():
         if self.position == 'haut_gauche':
             self.x = random.randint(317, 378)
             self.y = random.randint(225, 278)
+            self.distance_max = random.randint(295, 360)
                     
         elif self.position == 'haut_droit':
             self.x = random.randint(925, 975)
             self.y = random.randint(231, 277)
+            self.distance_max = random.randint(295, 360)
                     
         elif self.position == 'bas_gauche':
             self.x = random.randint(317, 378)
             self.y = random.randint(500, 550)
+            self.distance_max = random.randint(595, 660)
                     
         else :
             self.x = random.randint(925, 975)
             self.y = random.randint(500, 550)
-                
-        if self.position == 'bas_gauche' or self.position == 'bas_droit':
             self.distance_max = random.randint(595, 660)
-        else :
-            self.distance_max = random.randint(295, 360)
+        
+    #################################
+    ### Accesseurs :
+    #################################
+            
+    def acc_x(self):
+        '''
+        renvoie l'attribut x du pétale
+        : return (int)
+        '''
+        return self.x
+    
+    def acc_y(self):
+        '''
+        renvoie l'attribut y du pétale
+        : return (int)
+        '''
+        return self.y
+    
+    def acc_position(self):
+        '''
+        renvoie l'attribut position
+        : return (str)
+        '''
+        return self.position
+    
+    def acc_distance_max(self):
+        '''
+        renvoie l'attribut distance_max
+        : return (int)
+        '''
+        return self.distance_max
+    
+    #################################
+    ### Mutateurs :
+    #################################
+    
+    def mut_x(self, nb):
+        '''
+        modifie l'attribut x du pétale
+        : param nb (int)
+        : pas de return
+        '''
+        #Assertion
+        assert isinstance(nb, int), "le nombre doit être un entier !"
+        #Code
+        self.x += nb
+        
+    def mut_y(self, nb):
+        '''
+        modifie l'attribut y du pétale
+        : param nb (int)
+        : pas de return
+        '''
+        #Assertion
+        assert isinstance(nb, int), "le nombre doit être un entier !"
+        #Code
+        self.y += nb
+        
         
 
 ######################################################
@@ -67,7 +125,7 @@ class Affichage():
     def __init__(self, attributs_jeu, terrain, ecran, clavier_souris):
         '''
         Initialise l'affichage
-        :params
+        : params
             attributs_jeu (module.attributs_jeu.Attributs_Jeu)
             terrain (module_terrain.Terrain)
             ecran (pygame.display)
@@ -117,7 +175,7 @@ class Affichage():
             ]
         self.image_tombe = pygame.image.load("medias/tombe1.png")
         
-        # Curseur :
+        # Curseurs :
         self.curseur_normal = pygame.image.load("medias/curseurs/curseur0.png")
         self.curseur_appuye = pygame.image.load("medias/curseurs/curseur1.png")
 
@@ -141,14 +199,12 @@ class Affichage():
         self.distance_max = random.randint(300, 360)
         
         #Filtres
-        
         self.transition = 0
         self.temps_annonce = 0
         self.opacite = 100
         self.direction = 'diminution'
         
         #Sol (contour du personnage) :
-        
         self.sol_personnages = {
             'rouge' : pygame.image.load("medias/sol_r.png"),
             'bleu' : pygame.image.load("medias/sol_b.png"),
@@ -157,6 +213,7 @@ class Affichage():
             'rouge' : pygame.image.load("medias/sol_r_geant.png"),
             'bleu' : pygame.image.load("medias/sol_b_geant.png")
             }
+        
         #Réponses coffre
         self.rep_contenu = {1 : 'Bonus de vie',
                             2 : 'Changement de personnage',
@@ -168,7 +225,7 @@ class Affichage():
                             8 : "Potions changement d'équipe",
                             9 : "Potion de mort adverse",
                             10 : "Bonus de dégâts adverse"
-                                    }
+                            }
         
         #Personnages :
         self.personnages = {
@@ -237,7 +294,7 @@ class Affichage():
             'mage' : [[pygame.image.load("medias/selection/Jour/sr.png"), pygame.image.load("medias/selection/Jour/sb.png")], [pygame.image.load("medias/selection/Nuit/mrn.png"), pygame.image.load("medias/selection/Nuit/mbn.png")]],
             'monstre' : [pygame.image.load("medias/selection/Jour/mj.png"), pygame.image.load("medias/selection/Nuit/mn.png")]
         }
-        
+        #Rouge quand ils sont ednommagés
         self.personnages_endommages = {
             'paladin': [pygame.image.load("medias/degats/pr.png"), pygame.image.load("medias/degats/pb.png")],
             'poulet': [pygame.image.load("medias/degats/por.png"), pygame.image.load("medias/degats/pob.png")],
@@ -252,6 +309,7 @@ class Affichage():
             'mage' : [pygame.image.load("medias/degats/sr.png"), pygame.image.load("medias/degats/sb.png")],
             'monstre' : [pygame.image.load("medias/degats/m.png")]
         }
+        #Vert quand ils sont soignés
         self.personnages_soins = {
             'paladin': [pygame.image.load("medias/soins/pr.png"), pygame.image.load("medias/soins/pb.png")],
             'poulet': [pygame.image.load("medias/soins/por.png"), pygame.image.load("medias/soins/pob.png")],
@@ -266,11 +324,12 @@ class Affichage():
             'mage' : [pygame.image.load("medias/soins/sr.png"), pygame.image.load("medias/soins/sb.png")],
             'monstre' : [pygame.image.load("medias/soins/m.png")]
         }
-            
+        #Pour animations attaque   
         self.personnages_attaque = {
             'archere': [[pygame.image.load("medias/archere/attaque/tir1.png"), pygame.image.load("medias/archere/attaque/tir2.png"), pygame.image.load("medias/archere/attaque/tir3.png"), pygame.image.load("medias/archere/attaque/tir4.png")],
                         [pygame.image.load("medias/archere/attaque/tirb1.png"), pygame.image.load("medias/archere/attaque/tirb2.png"), pygame.image.load("medias/archere/attaque/tirb3.png"), pygame.image.load("medias/archere/attaque/tirb4.png")]]
         }
+        #Lors de leur déplacement
         self.personnages_deplacement = {
             'paladin': [pygame.image.load("medias/en_deplacement/pr.png"), pygame.image.load("medias/en_deplacement/pb.png")],
             'poulet': [pygame.image.load("medias/en_deplacement/por.png"), pygame.image.load("medias/en_deplacement/pob.png")],
@@ -285,10 +344,10 @@ class Affichage():
             'mage' : [pygame.image.load("medias/en_deplacement/sr.png"), pygame.image.load("medias/en_deplacement/sb.png")],
             'monstre' : [pygame.image.load("medias/en_deplacement/m.png")]
         }
-        #potions :
+        #Potions :
         self.potions = [pygame.image.load("medias/potions/retirer.png"), pygame.image.load("medias/potions/soin.png"), pygame.image.load("medias/potions/tuer.png"), pygame.image.load("medias/potions/changer.png"),
                         pygame.image.load("medias/potions/soin_vide.png"), pygame.image.load("medias/potions/tuer_vide.png"), pygame.image.load("medias/potions/changer_vide.png")]
-        #neuf images par bulles
+        #Bulles
         self.bulles = {
             'bleu' : [pygame.image.load("medias/bulles/bleu/0.png"), pygame.image.load("medias/bulles/bleu/1.png"), pygame.image.load("medias/bulles/bleu/2.png"), pygame.image.load("medias/bulles/bleu/3.png"), pygame.image.load("medias/bulles/bleu/4.png"), pygame.image.load("medias/bulles/bleu/5.png"), pygame.image.load("medias/bulles/bleu/6.png"), pygame.image.load("medias/bulles/bleu/7.png"), pygame.image.load("medias/bulles/bleu/8.png")],
             'rouge' : [pygame.image.load("medias/bulles/rouge/0.png"), pygame.image.load("medias/bulles/rouge/1.png"), pygame.image.load("medias/bulles/rouge/2.png"), pygame.image.load("medias/bulles/rouge/3.png"), pygame.image.load("medias/bulles/rouge/4.png"), pygame.image.load("medias/bulles/rouge/5.png"), pygame.image.load("medias/bulles/rouge/6.png"), pygame.image.load("medias/bulles/rouge/7.png"), pygame.image.load("medias/bulles/rouge/8.png")],
@@ -327,20 +386,21 @@ class Affichage():
         self.menu_fin = pygame.image.load("medias/menu/menu_fin.png")
         
     ########################################
-    ### Affichages Principale :
+    ### Affichage Principale :
     ########################################
     
     def afficher_curseur(self):
         '''
         Affiche le curseur en fonction de l'état (appuyé ou non) et affiche sa position dans l'écran si il est dans le plateau de jeu
+        : pas de return
         '''
         position_souris = self.clavier_souris.acc_position_curseur() #Position de la souris sur la fenêtre Pygame.
         
-        #Si le joueur n'appui pas sur le clique gauche de la souris, affiche le curseur appuyé :
+        #Si le joueur appuie sur le clique gauche de la souris, affiche le curseur appuyé :
         if self.clavier_souris.acc_appuye() :
             self.ecran.blit(self.curseur_appuye, position_souris)  
         
-        #Sinon, affiche le curseur non appuyé :
+        #Sinon, affiche le curseur non-appuyé :
         else :
             self.ecran.blit(self.curseur_normal, position_souris)
             
@@ -351,12 +411,14 @@ class Affichage():
     def afficher_fond(self):
         '''
         affiche le fond d'ecran
+        : pas de return
         '''
         self.ecran.blit(self.image_fond, (0, 0))
         
     def afficher_boutons_menu(self):
         '''
         affiche les différents boutons du menu
+        : pas de return
         '''
         police = pygame.font.Font("medias/pixelec.ttf", 21)
         bouton_clique = self.attributs_jeu.acc_bouton_clique()
@@ -383,7 +445,7 @@ class Affichage():
         self.ecran.blit(bouton_charger, (450, 420)) 
         self.ecran.blit(texte_charger, (600, 440))
         
-        #Bouton options :
+        #Boutonptions :
         if bouton_clique == 'options':
             bouton_jouer = self.boutons['options_menu'][1]
             texte_options = police.render("Options" , 1, (77, 148, 219))
@@ -408,6 +470,7 @@ class Affichage():
     def afficher_boutons_options(self):
         '''
         Affiche les différents boutons du menu options
+        : pas de return
         '''
         police = pygame.font.Font("medias/pixelec.ttf", 21)
         bouton_clique = self.attributs_jeu.acc_bouton_clique()
@@ -474,6 +537,7 @@ class Affichage():
     def afficher_menu_options(self) :
         '''
         Affiche le menu options
+        : pas de return
         '''
         police = pygame.font.Font("medias/pixelec.ttf", 21)
         
@@ -499,6 +563,7 @@ class Affichage():
     def afficher_menu_modes(self) :
         '''
         Affiche les différents modes de jeu à la disposition des joueurs
+        : pas de return
         '''
         police = pygame.font.Font("medias/pixelec.ttf", 21)
         bouton_clique = self.attributs_jeu.acc_bouton_clique()
@@ -562,14 +627,16 @@ class Affichage():
     def afficher_filtre(self):
         '''
         Ajoute un effet filtre au jeu selon s'il fait Jour ou Nuit :
+        : pas de return
         '''
+        temps = self.attributs_jeu.acc_temps()
         #S'il fait Nuit :
-        if self.attributs_jeu.acc_temps() == 'Nuit':
+        if temps == 'Nuit' :
             if self.transition < 70:
                 self.transition += 1
                 
         #S'il fait Jour :
-        elif self.attributs_jeu.acc_temps() == 'Jour' :
+        else :
             if self.transition != 0:
                 self.transition -= 1
                 
@@ -580,12 +647,14 @@ class Affichage():
     def afficher_terrain(self):
         '''
         Affiche le terrain
+        : pas de return
         '''
         self.ecran.blit(self.image_terrain, (250, 0))
         
     def afficher_bandes(self) :
         '''
         Affiche les bandes sur les côtés gauche et droit de la fenêtre
+        : pas de return
         '''
         self.ecran.blit(self.menu, (0, 0))
         self.ecran.blit(self.menu, (1050, 0))
@@ -593,162 +662,167 @@ class Affichage():
     def afficher_cerisier(self):
         '''
         Affiche les cerisiers sur le terrain
+        : pas de return
         '''
         self.ecran.blit(self.cerisier, (250, 0)) #Affiche le cerisier
 
         #Pour chaque pétale dans le tableau de pétales, désigne un rectangle rose à ces coordonnées
         for petale in self.tab_petales :
-            petale.y += 1
-            petale.x -= 1
-            pygame.draw.rect(self.ecran, (252, 235, 237), (int(petale.x), petale.y, petale.taille, petale.taille))
+            petale.mut_y(1)
+            petale.mut_x(-1)
+            pygame.draw.rect(self.ecran, (252, 235, 237), (int(petale.acc_x()), petale.acc_y(), petale.taille, petale.taille))
 
             #Si la pétale dépasse ce cadre, on la supprime du tableau des pétales :
-            if petale.y >= petale.distance_max or petale.x < 250:
-                self.tab_petales.append(Petale(petale.position))
+            if petale.acc_y() >= petale.acc_distance_max() or petale.acc_x() < 250:
+                self.tab_petales.append(Petale(petale.acc_position()))
                 self.tab_petales.remove(petale)
                 
     def afficher_personnage_selection(self):
         '''
-        Affiche le personnage sélectionné avec son image (Jour/Nuit) et des
-        informations sur lui (Type/PV/Attaque)
+        Affiche le personnage sélectionné avec son image (Jour/Nuit) et des informations sur lui (Type/PV/Attaque)
+        : pas de return
         '''
-        if self.attributs_jeu.acc_selection() != None and type(self.attributs_jeu.acc_selection()) != str:
-            selection = self.attributs_jeu.acc_selection()
+        selection = self.attributs_jeu.acc_selection()
+        if isinstance(selection, module_personnage.Personnage): #si c'est un personnage
+            #Index pour l'image
             if self.attributs_jeu.acc_temps() == 'Jour':
                 index = 0
             else :
                 index = 1
-            if isinstance(selection, module_personnage.Personnage):
-                if selection.acc_personnage() == 'monstre':
-                    image = self.cadres_personnages[selection.personnage][0]
+            #Image
+            personnage = selection.acc_personnage()
+            if personnage == 'monstre':
+                image = self.cadres_personnages[personnage][0]
+            else :
+                if selection.acc_equipe() == 'rouge' :
+                    image = self.cadres_personnages[personnage][index][0]
                 else :
-                    if selection.acc_equipe() == 'rouge' :
-                        image = self.cadres_personnages[selection.personnage][index][0]
-                    else :
-                        image = self.cadres_personnages[selection.personnage][index][1]
+                    image = self.cadres_personnages[personnage][index][1]
 
-                self.ecran.blit(image, (11, 12))
-                self.ecran.blit(self.cadre, (6, 10))
+            self.ecran.blit(image, (11, 12))
+            self.ecran.blit(self.cadre, (6, 10))
+        
+            ######### Informations concernant le personnage
+            ##type
+            police = pygame.font.Font("medias/pixelec.ttf", 17)
+            texte = police.render("Type : " , 1, (152, 82, 51))
+            self.ecran.blit(texte, (10, 150))
             
+            texte = police.render(selection.acc_personnage() , 1, (152, 82, 51))
+            self.ecran.blit(texte, (10, 175))
             
-                ######### Informations concernant le personnage
-                ##type
-                police = pygame.font.Font("medias/pixelec.ttf", 17)
-                texte = police.render("Type : " , 1, (152, 82, 51))
-                self.ecran.blit(texte, (10, 150))
+            ##pv
+            texte2 = police.render("Points de vie : ", 1, (152, 82, 51))
+            self.ecran.blit(texte2, (10, 200))
+            
+            texte2 = police.render(str(selection.pv) , 1, (152, 82, 51))
+            self.ecran.blit(texte2, (10, 225))
+            
+            if personnage == 'sorciere':
+                ##vérifie si le joueur clique sur une autre potion
+                self.clavier_souris.potion_est_clique(self.attributs_jeu.acc_equipe_en_cours(), self.attributs_jeu.acc_selection().acc_equipe())
+                #affichage des potions pour la sorciere
+                texte3 = police.render("Potions : " , 1, (152, 82, 51))
+                self.ecran.blit(texte3, (10, 250))
                 
-                texte = police.render(selection.acc_personnage() , 1, (152, 82, 51))
-                self.ecran.blit(texte, (10, 175))
+                ####longueur des files (nombre de potion)
+                if selection.acc_equipe() == 'bleu' : #équipe bleue
+                    l = str(self.attributs_jeu.acc_potions_bleues()[2].acc_longueur())
+                    l2 = str(self.attributs_jeu.acc_potions_bleues()[3].acc_longueur())
+                    l3 = str(self.attributs_jeu.acc_potions_bleues()[4].acc_longueur())
+                    potion_s = self.attributs_jeu.acc_potion_bleue_selectionnee()
+                else: #équipe rouge
+                    l = str(self.attributs_jeu.acc_potions_rouges()[2].acc_longueur())
+                    l2 = str(self.attributs_jeu.acc_potions_rouges()[3].acc_longueur())
+                    l3 = str(self.attributs_jeu.acc_potions_rouges()[4].acc_longueur())
+                    potion_s = self.attributs_jeu.acc_potion_rouge_selectionnee()
                 
-                ##pv
-                texte2 = police.render("Points de vie : ", 1, (152, 82, 51))
-                self.ecran.blit(texte2, (10, 200))
+                #potion 1 infinie visible par tous
+                infini = pygame.image.load("medias/potions/infini.png")
+                self.ecran.blit(infini,(70, 350))
                 
-                texte2 = police.render(str(selection.pv) , 1, (152, 82, 51))
-                self.ecran.blit(texte2, (10, 225))
-                
-                if selection.acc_personnage() == 'sorciere':
-                    ##vérifie si le joueur clique sur une autre potion
-                    self.clavier_souris.potion_est_clique(self.attributs_jeu.acc_equipe_en_cours(), self.attributs_jeu.acc_selection().acc_equipe())
-                    #affichage des potions pour la sorciere
-                    texte3 = police.render("Potions : " , 1, (152, 82, 51))
-                    self.ecran.blit(texte3, (10, 250))
-                    
-                    ####longueur des files
-                    if selection.acc_equipe() == 'bleu' : #équipe bleue
-                        l = str(self.attributs_jeu.acc_potions_bleues()[2].acc_longueur())
-                        l2 = str(self.attributs_jeu.acc_potions_bleues()[3].acc_longueur())
-                        l3 = str(self.attributs_jeu.acc_potions_bleues()[4].acc_longueur())
-                        potion_s = self.attributs_jeu.acc_potion_bleue_selectionnee()
-                    else: #équipe rouge
-                        l = str(self.attributs_jeu.acc_potions_rouges()[2].acc_longueur())
-                        l2 = str(self.attributs_jeu.acc_potions_rouges()[3].acc_longueur())
-                        l3 = str(self.attributs_jeu.acc_potions_rouges()[4].acc_longueur())
-                        potion_s = self.attributs_jeu.acc_potion_rouge_selectionnee()
-                    
-                    #potion 1 infinie visible par tous
-                    infini = pygame.image.load("medias/potions/infini.png")
-                    self.ecran.blit(infini,(70, 350))
-                    
-                    ###SORCIERE DE L'EQUIPE QUI JOUE
-                    if selection.acc_equipe() == self.attributs_jeu.acc_equipe_en_cours() : #le joueur ne peut regarder que ses personnages
-                        ##en haut à gauche
-                        self.ecran.blit(self.potions[0], (47, 290))
-                        ##en haut à droite
-                        if l == '0' :
-                            self.ecran.blit(self.potions[4], (156, 290)) #grisatre pour montrer que c'est vide
-                        else :
-                            self.ecran.blit(self.potions[1], (156, 290))
-                        self.ecran.blit(police.render(l , 1, (0, 0, 0)), (195, 372))
-                        ##en bas à gauche
-                        if l2 == '0':
-                            self.ecran.blit(self.potions[5], (40, 404)) #grisatre pour montrer que c'est vide
-                        else:
-                            self.ecran.blit(self.potions[2], (40, 404))
-                        self.ecran.blit(police.render(l2 , 1, (0, 0, 0)), (90, 495))
-                        ##en bas à droite
-                        if l3 == '0':
-                            self.ecran.blit(self.potions[6], (154, 404)) #grisatre pour montrer que c'est vide
-                        else :
-                            self.ecran.blit(self.potions[3], (154, 404))
-                        self.ecran.blit(police.render(l3 , 1, (0, 0, 0)), (200, 495))
-                        
-                        ###POTION SELECTIONNEE
-                        dic_position_rec = {1 : (33, 286, 88),
-                                        2 : (133, 286, 87),
-                                        3 : (22, 400, 95),
-                                        4 : (134, 400, 96)
-                                        }
-                        rectangle = pygame.Rect(dic_position_rec[potion_s][0], dic_position_rec[potion_s][1], dic_position_rec[potion_s][2], dic_position_rec[potion_s][2])
-                        if 0 <= self.attributs_jeu.acc_compteur() <= 48:
-                            couleur = (0, 0, 0) #noir
-                        else :
-                            couleur = (224, 209, 146) #couleur de fond
-                        pygame.draw.rect(self.ecran, couleur, rectangle, 2) #(surface, couleur, figure (x, y, longueur, hauteur), si contour → épaisseur)
-                        ####INFOBULLE
-                        dic_phrase = {1 : 'inflige des dégâts',
-                                    2 : 'soigne',
-                                    3 : 'tue instantanément',
-                                    4 : "fais changer d'équipe"
-                                    }
-                        pos_souris = self.clavier_souris.acc_position_curseur()
-                        
-                        if rectangle.collidepoint(pos_souris): #si la souris est sur le rectangle
-                            # Afficher une info-bulle
-                            infobulle_texte = police.render(dic_phrase[potion_s], True, (0, 0, 0))
-                            infobulle_rect = infobulle_texte.get_rect()
-                            infobulle_rect.topleft = (pos_souris[0] - 4, pos_souris[1] - 18) #un peu en dessous du curseur
-                            pygame.draw.rect(self.ecran, (152, 82, 51), infobulle_rect)
-                            self.ecran.blit(infobulle_texte, infobulle_rect)
-                    ###SORCIERE ADVERSE
-                    else:
-                        point_interrogation = pygame.image.load("medias/potions/point_interrogation.png")
-                        self.ecran.blit(point_interrogation,(70, 350))
-                        self.ecran.blit(point_interrogation,(195, 372))
-                        self.ecran.blit(point_interrogation,(90, 495))
-                        self.ecran.blit(point_interrogation,(210, 495))
-                        ##en haut à gauche
-                        self.ecran.blit(self.potions[0], (47, 290))
-                        ##en haut à droite
+                ###SORCIERE DE L'EQUIPE QUI JOUE
+                if selection.acc_equipe() == self.attributs_jeu.acc_equipe_en_cours() : #le joueur ne peut regarder que ses personnages
+                    ##en haut à gauche
+                    self.ecran.blit(self.potions[0], (47, 290))
+                    ##en haut à droite
+                    if l == '0' :
+                        self.ecran.blit(self.potions[4], (156, 290)) #grisatre pour montrer que c'est vide
+                    else :
                         self.ecran.blit(self.potions[1], (156, 290))
-                        ##en bas à gauche
-                        self.ecran.blit(self.potions[2], (40, 404))
-                        ##en bas à droite
-                        self.ecran.blit(self.potions[3], (154, 404))
-                    
-                else :
-                    #si c'est un personnage lambda, on lui affiche ses dégats
-                    texte3 = police.render("Attaque : " , 1, (152, 82, 51))
-                    self.ecran.blit(texte3, (10, 250))
-                    if selection.acc_equipe() == 'bleu' :
-                        texte3 = police.render(str(module_personnage.DIC_ATTAQUES_BLEU[selection.acc_personnage()]) , 1, (152, 82, 51))
+                    self.ecran.blit(police.render(l , 1, (0, 0, 0)), (195, 372))
+                    ##en bas à gauche
+                    if l2 == '0':
+                        self.ecran.blit(self.potions[5], (40, 404)) #grisatre pour montrer que c'est vide
                     else:
-                        texte3 = police.render(str(module_personnage.DIC_ATTAQUES_ROUGE[selection.acc_personnage()]) , 1, (152, 82, 51))
-                    self.ecran.blit(texte3, (10, 275))
+                        self.ecran.blit(self.potions[2], (40, 404))
+                    self.ecran.blit(police.render(l2 , 1, (0, 0, 0)), (90, 495))
+                    ##en bas à droite
+                    if l3 == '0':
+                        self.ecran.blit(self.potions[6], (154, 404)) #grisatre pour montrer que c'est vide
+                    else :
+                        self.ecran.blit(self.potions[3], (154, 404))
+                    self.ecran.blit(police.render(l3 , 1, (0, 0, 0)), (200, 495))
+                    
+                    ###POTION SELECTIONNEE
+                    dic_position_rec = {1 : (33, 286, 88),
+                                    2 : (133, 286, 87),
+                                    3 : (22, 400, 95),
+                                    4 : (134, 400, 96)
+                                    }
+                    rectangle = pygame.Rect(dic_position_rec[potion_s][0], dic_position_rec[potion_s][1], dic_position_rec[potion_s][2], dic_position_rec[potion_s][2])
+                    #pour clignoter
+                    if 0 <= self.attributs_jeu.acc_compteur() <= 48:
+                        couleur = (0, 0, 0) #noir
+                    else :
+                        couleur = (224, 209, 146) #couleur de fond
+                    pygame.draw.rect(self.ecran, couleur, rectangle, 2) #(surface, couleur, figure (x, y, longueur, hauteur), si contour → épaisseur)
+                    ####INFOBULLE
+                    dic_phrase = {1 : 'inflige des dégâts',
+                                  2 : 'soigne',
+                                  3 : 'tue instantanément',
+                                  4 : "fais changer d'équipe"
+                                 }
+                    pos_souris = self.clavier_souris.acc_position_curseur()
+                    
+                    if rectangle.collidepoint(pos_souris): #si la souris est sur le rectangle
+                        # Afficher une info-bulle
+                        infobulle_texte = police.render(dic_phrase[potion_s], True, (0, 0, 0))
+                        infobulle_rect = infobulle_texte.get_rect()
+                        infobulle_rect.topleft = (pos_souris[0] - 4, pos_souris[1] - 18) #un peu en dessous du curseur
+                        pygame.draw.rect(self.ecran, (152, 82, 51), infobulle_rect)
+                        self.ecran.blit(infobulle_texte, infobulle_rect)
+                ###SORCIERE ADVERSE
+                else:
+                    #point d'interrogation pour ne pas voir le nombre de potions
+                    point_interrogation = pygame.image.load("medias/potions/point_interrogation.png")
+                    self.ecran.blit(point_interrogation,(70, 350))
+                    self.ecran.blit(point_interrogation,(195, 372))
+                    self.ecran.blit(point_interrogation,(90, 495))
+                    self.ecran.blit(point_interrogation,(210, 495))
+                    ##en haut à gauche
+                    self.ecran.blit(self.potions[0], (47, 290))
+                    ##en haut à droite
+                    self.ecran.blit(self.potions[1], (156, 290))
+                    ##en bas à gauche
+                    self.ecran.blit(self.potions[2], (40, 404))
+                    ##en bas à droite
+                    self.ecran.blit(self.potions[3], (154, 404))
+                
+            else :
+                #si c'est un personnage lambda, on lui affiche ses dégats d'attaque
+                texte3 = police.render("Attaque : " , 1, (152, 82, 51))
+                self.ecran.blit(texte3, (10, 250))
+                if selection.acc_equipe() == 'bleu' :
+                    texte3 = police.render(str(module_personnage.DIC_ATTAQUES_BLEU[selection.acc_personnage()]) , 1, (152, 82, 51))
+                else:
+                    texte3 = police.render(str(module_personnage.DIC_ATTAQUES_ROUGE[selection.acc_personnage()]) , 1, (152, 82, 51))
+                self.ecran.blit(texte3, (10, 275))
                 
     def afficher_equipe_en_cours(self):
         '''
         Affiche l'équipe en cours avec le nombre d'action qui lui reste
+        : pas de return
         '''
         police = pygame.font.Font("medias/pixelec.ttf", 17)
         
@@ -768,7 +842,8 @@ class Affichage():
         
     def afficher_console(self):
         '''
-        affiche le console où sera écrit chaque action des équipes.
+        affiche le console où sera écrit chaque action des équipes
+        : pas de return
         '''
         police = pygame.font.Font("medias/police_console.ttf", 13)
         pile = self.attributs_jeu.acc_console()
@@ -780,15 +855,15 @@ class Affichage():
             tab = pile.depiler() #Dépile la phrase et ses paramètres de la pile principale
             stock.empiler(tab) #Empile la phrase et ses paramètres dans le stock
             
-            #Si la couleur demandé est bleu, change la couleur de la police en bleu :
+            #Si la couleur demandée est bleu, change la couleur de la police en bleu :
             if tab[1] == 'bleu':
                 texte = police.render(tab[0] , 1, (42, 51, 176))
                 
-            #Si la couleur demandé est rouge, change la couleur de la police en rouge :
+            #Si la couleur demandée est rouge, change la couleur de la police en rouge :
             elif tab[1] == 'rouge' :
                 texte = police.render(tab[0], 1, (237, 28, 36))
             
-            #Sinon, la couleur demandé est noir, change la couleur de la police en noir :
+            #Sinon, la couleur demandée est noir, change la couleur de la police en noir :
             else :
                 texte = police.render(tab[0], 1, (0, 0, 0))
             
@@ -803,6 +878,7 @@ class Affichage():
     def afficher_annonce_coffre(self):
         '''
         Affiche l'annonce du coffre une fois celui-ci ouvert
+        : pas de return
         '''
         if self.attributs_jeu.acc_annonce_coffre():
             if self.direction == 'diminution':
@@ -827,7 +903,8 @@ class Affichage():
             
     def afficher_boutons_jeu(self):
         '''
-        affiche les différents boutons du jeu
+        Affiche les différents boutons du jeu
+        : pas de return
         '''
         police = pygame.font.Font("medias/pixelec.ttf", 21)
         bouton_clique = self.attributs_jeu.acc_bouton_clique()
@@ -880,6 +957,7 @@ class Affichage():
     def afficher_personnages(self):
         '''
         Affiche les personnages et un contour de couleur pour chaque personnages de l'équipe en cours (si activé dans les options)
+        : pas de return
         '''
         #Personnages/Monstres :
         for personnage in self.attributs_jeu.acc_tab_personnages() + self.attributs_jeu.acc_tab_monstres() :
@@ -901,67 +979,36 @@ class Affichage():
                 else :
                     self.ecran.blit(self.sol_personnages[equipe], (x , y))
 
-            #Endommagé (si le personnage est endommagé) :
-            if endommage :
-                
-                endommage = self.personnages_endommages[nom] #Appel les différentes images du personnage
-                
+            ##si le personnage est endommagé ou soigné :
+            if endommage or soigne :
+                if endommage :
+                    tableau = self.personnages_endommages[nom] #Appel les différentes images du personnage
+                else :
+                    tableau = self.personnages_soins[nom]
                 #Si le personnage est un monstre :
                 if nom == 'monstre' :
-                    self.ecran.blit(endommage[0], (x , y))
-                
-                #Sinon, le personnage n'est pas un monstre
-                else :
-                    
-                    #Si le personnage est de l'équipe rouge :
-                    if equipe == 'rouge' :
-                        
-                        #Si le personnage est un Géant :
-                        if nom == 'geant' :
-                            self.ecran.blit(endommage[0][personnage.acc_numero_geant()], (x , y))
-                            
-                        #Sinon, le personnage est "classique"
-                        else :
-                            self.ecran.blit(endommage[0], (x , y))
-                    
-                    #Sinon, le personnage est de l'équipe bleu :
-                    else :
-                        
-                        #Si le personnage est un Géant :
-                        if nom == 'geant' :
-                            self.ecran.blit(endommage[1][personnage.acc_numero_geant()], (x , y))
-                            
-                        #Sinon, le personnage est "classique"
-                        else :
-                            self.ecran.blit(endommage[1], (x , y))
-                
-            elif soigne : #si le personnage est en train d'être soigné
-                soin = self.personnages_soins[nom] #Appel les différentes images du personnage
-                
+                    self.ecran.blit(tableau[0], (x , y))
                 #Si le personnage est de l'équipe rouge :
-                if equipe == 'rouge' :
-                    
+                elif equipe == 'rouge' :
                     #Si le personnage est un Géant :
                     if nom == 'geant' :
-                        self.ecran.blit(soin[0][personnage.acc_numero_geant()], (x , y))
-                        
+                        self.ecran.blit(tableau[0][personnage.acc_numero_geant()], (x , y))   
                     #Sinon, le personnage est "classique"
                     else :
-                        self.ecran.blit(soin[0], (x , y))
-                
+                        self.ecran.blit(tableau[0], (x , y))
                 #Sinon, le personnage est de l'équipe bleu :
                 else :
-                    
                     #Si le personnage est un Géant :
                     if nom == 'geant' :
-                        self.ecran.blit(soin[1][personnage.acc_numero_geant()], (x , y))
-                        
+                        self.ecran.blit(talbeau[1][personnage.acc_numero_geant()], (x , y))   
                     #Sinon, le personnage est "classique"
                     else :
-                        self.ecran.blit(soin[1], (x , y))
+                        self.ecran.blit(tableau[1], (x , y))
                         
-            elif attaque and nom == 'archere': #si le personnage est en train d'attaque un autre personnage (seules les animations d'attaque de l'archere son disponibles)
+            ##Si le personnage est en train d'attaque un autre personnage (seules les animations d'attaque de l'archere son disponibles)           
+            elif attaque and nom == 'archere': 
                 attaques = self.personnages_attaque[nom] #Appel les différentes images du personnage
+                #réglages pour l'animation
                 nb = self.attributs_jeu.acc_attaque_temps()
                 if nb <= 1 or nb >=17 :
                     nb = 0
@@ -973,80 +1020,64 @@ class Affichage():
                     nb = 3
                 #Si le personnage est de l'équipe rouge :
                 if equipe == 'rouge' :
-                    
                     self.ecran.blit(attaques[0][nb], (x , y))
-                
                 #Sinon, le personnage est de l'équipe bleu :
                 else :
-                    
                     self.ecran.blit(attaques[1][nb], (x , y))
                 
             #Animations (sinon si le personnage n'est pas en déplacement):
             elif self.attributs_jeu.acc_personnage_en_deplacement() != personnage :
-                
                 images_personnage = self.personnages[nom] #Appelle les différentes images du personnage
                 nombre_images = len(images_personnage[0])
                 index_image = int(self.attributs_jeu.acc_compteur() / 70 * nombre_images)
                 
                 #Si le personnage est un monstre :
                 if nom == 'monstre':
-                    
                     #Si le monstre est sous terre :
                     if personnage.acc_etat() == 1: 
                         self.ecran.blit(images_personnage[0][index_image], (x, y))
-                    
                     #Sinon, le monstre est hors de la terre :
                     else: 
                         self.ecran.blit(images_personnage[1][index_image], (x, y))
-                
                 #Sinon, le personnage n'est pas un monstre
-                else :
-                       
+                else :   
                     #Si le personnage est de l'équipe rouge :
                     if equipe == 'rouge' :
-                        
                         #Si le personnage est un Géant :
                         if nom == 'geant' :
-                            self.ecran.blit(images_personnage[1][index_image][personnage.numero_geant], (x, y))
-                            
+                            self.ecran.blit(images_personnage[1][index_image][personnage.numero_geant], (x, y))  
                         #Sinon, le personnage est "classique"
                         else :
-                            self.ecran.blit(images_personnage[0][index_image], (x, y))
-                            
+                            self.ecran.blit(images_personnage[0][index_image], (x, y))      
                     #Sinon, le personnage est de l'équipe bleu :
                     else :
-                        
                         #Si le personnage est un Géant :
                         if nom == 'geant' :
-                            self.ecran.blit(images_personnage[0][index_image][personnage.numero_geant], (x, y))
-                            
+                            self.ecran.blit(images_personnage[0][index_image][personnage.numero_geant], (x, y))  
                         #Sinon, le personnage est "classique"
                         else :
                             self.ecran.blit(images_personnage[1][index_image], (x, y))
                 
         #Coffres :
         for coffre in self.attributs_jeu.acc_tab_coffres() :
-            
             #Coordonnées/Etat/Images du coffre :
             x = coffre.acc_x() * 38 + 250
             y = coffre.acc_y() * 38
             etat_ouvert = coffre.acc_est_ouvert()
-            
             #Si le coffre est dans son état ouverture :
             if etat_ouvert :
                 self.ecran.blit(self.images_coffre[coffre.acc_avancement_ouverture()], (x, y))
-                
-                #Si ??? :
+                #Pour animation de l'ouverture
                 if coffre.avancement_ouverture < 10 and self.attributs_jeu.acc_compteur() % 3 == 0 :
                     coffre.mut_avancement_ouverture(coffre.acc_avancement_ouverture() + 1) #Augmente l'avancement de l'ouverture du coffre de 1
-            
-            #Sinon, le coffre ne s'ouvre pas :     
+            #Sinon, le coffre n'est pas ouvert :     
             else :
                 self.ecran.blit(self.images_coffre[0], (x, y))
                 
     def afficher_deplacements(self):
         '''
         Affiche les déplacements possibles sur la grille
+        : pas de return
         '''
         #Pour chaque coordonnées des cases du tableau des déplacements que le personnage peut effectuer :
         for coordonnees in self.attributs_jeu.acc_deplacements() :
@@ -1057,11 +1088,11 @@ class Affichage():
     def afficher_personnage_en_deplacement(self):
         '''
         Affiche le personnage en déplacement
+        : pas de return
         '''
         #S'il y a un déplacement en cours et qu'il n'y a aucun personnage sélectionné :
         if self.attributs_jeu.acc_deplacement_en_cours() and self.attributs_jeu.acc_selection() != None :
             
-            #Si ??? :
             if self.attributs_jeu.acc_indice_courant() < len(self.attributs_jeu.acc_chemin()) - 1 :
                 destination = self.attributs_jeu.acc_chemin()[self.attributs_jeu.acc_indice_courant() + 1]
                 x, y = self.attributs_jeu.acc_coordonnees_personnage()
@@ -1093,35 +1124,39 @@ class Affichage():
     def afficher_monstres_en_deplacement(self):
         '''
         affiche les monstres en déplacement
+        : pas de return
         '''
         for monstre in self.attributs_jeu.acc_monstres_a_deplacer() : #chaque monstre à déplacer
             
-            if monstre.futur_x == None and monstre.futur_y == None:
-                monstre.futur_x, monstre.futur_y = monstre.prochaines_coordonnees(self.terrain)
-                monstre.futur_coord_x = 250 + monstre.futur_x * 38
-                monstre.futur_coord_y = monstre.futur_y * 38
+            if monstre.acc_futur_x() == None and monstre.acc_futur_y() == None:
+                case = monstre.prochaines_coordonnees(self.terrain)
+                monstre.mut_futur_x(case[0])
+                monstre.mut_futur_y(case[1])
+                monstre.mut_futur_coordo_x(250 + monstre.acc_futur_x() * 38)
+                monstre.mut_futur_coordo_y(monstre.acc_futur_y() * 38)
                 
-            if monstre.coord_x != monstre.futur_coord_x :
-                dx = min(max(monstre.futur_coord_x - monstre.coord_x, -3), 3)
-                monstre.coord_x += dx
-            if monstre.coord_y != monstre.futur_coord_y :
-                dy = min(max(monstre.futur_coord_y - monstre.coord_y, -3), 3)
-                monstre.coord_y += dy
+            if monstre.acc_coordo_x() != monstre.acc_futur_coordo_x() :
+                dx = min(max(monstre.acc_futur_coordo_x() - monstre.acc_coordo_x(), -3), 3)
+                monstre.mut_coordo_x(monstre.acc_coordo_x() + dx)
+            if monstre.acc_coordo_y() != monstre.acc_futur_coordo_y() :
+                dy = min(max(monstre.acc_futur_coordo_y() - monstre.acc_coordo_y(), -3), 3)
+                monstre.mut_coordo_x(monstre.acc_coordo_x() + dx)
 
             # affichage du monstre :
             image_monstre = self.personnages_deplacement['monstre'][0]
-            self.ecran.blit(image_monstre, (monstre.coord_x, monstre.coord_y))
+            self.ecran.blit(image_monstre, (monstre.acc_coordo_x(), monstre.acc_coordo_y()))
             
-            if monstre.coord_x == monstre.futur_coord_x and monstre.coord_y == monstre.futur_coord_y :
-                monstre.deplacer(monstre.futur_x, monstre.futur_y) # déplace le monstre
-                self.terrain.mut_terrain(monstre.x, monstre.y, monstre) # place le monstre à sa nouvelle position
+            if monstre.acc_coordo_x() == monstre.acc_futur_coordo_x() and monstre.acc_coordo_y() == monstre.acc_futur_coordo_y() :
+                monstre.deplacer(monstre.acc_futur_x(), monstre.acc_futur_y()) # déplace le monstre
+                self.terrain.mut_terrain(monstre.acc_x(), monstre.acc_y(), monstre) # place le monstre à sa nouvelle position
                 self.attributs_jeu.monstres_a_deplacer.remove(monstre)
-                monstre.futur_x = None
-                monstre.futur_y = None
+                monstre.mut_futur_x(None)
+                monstre.mut_futur_y(None)
             
     def afficher_attaques(self):
         '''
         Affiche les déplacements possibles sur la grille
+        : pas de return
         '''
         #Pour chaque coordonnées des cases du tableau des attaques que le personnage peut effectuer :
         for coordonnees in self.attributs_jeu.acc_attaques():
@@ -1146,7 +1181,8 @@ class Affichage():
             
     def afficher_tombes(self):
         '''
-        Affiche des tombes sur la case sur laquelle un personnage est mort.
+        Affiche des tombes sur la case sur laquelle un personnage est mort
+        : pas de return
         '''
         #Pour chaque tombe dans le tableau de tombes, on affiche une tombe à ses coordonnées x et y :
         for tombe in self.attributs_jeu.acc_positions_tombes():
@@ -1155,18 +1191,20 @@ class Affichage():
     def afficher_cases_potions(self):
         '''
         Affiche les cases où la potion a éclaté avec un effet de bulles
+        : pas de return
         '''
         equipe = self.attributs_jeu.acc_equipe_en_cours()
+        #potion séléectionnée
         if equipe == 'bleu':
             potion = self.attributs_jeu.acc_potion_bleue_selectionnee()
         else:
             potion = self.attributs_jeu.acc_potion_rouge_selectionnee()
+        ##réglages pour l'animation
         attaque1 = self.attributs_jeu.acc_attaque_temps()
-        ##réglage de la rapidité de l'animation
         attaque = attaque1 // 3
         if attaque1 > 23:
             attaque -= 8
-            
+        #bulles    
         dic_couleurs = {1 : 'bleu',
                         2 : 'vert',
                         3 : 'rouge',
@@ -1181,6 +1219,7 @@ class Affichage():
     def afficher_fin_jeu(self):
         '''
         affiche le menu de la fin du jeu
+        : pas de return
         '''
         #Si le cadre ne descend pas trop bas (y <= 204)
         if self.attributs_jeu.acc_position_y_menu_fin() != 204 :
@@ -1233,7 +1272,8 @@ class Affichage():
         
     def afficher_position_souris(self) :
         '''
-        Affiche les coordonnées de la case à la position de la souris.
+        Affiche les coordonnées de la case à la position de la souris
+        : pas de return
         '''
         position_case = self.clavier_souris.acc_position_case()
         if position_case[0] >= 0 and position_case[0] <= 20 and position_case[1] >= 0 and position_case[1] <= 20:
@@ -1248,7 +1288,8 @@ class Affichage():
     
     def afficher_menu(self) :
         '''
-        Affiche tous les objets du menu sur la fenêtre pygame.
+        Affiche tous les objets du menu sur la fenêtre pygame
+        : pas de return
         '''
         self.afficher_fond()
         
@@ -1266,7 +1307,8 @@ class Affichage():
             
     def afficher_jeu(self):
         '''
-        Affiche tous les objets du jeu sur la fenêtre pygame.
+        Affiche tous les objets du jeu sur la fenêtre pygame
+        : pas de return
         '''
         self.afficher_bandes()
         
