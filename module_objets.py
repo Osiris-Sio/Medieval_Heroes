@@ -141,25 +141,24 @@ class Coffre():
             reponse = 10
         return reponse
     
-    def est_present_autour(self, terrain, equipe_en_cours):
+    def est_present_autour(self, terrain, personnage):
         '''
         renvoie True si il y a un personnage de l'équipe qui joue autour du coffre et False sinon
         : params
             terrain (module_terrain.Terrain)
-            equipe_en_cours (str)
+            personnage (module_personnage.Personnage)
         : return (bool)
         '''
         #Assertions
         assert isinstance(terrain, module_terrain.Terrain), "le terrain doit être de la classe Terrain"
-        assert isinstance(equipe_en_cours, str) and equipe_en_cours in ['bleu', 'rouge'], "l'équipe en cours doit être 'bleu' ou 'rouge"
+        assert isinstance(personnage, module_personnage.Personnage), "le personnage doit être de la classe Personnage"
         #Code
-        alentour = module_terrain.Terrain.cases_autour((self.x, self.y)) #on regarde les cases autour du coffre
+        alentour = module_terrain.cases_autour((self.x, self.y)) #on regarde les cases autour du coffre
         present = False
         i = 0
         while not present and i < len(alentour): #tant qu'on n'a pas trouvé ou qu'on n'a pas tout regardé
             perso = terrain.acc_terrain(alentour[i][0], alentour[i][1])
-            if isinstance(perso, module_personnage.Personnage): #si il y a un personnage
-                present = perso.acc_equipe() == equipe_en_cours #si un personnage de l'équipe en cours est à côté du coffre
+            present = perso == personnage
             i += 1
         return present
     
@@ -182,10 +181,10 @@ class Potion():
         '''
         initialise une potion mystère
         : param contenu (int)
-            • 1 : réduit les pv de l'ennemi
-            • 2 : guérit le coéquipier
-            • 3 : tue instantanément
-            • 4 : l'ennemi change d'équipe
+            • 1 : réduit les pv du personnage visé
+            • 2 : augmente les pv du personnage visé
+            • 3 : tue le personnage visé
+            • 4 : change l'équipe du personnage visé
         '''
         #assertions
         assert isinstance(contenu, int) and contenu in [1, 2, 3, 4], "le contenu doit être une entier entre 1 et 4 inclus !"
@@ -193,18 +192,6 @@ class Potion():
         self.contenu = contenu
         self.etendue = self.etendue_potion()
         
-    def __repr__(self):
-        '''
-        renvoie une chaîne de caractères pour décrire la potion
-        : return (str)
-        '''
-        dic_contenu = {1 : 'réduit les pv du personnage visé',
-                       2 : 'augmente les pv du personnage visé',
-                       3 : 'tue instantanément le personnage visé',
-                       4 : "change l'équipe du personnage visé"
-                       }
-        return "Une potion qui " + dic_contenu[self.contenu] + " et qui a une portée de " + str(self.etendue)
-    
     ####################################
     ############# Accesseurs :
     ####################################
@@ -226,19 +213,19 @@ class Potion():
     def etendue_potion(self):
         '''
         renvoie les cases que la potion va atteindre
-            1 : une case (70%)
-            2 : deux cases (au hasard entre haut, bas, droite et gauche)  (24%)
-            3 : cinq cases (haut, bas, droite, gauche, centre) (5%)
-            4 : neuf cases (le carré autour du centre) (1%)
+            1 : une case (60%)
+            2 : deux cases (au hasard entre haut, bas, droite et gauche)  (25%)
+            3 : cinq cases (haut, bas, droite, gauche, centre) (10%)
+            4 : neuf cases (le carré autour du centre) (5%)
         : return (int)
         '''
         if self.contenu == 1 or self.contenu == 2: #potion d'attaque ou de guérison
-            nombre = random.randint(0, 100)
-            if 0 <= nombre <= 69:
+            nombre = random.randint(0, 99)
+            if 0 <= nombre <= 59:
                 reponse = 1
-            elif 70 <= nombre <= 94:
+            elif 60 <= nombre <= 84:
                 reponse = 2
-            elif 95 <= nombre <= 99:
+            elif 85 <= nombre <= 94:
                 reponse = 3
             else:
                 reponse = 4
@@ -246,29 +233,43 @@ class Potion():
             reponse = 1 #juste la case elle-même
         return reponse
 
-    def definir_cases_atteintes(x, y, etendu):
+    def definir_cases_atteintes(self, x, y, terrain):
         '''
         renvoie un tableau avec les coordonnées des cases touchées par la potion
         : params
             x, y (int)
-            etendu (int)
+            terrain (module_terrain.Terrain)
         : return (list)
         '''
+        #Assertions
+        assert isinstance(x, int) and 0 <= x <= 20, 'x doit être un entier compris entre 0 et 20 inclus'
+        assert isinstance(y, int) and 0 <= y <= 20, 'y doit être un entier compris entre 0 et 20 inclus'
+        assert isinstance(terrain, module_terrain.Terrain), "le terrain doit être de la classe Terrain"
+        #Code
         ##Tableau des coordonnées finales
         tab_cases = []
         ##Intermédiaire
         tuples_cases_2 = [(-1, 0), (1, 0), (0, -1), (0, 1)]
         tuples_cases = [(0, 0)]
-        if not etendu == 1: #2, 3 et 4 
-            if etendu == 2: #2 cases
+        if not self.etendue == 1: #2, 3 et 4 
+            if self.etendue == 2: #2 cases
                 tuples_cases.append(random.choice(tuples_cases_2))
             else: #3 et 4 (5 ou 9 cases)
                 for tuples in tuples_cases_2 :
                     tuples_cases.append(tuples)
-                if etendu == 4: #9 cases
+                if self.etendue == 4: #9 cases
                     for tuples in [(-1, -1), (1, 1), (-1, 1), (1, -1)]:
                         tuples_cases.append(tuples)
         #Finalité                            
         for tuples in tuples_cases:
-            tab_cases.append((x + tuples[0], y + tuples[1]))
+            n_x = x + tuples[0]
+            n_y = y + tuples[1]
+            tab_cases.append((n_x, n_y))
+            #Si c'est un géant, tout le géant doit être touché
+            perso = terrain.acc_terrain(n_x, n_y)
+            if isinstance(perso, module_personnage.Personnage) and perso.acc_personnage() == 'geant': #si c'est un géant
+                famille = module_personnage.trouve_famille_geant(perso)
+                for elt in famille : #pour chaque partie du géant
+                    if not elt in tab_cases : #si il n'y est pas déjà dans le tableau
+                        tab_cases.append(elt) #on l'ajoute
         return tab_cases

@@ -96,7 +96,7 @@ class Sauvegarde() :
         )
         
         if not fichier :
-            return "Aucun fichier sélectionné."
+            return "Aucun fichier sélectionné"
         
         tab_chaines = self.generer_chaines()
         try :
@@ -229,7 +229,7 @@ class Sauvegarde() :
         )
         
         if not fichier :
-            return "Aucun fichier sélectionné."
+            return "Aucun fichier sélectionné"
         
         try :
             lecture = open(fichier,'r',encoding='utf_8')

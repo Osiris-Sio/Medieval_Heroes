@@ -233,9 +233,9 @@ class Clavier_Souris() :
             self.attributs_jeu.mut_bouton_clique('retour_menu')
             self.attributs_jeu.mut_temps_appui_bouton(time.time())
         #Si la position de la souris est sur la barre de volume :
-        if 475 <= position_curseur[0] <= 775 and 550 < position_curseur[1] < 597 :
+        if 480 <= position_curseur[0] <= 775 and 580 < position_curseur[1] < 627 :
             self.attributs_jeu.mut_x_pointeur(position_curseur[0])
-            volume_sonore = (position_curseur[0] - 490)/ 300 # la bonne valeur est de base 475 mais j'ai augmenté pour que les joueurs puissent plus facilement selectionner un volume de 0
+            volume_sonore = (position_curseur[0] - 490)/ 300 # la bonne valeur est de base 480 mais j'ai augmenté pour que les joueurs puissent plus facilement selectionner un volume de 0
             if volume_sonore < 0 :
                 volume_sonore = 0
             self.musique_et_sons.mut_volume(volume_sonore) 

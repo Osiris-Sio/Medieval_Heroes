@@ -13,6 +13,57 @@ Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul
 import module_attributs_jeu
 
 ######################################################
+### Fonctions hors-classe :
+######################################################
+def cases_autour(coordo):
+    '''
+    renvoie les 8 cases se situant autour de la case de coordonnées (coordo):
+    : param coordo (tuple):
+    : return (list of tuples)
+    '''
+    #Assertion
+    assert isinstance(coordo, tuple), "les coordonnées doivent être dans un tuple"
+    assert 0 <= coordo[0] <= 20 and 0 <= coordo[1] <= 20, "les coordonnées doivent être dans le terrain"
+    #Code
+    tab = []
+    for tuples in [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]: #haut, bas, gauche, droite en premier
+        tuple_case = (coordo[0] + tuples[0],coordo[1] + tuples[1])
+        if 0 <= tuple_case[0] <= 20 and 0 <= tuple_case[1] <= 20: #si la case ne sort pas du terrain
+            tab.append(tuple_case) 
+    return tab
+    
+def tuples_en_coordonnees(coordo_perso, cases, numero_geant = None):
+    '''
+    change les tuples composés de -1, 1 et de 0 avec des coordonnées de cases
+    : params
+        coordo_perso (tuple)
+        cases (list)
+        numero_geant (int ou None) si int alors c'est un géant sinon personnage "normal"
+    : return (list of tuples), le tableau avec les coordonnées des cases
+    '''
+    #Assertions
+    assert isinstance(coordo_perso, tuple), "les coordonnées doivent être dans un tuple"
+    assert isinstance(cases, list), "les cases sont un tableau"
+    assert numero_geant == None or numero_geant in [0, 1, 2, 3], "le numéro du géant doit être soit None soit 0, 1, 2, 3"
+    #Code
+    dic_geant = {0 : (0, 0),
+                 1 : (-1, 0),
+                 2 : (0, -1),
+                 3 : (-1, -1)
+                }
+    
+    tab_cases = []
+    for tuples in cases:
+        if not numero_geant == None :
+            tuples = (dic_geant[numero_geant][0] + tuples[0], dic_geant[numero_geant][1] + tuples[1])
+        x = coordo_perso[0] + tuples[0]
+        y =  coordo_perso[1] + tuples[1]
+        if 0 <= x <= 20 and  0 <= y <= 20 : #dans la grille
+            nouveau_tuple = (x, y)
+            tab_cases.append(nouveau_tuple)
+    return tab_cases
+    
+######################################################
 ### Classe Terrain :
 ######################################################
 
@@ -117,53 +168,6 @@ class Terrain():
     ######################################
     ########### Méthodes
     ######################################
-    def cases_autour(coordo):
-        '''
-        renvoie les 8 cases se situant autour de la case de coordonnées (coordo):
-        : param coordo (tuple):
-        : return (list of tuples)
-        '''
-        #Assertion
-        assert isinstance(coordo, tuple), "les coordonnées doivent être dans un tuple"
-        assert 0 <= coordo[0] <= 20 and 0 <= coordo[1] <= 20, "les coordonnées doivent être dans le terrain"
-        #Code
-        tab = []
-        for tuples in [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]: #haut, bas, gauche, droite en premier
-            tuple_case = (coordo[0] + tuples[0],coordo[1] + tuples[1])
-            if 0 <= tuple_case[0] <= 20 and 0 <= tuple_case[1] <= 20: #si la case ne sort pas du terrain
-                tab.append(tuple_case) 
-        return tab
-     
-    def tuples_en_coordonnees(coordo_perso, cases, numero_geant = None):
-        '''
-        change les tuples composés de -1, 1 et de 0 avec des coordonnées de cases
-        : params
-            coordo_perso (tuple)
-            cases (list)
-            numero_geant (int ou None) si int alors c'est un géant sinon personnage "normal"
-        : return (list of tuples), le tableau avec les coordonnées des cases
-        '''
-        #Assertions
-        assert isinstance(coordo_perso, tuple), "les coordonnées doivent être dans un tuple"
-        assert isinstance(cases, list), "les cases sont un tableau"
-        assert numero_geant == None or numero_geant in [0, 1, 2, 3], "le numéro du géant doit être soit None soit 0, 1, 2, 3"
-        #Code
-        dic_geant = {0 : (0, 0),
-                     1 : (-1, 0),
-                     2 : (0, -1),
-                     3 : (-1, -1)
-                    }
-        
-        tab_cases = []
-        for tuples in cases:
-            if not numero_geant == None :
-                tuples = (dic_geant[numero_geant][0] + tuples[0], dic_geant[numero_geant][1] + tuples[1])
-            x = coordo_perso[0] + tuples[0]
-            y =  coordo_perso[1] + tuples[1]
-            if 0 <= x <= 20 and  0 <= y <= 20 : #dans la grille
-                nouveau_tuple = (x, y)
-                tab_cases.append(nouveau_tuple)
-        return tab_cases
     
     def trouver_case_libre_proche(self, x, y, chaine):
         '''

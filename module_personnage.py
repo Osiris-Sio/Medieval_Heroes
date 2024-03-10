@@ -15,6 +15,30 @@ from graphe import module_graphe_dic
 import random, module_terrain
 
 ######################################################
+### Fonction hors-classe :
+######################################################
+
+def trouve_famille_geant(perso):
+    '''
+    renvoie la bonne famille des géants
+    : params
+        perso (Personnage)
+    : return (list)
+    '''
+    ##Assertions
+    assert isinstance(perso, Personnage) and perso.acc_personnage() == 'geant', "le personnage doit être de la classe Geant"
+    #Code
+    tab = []
+    dic_coordo = {0 : [(1, 0), (0, 1), (1, 1)],
+                  1 : [(-1, 0), (0, 1), (-1, 1)],
+                  2 : [(0, -1), (1, 0), (1, -1)],
+                  3 : [(0, -1), (-1, 0), (-1, -1)]}
+    
+    for case in dic_coordo[perso.acc_numero_geant()]:
+        tab.append((perso.acc_x() + case[0], perso.acc_y() + case[1]))
+    return tab
+    
+######################################################
 ### Classe Personnage
 ######################################################
 
@@ -37,7 +61,7 @@ DIC_PV = {'archere' : 10,
 DIC_ATTAQUES_BLEU = {'archere' : 7,
                 'paladin' : 5,
                 'cavalier' : 7,
-                'geant' : 15,
+                'geant' : 10,
                 'sorciere' : 0,
                 'poulet' : 2,
                 'ivrogne' : 5,
@@ -51,7 +75,7 @@ DIC_ATTAQUES_BLEU = {'archere' : 7,
 DIC_ATTAQUES_ROUGE = {'archere' : 7,
                 'paladin' : 5,
                 'cavalier' : 7,
-                'geant' : 15,
+                'geant' : 10,
                 'sorciere' : 0,
                 'poulet' : 2,
                 'ivrogne' : 5,
@@ -202,7 +226,7 @@ class Personnage():
         : pas de return
         '''
         #assertion
-        assert isinstance(valeur, int) and valeur >= 0, 'la nouvelle valeur doit être un entier positif'
+        assert isinstance(valeur, int), 'la nouvelle valeur doit être un entier'
         #code
         self.pv = valeur
         
@@ -289,7 +313,7 @@ class Personnage():
                     attaques_valides.append(attaque) # si elle est bonne, on l'ajoute
                 #géant
                 elif perso.acc_personnage() == 'geant':
-                    famille = self.trouve_famille_geant(perso) #tous les membres du géant
+                    famille = trouve_famille_geant(perso) #tous les membres du géant
                     for elt in famille :
                         if not elt in attaques_valides :
                             attaques_valides.append(elt)
@@ -320,22 +344,6 @@ class Personnage():
     #################################################
     ####### Sous_fonctions
     #################################################
-    def trouve_famille_geant(self, perso):
-        '''
-        renvoie la bonne famille des géants
-        : params
-            perso (Personnage)
-        : return (list)
-        '''
-        tab = []
-        dic_coordo = {0 : [(1, 0), (0, 1), (1, 1)],
-                      1 : [(-1, 0), (0, 1), (-1, 1)],
-                      2 : [(0, -1), (1, 0), (1, -1)],
-                      3 : [(0, -1), (-1, 0), (-1, -1)]}
-        
-        for case in dic_coordo[perso.acc_numero_geant()]:
-            tab.append((perso.acc_x() + case[0], perso.acc_y() + case[1]))
-        return tab
     
     def cases_deplacements(self):
         '''
@@ -371,7 +379,7 @@ class Personnage():
             cases = dic_deplacements[self.personnage]
         
         ###Les coordonnées
-        return module_terrain.Terrain.tuples_en_coordonnees((self.x, self.y), cases)
+        return module_terrain.tuples_en_coordonnees((self.x, self.y), cases)
     
     def cases_attaques(self):
         '''
@@ -398,7 +406,7 @@ class Personnage():
             cases = dic_attaques[self.personnage]
             
         ###Les coordonnées
-        return module_terrain.Terrain.tuples_en_coordonnees((self.x, self.y), cases)
+        return module_terrain.tuples_en_coordonnees((self.x, self.y), cases)
     
     def cases_sans_obstacles(self, terrain, cases):
         '''
@@ -440,7 +448,7 @@ class Personnage():
         '''
         graphe = module_graphe_dic.Graphe_non_oriente_dic()
         for coordo_centre in [coordo] + terrain :
-            for coordo_voisin in module_terrain.Terrain.cases_autour(coordo_centre): #on regarde les voisins de la case
+            for coordo_voisin in module_terrain.cases_autour(coordo_centre): #on regarde les voisins de la case
                 if coordo_voisin in [coordo] + terrain : #si le voisin est atteignable par le personnage
                     graphe.ajouter_arete(coordo_centre, coordo_voisin) #on ajoute une arête entre les deux cases
         return graphe
@@ -470,7 +478,7 @@ class Cavalier(Personnage):
         '''
         tab_cavalier = [(-2, -1), (-1, -2), (1, -2), (-2, 1), (-1, 2), (2, -1), (1, 2), (2, 1)]
         #Les coordonnées
-        return module_terrain.Terrain.tuples_en_coordonnees((self.x, self.y), tab_cavalier)
+        return module_terrain.tuples_en_coordonnees((self.x, self.y), tab_cavalier)
     
     def cases_valides_deplacement(self, terrain):
         '''
@@ -544,7 +552,7 @@ class Geant(Personnage):
         ###Dictionnaire des déplacements
         tab_geant = [(0, -1), (-1, 0), (-1, 1), (1, -1), (0, 2), (2, 0), (2, 1), (1, 2)]
         ##dépend de la case sélectionnée du géant
-        return module_terrain.Terrain.tuples_en_coordonnees((self.x, self.y), tab_geant, self.numero_geant)
+        return module_terrain.tuples_en_coordonnees((self.x, self.y), tab_geant, self.numero_geant)
     
     def cases_attaques(self):
         '''
@@ -553,7 +561,7 @@ class Geant(Personnage):
         '''
         tab_geant = [(0, -1), (-1, 0), (-1, 1), (1, -1), (0, 2), (2, 0), (2, 1), (1, 2), (-1, -1), (-1, 2), (2, -1), (2, 2)]
         ##dépend de la case sélectionnée du géant
-        return module_terrain.Terrain.tuples_en_coordonnees((self.x, self.y), tab_geant, self.numero_geant)
+        return module_terrain.tuples_en_coordonnees((self.x, self.y), tab_geant, self.numero_geant)
     
     def cases_valides_deplacement(self, terrain):
         '''
@@ -591,7 +599,7 @@ class Geant(Personnage):
         for case in deplacements:
             if not case in dep_deja_fait: #si ce couple n'a pas déjà été fait
                 couple = []
-                for case_autour in module_terrain.Terrain.cases_autour(case)[:4] :#seulement à droite, à gauche, en haut ou en bas
+                for case_autour in module_terrain.cases_autour(case)[:4] :#seulement à droite, à gauche, en haut ou en bas
                     if case_autour in deplacements:
                         #création du nouveau couple
                         couple.append(case)
@@ -849,7 +857,7 @@ class Monstre(Personnage):
             for y in range(21): #les y
                 case = (x, y) #la case
                 if terrain.est_possible(x, y) or case == coordo or (self.x, self.y) == case: #si la case est vide ou si c'est la victime ou si c'est le monstre
-                    cases_autour = module_terrain.Terrain.cases_autour(case)
+                    cases_autour = module_terrain.cases_autour(case)
                     for case_voisine in cases_autour :
                         if terrain.est_possible(case_voisine[0], case_voisine[1]): #si la cases est vide
                             graphe.ajouter_arete(case, case_voisine) #on ajoute une arête entre les deux cases
@@ -882,7 +890,7 @@ class Monstre(Personnage):
         '''
         #tableau cases
         tab = [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]
-        tab_coordo = module_terrain.Terrain.tuples_en_coordonnees((self.x, self.y), tab)
+        tab_coordo = module_terrain.tuples_en_coordonnees((self.x, self.y), tab)
 
         #victimes
         tab_v = []

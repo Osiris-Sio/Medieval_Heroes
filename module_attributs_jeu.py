@@ -49,7 +49,7 @@ class Attributs_Jeu() :
         
         #Bouton :
         self.bouton_clique = None #Si None, c'est que aucun bouton du jeu ou du menu a été cliqué. Sinon, prend la chaine de caractères correspondante (exemple : Le bouton 'jouer' a été cliqué, alors bouton_cliqué = 'jouer')
-        self.temps_appui_bouton = 0 #Le temps passé après qu'un bouton a été cliqué
+        self.temps_appui_bouton = 0.0 #Le temps passé après qu'un bouton a été cliqué
         
         #Jour/Nuit :
         self.temps = 'Jour' #Le temps du jeu
@@ -574,7 +574,7 @@ class Attributs_Jeu() :
         : param tab (list of list of geant)
         : pas de return
         '''
-        #assertion
+        #assertions
         assert isinstance(tab, list), "Le paramètre doit être tableau de tableau contenant des geants (list of list of geant) !"
         for elt in tab :
             assert isinstance(elt, list), "Le paramètre doit être tableau de tableau contenant des geants (list of list of geant) !"
@@ -589,7 +589,7 @@ class Attributs_Jeu() :
         : param tab (list of list of geant)
         : pas de return
         '''
-        #assertion
+        #assertions
         assert isinstance(tab, list), "Le paramètre doit être tableau de tableau contenant des geants (list of list of geant) !"
         for elt in tab :
             assert isinstance(elt, list), "Le paramètre doit être tableau de tableau contenant des geants (list of list of geant) !"
@@ -1274,8 +1274,15 @@ class Attributs_Jeu() :
         #Assertion :
         assert isinstance(coffre, module_objets.Coffre), 'Le paramètre doit être un coffre (module_objets.Coffre) !'
         #Code :
-        self.tab_coffres.remove(coffre)  
-    
+        self.tab_coffres.remove(coffre)
+        
+    def augmente_nombre_tour(self) :
+        '''
+        Ajoute 1 à l'attribut nombre_tour
+        : pas de return
+        '''
+        self.nombre_tour += 1
+        
     def changer_temps_jeu(self):
         '''
         modifie le temps de la journée si un certain nombre de déplacements/attaques a été effectué
@@ -1296,7 +1303,6 @@ class Attributs_Jeu() :
            
         ##Temps pour les monstres d'apparaître ?
         elif self.acc_nombre_tour() % 4 == 2 and self.acc_temps() == 'Jour':
-            
             #Si l'apparition des monstres est désactivé et qu'ils n'ont pas encore été déplacés
             if not self.acc_monstres_active() and not self.acc_monstres_deja_deplaces() :
                 self.mut_monstres_active(True) #Le "placement" de monstres est activé

@@ -111,8 +111,6 @@ class Petale():
         #Code
         self.y += nb
         
-        
-
 ######################################################
 ### Classe Affichage :
 ######################################################
@@ -145,7 +143,7 @@ class Affichage():
         #Attributs Ressources (pour charger les ressources):
         
         #Ajoute l'icone à la fenêtre :
-        pygame.display.set_icon(pygame.image.load('medias/img_jeu.png'))
+        pygame.display.set_icon(pygame.image.load('medias/medieval_heroes.png'))
         
         #Menu/options :
         self.menu = pygame.image.load("medias/menu/menu4.png")
@@ -153,11 +151,11 @@ class Affichage():
         self.fond_options = pygame.image.load("medias/menu/menu_param.png")
         
         #Modes :
-        self.local = pygame.image.load("medias/jeu_local.png")
-        self.robot = pygame.image.load("medias/jeu_robot.png")
+        self.local = pygame.image.load("medias/menu/jeu_local.png")
+        self.robot = pygame.image.load("medias/menu/jeu_robot.png")
         
         #Terrain :
-        self.image_terrain = pygame.image.load("medias/21x21.png")
+        self.image_terrain = pygame.image.load("medias/terrain/terrain_niveau1.png")
         
         #Décors :
         self.images_coffre = [
@@ -173,7 +171,7 @@ class Affichage():
             pygame.image.load("medias/coffre/c9.png"), 
             pygame.image.load("medias/coffre/coffre_ouvert.png")
             ]
-        self.image_tombe = pygame.image.load("medias/tombe1.png")
+        self.image_tombe = pygame.image.load("medias/terrain/tombe.png")
         
         # Curseurs :
         self.curseur_normal = pygame.image.load("medias/curseurs/curseur0.png")
@@ -185,7 +183,7 @@ class Affichage():
                          pygame.image.load("medias/attaque_deplacement/guerison_possible.png")]
         
         #Cerisiers :
-        self.cerisier = pygame.image.load("medias/cerisier.png")
+        self.cerisier = pygame.image.load("medias/terrain/cerisier.png")
         self.tab_petales = [
             Petale('haut_gauche'), 
             Petale('haut_gauche'), 
@@ -196,7 +194,6 @@ class Affichage():
             Petale('bas_droit'),  
             Petale('bas_droit')
             ]
-        self.distance_max = random.randint(300, 360)
         
         #Filtres
         self.transition = 0
@@ -206,12 +203,12 @@ class Affichage():
         
         #Sol (contour du personnage) :
         self.sol_personnages = {
-            'rouge' : pygame.image.load("medias/sol_r.png"),
-            'bleu' : pygame.image.load("medias/sol_b.png"),
+            'rouge' : pygame.image.load("medias/terrain/sol_r.png"),
+            'bleu' : pygame.image.load("medias/terrain/sol_b.png"),
             }
         self.sol_geants = {
-            'rouge' : pygame.image.load("medias/sol_r_geant.png"),
-            'bleu' : pygame.image.load("medias/sol_b_geant.png")
+            'rouge' : pygame.image.load("medias/terrain/sol_r_geant.png"),
+            'bleu' : pygame.image.load("medias/terrain/sol_b_geant.png")
             }
         
         #Réponses coffre
@@ -230,119 +227,120 @@ class Affichage():
         #Personnages :
         self.personnages = {
             'paladin': [
-                [pygame.image.load("medias/paladin/paladin1.png"), pygame.image.load("medias/paladin/paladin2.png")],
-                [pygame.image.load("medias/paladin/paladinb1.png"), pygame.image.load("medias/paladin/paladinb2.png")]
+                [pygame.image.load("medias/personnages/paladin/paladin1.png"), pygame.image.load("medias/personnages/paladin/paladin2.png")],
+                [pygame.image.load("medias/personnages/paladin/paladinb1.png"), pygame.image.load("medias/personnages/paladin/paladinb2.png")]
             ],
             'poulet': [
-                [pygame.image.load("medias/poulet/pr1.png"), pygame.image.load("medias/poulet/pr2.png"), pygame.image.load("medias/poulet/pr3.png"), pygame.image.load("medias/poulet/pr2.png") , pygame.image.load("medias/poulet/pr2.png")],
-                [pygame.image.load("medias/poulet/pb1.png"), pygame.image.load("medias/poulet/pb2.png"), pygame.image.load("medias/poulet/pb3.png"), pygame.image.load("medias/poulet/pb2.png"), pygame.image.load("medias/poulet/pb2.png")]
+                [pygame.image.load("medias/personnages/poulet/pr1.png"), pygame.image.load("medias/personnages/poulet/pr2.png"), pygame.image.load("medias/personnages/poulet/pr3.png"), pygame.image.load("medias/personnages/poulet/pr2.png") , pygame.image.load("medias/personnages/poulet/pr2.png")],
+                [pygame.image.load("medias/personnages/poulet/pb1.png"), pygame.image.load("medias/personnages/poulet/pb2.png"), pygame.image.load("medias/personnages/poulet/pb3.png"), pygame.image.load("medias/personnages/poulet/pb2.png"), pygame.image.load("medias/personnages/poulet/pb2.png")]
             ],
             'geant': [
                 [
-                    [pygame.image.load("medias/geant/gb1.png"), pygame.image.load("medias/geant/gb2.png"), pygame.image.load("medias/geant/gb3.png"), pygame.image.load("medias/geant/gb4.png")],
-                    [pygame.image.load("medias/geant/gb11.png"), pygame.image.load("medias/geant/gb22.png"), pygame.image.load("medias/geant/gb33.png"), pygame.image.load("medias/geant/gb44.png")]
+                    [pygame.image.load("medias/personnages/geant/gb1.png"), pygame.image.load("medias/personnages/geant/gb2.png"), pygame.image.load("medias/personnages/geant/gb3.png"), pygame.image.load("medias/personnages/geant/gb4.png")],
+                    [pygame.image.load("medias/personnages/geant/gb11.png"), pygame.image.load("medias/personnages/geant/gb22.png"), pygame.image.load("medias/personnages/geant/gb33.png"), pygame.image.load("medias/personnages/geant/gb44.png")]
                 ],
                 [
-                    [pygame.image.load("medias/geant/gr1.png"), pygame.image.load("medias/geant/gr2.png"), pygame.image.load("medias/geant/gr3.png"), pygame.image.load("medias/geant/gr4.png")],
-                    [pygame.image.load("medias/geant/gr11.png"), pygame.image.load("medias/geant/gr22.png"), pygame.image.load("medias/geant/gr33.png"), pygame.image.load("medias/geant/gr44.png")]
+                    [pygame.image.load("medias/personnages/geant/gr1.png"), pygame.image.load("medias/personnages/geant/gr2.png"), pygame.image.load("medias/personnages/geant/gr3.png"), pygame.image.load("medias/personnages/geant/gr4.png")],
+                    [pygame.image.load("medias/personnages/geant/gr11.png"), pygame.image.load("medias/personnages/geant/gr22.png"), pygame.image.load("medias/personnages/geant/gr33.png"), pygame.image.load("medias/personnages/geant/gr44.png")]
                 ]
             ],
             'cavalier': [
-                [pygame.image.load("medias/cavalier/cr1.png"), pygame.image.load("medias/cavalier/cr2.png"), pygame.image.load("medias/cavalier/cr3.png"), pygame.image.load("medias/cavalier/cr4.png"), pygame.image.load("medias/cavalier/cr5.png"), pygame.image.load("medias/cavalier/cr6.png"), pygame.image.load("medias/cavalier/cr7.png"), pygame.image.load("medias/cavalier/cr8.png")],
-                [pygame.image.load("medias/cavalier/cb1.png"), pygame.image.load("medias/cavalier/cb2.png"), pygame.image.load("medias/cavalier/cb3.png"), pygame.image.load("medias/cavalier/cb4.png"), pygame.image.load("medias/cavalier/cb5.png"), pygame.image.load("medias/cavalier/cb6.png"), pygame.image.load("medias/cavalier/cb7.png"), pygame.image.load("medias/cavalier/cb8.png")]
+                [pygame.image.load("medias/personnages/cavalier/cr1.png"), pygame.image.load("medias/personnages/cavalier/cr2.png"), pygame.image.load("medias/personnages/cavalier/cr3.png"), pygame.image.load("medias/personnages/cavalier/cr4.png"), pygame.image.load("medias/personnages/cavalier/cr5.png"), pygame.image.load("medias/personnages/cavalier/cr6.png"), pygame.image.load("medias/personnages/cavalier/cr7.png"), pygame.image.load("medias/personnages/cavalier/cr8.png")],
+                [pygame.image.load("medias/personnages/cavalier/cb1.png"), pygame.image.load("medias/personnages/cavalier/cb2.png"), pygame.image.load("medias/personnages/cavalier/cb3.png"), pygame.image.load("medias/personnages/cavalier/cb4.png"), pygame.image.load("medias/personnages/cavalier/cb5.png"), pygame.image.load("medias/personnages/cavalier/cb6.png"), pygame.image.load("medias/personnages/cavalier/cb7.png"), pygame.image.load("medias/personnages/cavalier/cb8.png")]
             ],
             'archere': [
-                [pygame.image.load("medias/archere/ar2.png"),pygame.image.load("medias/archere/ar1.png")],
-                [pygame.image.load("medias/archere/ab1.png"),pygame.image.load("medias/archere/ab2.png")]],
+                [pygame.image.load("medias/personnages/archere/ar2.png"),pygame.image.load("medias/personnages/archere/ar1.png")],
+                [pygame.image.load("medias/personnages/archere/ab1.png"),pygame.image.load("medias/personnages/archere/ab2.png")]],
             'sorciere': [
-                [pygame.image.load("medias/sorciere/sor1.png"),pygame.image.load("medias/sorciere/sor2.png")],
-                [pygame.image.load("medias/sorciere/sob1.png"),pygame.image.load("medias/sorciere/sob2.png")]],
+                [pygame.image.load("medias/personnages/sorciere/sor1.png"),pygame.image.load("medias/personnages/sorciere/sor2.png")],
+                [pygame.image.load("medias/personnages/sorciere/sob1.png"),pygame.image.load("medias/personnages/sorciere/sob2.png")]],
             'ivrogne': [
-                [pygame.image.load("medias/ivrogne/ir1.png"), pygame.image.load("medias/ivrogne/ir2.png"), pygame.image.load("medias/ivrogne/ir3.png"), pygame.image.load("medias/ivrogne/ir4.png"), pygame.image.load("medias/ivrogne/ir3.png"), pygame.image.load("medias/ivrogne/ir2.png")],
-                [pygame.image.load("medias/ivrogne/ib1.png"), pygame.image.load("medias/ivrogne/ib2.png"), pygame.image.load("medias/ivrogne/ib3.png"), pygame.image.load("medias/ivrogne/ib4.png"), pygame.image.load("medias/ivrogne/ib3.png"),pygame.image.load("medias/ivrogne/ib2.png"),]],
+                [pygame.image.load("medias/personnages/ivrogne/ir1.png"), pygame.image.load("medias/personnages/ivrogne/ir2.png"), pygame.image.load("medias/personnages/ivrogne/ir3.png"), pygame.image.load("medias/personnages/ivrogne/ir4.png"), pygame.image.load("medias/personnages/ivrogne/ir3.png"), pygame.image.load("medias/personnages/ivrogne/ir2.png")],
+                [pygame.image.load("medias/personnages/ivrogne/ib1.png"), pygame.image.load("medias/personnages/ivrogne/ib2.png"), pygame.image.load("medias/personnages/ivrogne/ib3.png"), pygame.image.load("medias/personnages/ivrogne/ib4.png"), pygame.image.load("medias/personnages/ivrogne/ib3.png"),pygame.image.load("medias/personnages/ivrogne/ib2.png"),]],
             'barbare': [
-                [pygame.image.load("medias/barbare/br1.png"), pygame.image.load("medias/barbare/br2.png")],
-                [pygame.image.load("medias/barbare/bb1.png"), pygame.image.load("medias/barbare/bb2.png")]],
+                [pygame.image.load("medias/personnages/barbare/br1.png"), pygame.image.load("medias/personnages/barbare/br2.png")],
+                [pygame.image.load("medias/personnages/barbare/bb1.png"), pygame.image.load("medias/personnages/barbare/bb2.png")]],
             'cracheur de feu': [
-                [pygame.image.load("medias/cracheur_de_feu/rouge/c66.png"), pygame.image.load("medias/cracheur_de_feu/rouge/c55.png"), pygame.image.load("medias/cracheur_de_feu/rouge/c44.png"), pygame.image.load("medias/cracheur_de_feu/rouge/c33.png"), pygame.image.load("medias/cracheur_de_feu/rouge/c22.png"), pygame.image.load("medias/cracheur_de_feu/rouge/c11.png"), pygame.image.load("medias/cracheur_de_feu/rouge/c1.png"), pygame.image.load("medias/cracheur_de_feu/rouge/c2.png"), pygame.image.load("medias/cracheur_de_feu/rouge/c3.png"), pygame.image.load("medias/cracheur_de_feu/rouge/c4.png"), pygame.image.load("medias/cracheur_de_feu/rouge/c5.png"),pygame.image.load("medias/cracheur_de_feu/rouge/c6.png")],
-                [pygame.image.load("medias/cracheur_de_feu/bleu/c66.png"), pygame.image.load("medias/cracheur_de_feu/bleu/c55.png"), pygame.image.load("medias/cracheur_de_feu/bleu/c44.png"), pygame.image.load("medias/cracheur_de_feu/bleu/c33.png"), pygame.image.load("medias/cracheur_de_feu/bleu/c22.png"), pygame.image.load("medias/cracheur_de_feu/bleu/c11.png"), pygame.image.load("medias/cracheur_de_feu/bleu/c1.png"), pygame.image.load("medias/cracheur_de_feu/bleu/c2.png"), pygame.image.load("medias/cracheur_de_feu/bleu/c3.png"), pygame.image.load("medias/cracheur_de_feu/bleu/c4.png"), pygame.image.load("medias/cracheur_de_feu/bleu/c5.png"),pygame.image.load("medias/cracheur_de_feu/bleu/c6.png")]],
+                [pygame.image.load("medias/personnages/cracheur_de_feu/rouge/c66.png"), pygame.image.load("medias/personnages/cracheur_de_feu/rouge/c55.png"), pygame.image.load("medias/personnages/cracheur_de_feu/rouge/c44.png"), pygame.image.load("medias/personnages/cracheur_de_feu/rouge/c33.png"), pygame.image.load("medias/personnages/cracheur_de_feu/rouge/c22.png"), pygame.image.load("medias/personnages/cracheur_de_feu/rouge/c11.png"), pygame.image.load("medias/personnages/cracheur_de_feu/rouge/c1.png"), pygame.image.load("medias/personnages/cracheur_de_feu/rouge/c2.png"), pygame.image.load("medias/personnages/cracheur_de_feu/rouge/c3.png"), pygame.image.load("medias/personnages/cracheur_de_feu/rouge/c4.png"), pygame.image.load("medias/personnages/cracheur_de_feu/rouge/c5.png"),pygame.image.load("medias/personnages/cracheur_de_feu/rouge/c6.png")],
+                [pygame.image.load("medias/personnages/cracheur_de_feu/bleu/c66.png"), pygame.image.load("medias/personnages/cracheur_de_feu/bleu/c55.png"), pygame.image.load("medias/personnages/cracheur_de_feu/bleu/c44.png"), pygame.image.load("medias/personnages/cracheur_de_feu/bleu/c33.png"), pygame.image.load("medias/personnages/cracheur_de_feu/bleu/c22.png"), pygame.image.load("medias/personnages/cracheur_de_feu/bleu/c11.png"), pygame.image.load("medias/personnages/cracheur_de_feu/bleu/c1.png"), pygame.image.load("medias/personnages/cracheur_de_feu/bleu/c2.png"), pygame.image.load("medias/personnages/cracheur_de_feu/bleu/c3.png"), pygame.image.load("medias/personnages/cracheur_de_feu/bleu/c4.png"), pygame.image.load("medias/personnages/cracheur_de_feu/bleu/c5.png"),pygame.image.load("medias/personnages/cracheur_de_feu/bleu/c6.png")]],
             'valkyrie': [
-                [pygame.image.load("medias/valkyrie/vr1.png"), pygame.image.load("medias/valkyrie/vr2.png")],
-                [pygame.image.load("medias/valkyrie/vb1.png"), pygame.image.load("medias/valkyrie/vb2.png")]],
+                [pygame.image.load("medias/personnages/valkyrie/vr1.png"), pygame.image.load("medias/personnages/valkyrie/vr2.png")],
+                [pygame.image.load("medias/personnages/valkyrie/vb1.png"), pygame.image.load("medias/personnages/valkyrie/vb2.png")]],
             'mage': [
-                [pygame.image.load("medias/mage/rouge/sr1.png"), pygame.image.load("medias/mage/rouge/sr2.png"), pygame.image.load("medias/mage/rouge/sr3.png"), pygame.image.load("medias/mage/rouge/sr4.png"), pygame.image.load("medias/mage/rouge/sr5.png"), pygame.image.load("medias/mage/rouge/sr6.png"), pygame.image.load("medias/mage/rouge/sr7.png"), pygame.image.load("medias/mage/rouge/sr8.png"), pygame.image.load("medias/mage/rouge/sr9.png"), pygame.image.load("medias/mage/rouge/sr10.png"), pygame.image.load("medias/mage/rouge/sr11.png"), pygame.image.load("medias/mage/rouge/sr12.png"), pygame.image.load("medias/mage/rouge/sr13.png"), pygame.image.load("medias/mage/rouge/sr14.png"), pygame.image.load("medias/mage/rouge/sr15.png"), pygame.image.load("medias/mage/rouge/sr16.png"), pygame.image.load("medias/mage/rouge/sr17.png"), pygame.image.load("medias/mage/rouge/sr18.png"), pygame.image.load("medias/mage/rouge/sr19.png"), pygame.image.load("medias/mage/rouge/sr20.png"), pygame.image.load("medias/mage/rouge/sr21.png"), pygame.image.load("medias/mage/rouge/sr22.png"), pygame.image.load("medias/mage/rouge/sr23.png"), pygame.image.load("medias/mage/rouge/sr24.png"), pygame.image.load("medias/mage/rouge/sr25.png"), pygame.image.load("medias/mage/rouge/sr26.png"), pygame.image.load("medias/mage/rouge/sr27.png"), pygame.image.load("medias/mage/rouge/sr28.png"), pygame.image.load("medias/mage/rouge/sr29.png"), pygame.image.load("medias/mage/rouge/sr30.png"), pygame.image.load("medias/mage/rouge/sr31.png"), pygame.image.load("medias/mage/rouge/sr32.png"), pygame.image.load("medias/mage/rouge/sr33.png"), pygame.image.load("medias/mage/rouge/sr32.png"), pygame.image.load("medias/mage/rouge/sr31.png"), pygame.image.load("medias/mage/rouge/sr30.png"), pygame.image.load("medias/mage/rouge/sr29.png"), pygame.image.load("medias/mage/rouge/sr28.png"), pygame.image.load("medias/mage/rouge/sr27.png"), pygame.image.load("medias/mage/rouge/sr26.png"), pygame.image.load("medias/mage/rouge/sr25.png"), pygame.image.load("medias/mage/rouge/sr24.png"), pygame.image.load("medias/mage/rouge/sr23.png"), pygame.image.load("medias/mage/rouge/sr22.png"), pygame.image.load("medias/mage/rouge/sr21.png"), pygame.image.load("medias/mage/rouge/sr20.png"), pygame.image.load("medias/mage/rouge/sr19.png"), pygame.image.load("medias/mage/rouge/sr18.png"), pygame.image.load("medias/mage/rouge/sr17.png"), pygame.image.load("medias/mage/rouge/sr16.png"), pygame.image.load("medias/mage/rouge/sr15.png"), pygame.image.load("medias/mage/rouge/sr14.png"), pygame.image.load("medias/mage/rouge/sr13.png"), pygame.image.load("medias/mage/rouge/sr12.png"), pygame.image.load("medias/mage/rouge/sr11.png"), pygame.image.load("medias/mage/rouge/sr10.png"), pygame.image.load("medias/mage/rouge/sr9.png"), pygame.image.load("medias/mage/rouge/sr8.png"), pygame.image.load("medias/mage/rouge/sr7.png"), pygame.image.load("medias/mage/rouge/sr6.png"), pygame.image.load("medias/mage/rouge/sr5.png"), pygame.image.load("medias/mage/rouge/sr4.png"), pygame.image.load("medias/mage/rouge/sr3.png"), pygame.image.load("medias/mage/rouge/sr2.png"), pygame.image.load("medias/mage/rouge/sr1.png")],
-                [pygame.image.load("medias/mage/bleu/sb1.png"), pygame.image.load("medias/mage/bleu/sb2.png"), pygame.image.load("medias/mage/bleu/sb3.png"), pygame.image.load("medias/mage/bleu/sb4.png"), pygame.image.load("medias/mage/bleu/sb5.png"), pygame.image.load("medias/mage/bleu/sb6.png"), pygame.image.load("medias/mage/bleu/sb7.png"), pygame.image.load("medias/mage/bleu/sb8.png"), pygame.image.load("medias/mage/bleu/sb9.png"), pygame.image.load("medias/mage/bleu/sb10.png"), pygame.image.load("medias/mage/bleu/sb11.png"), pygame.image.load("medias/mage/bleu/sb12.png"), pygame.image.load("medias/mage/bleu/sb13.png"), pygame.image.load("medias/mage/bleu/sb14.png"), pygame.image.load("medias/mage/bleu/sb15.png"), pygame.image.load("medias/mage/bleu/sb16.png"), pygame.image.load("medias/mage/bleu/sb17.png"), pygame.image.load("medias/mage/bleu/sb18.png"), pygame.image.load("medias/mage/bleu/sb19.png"), pygame.image.load("medias/mage/bleu/sb20.png"), pygame.image.load("medias/mage/bleu/sb21.png"), pygame.image.load("medias/mage/bleu/sb22.png"), pygame.image.load("medias/mage/bleu/sb23.png"), pygame.image.load("medias/mage/bleu/sb24.png"), pygame.image.load("medias/mage/bleu/sb25.png"), pygame.image.load("medias/mage/bleu/sb26.png"), pygame.image.load("medias/mage/bleu/sb27.png"), pygame.image.load("medias/mage/bleu/sb28.png"), pygame.image.load("medias/mage/bleu/sb29.png"), pygame.image.load("medias/mage/bleu/sb30.png"), pygame.image.load("medias/mage/bleu/sb31.png"), pygame.image.load("medias/mage/bleu/sb32.png"), pygame.image.load("medias/mage/bleu/sb33.png"),  pygame.image.load("medias/mage/bleu/sb32.png"), pygame.image.load("medias/mage/bleu/sb31.png"), pygame.image.load("medias/mage/bleu/sb30.png"), pygame.image.load("medias/mage/bleu/sb29.png"), pygame.image.load("medias/mage/bleu/sb28.png"), pygame.image.load("medias/mage/bleu/sb27.png"), pygame.image.load("medias/mage/bleu/sb26.png"), pygame.image.load("medias/mage/bleu/sb25.png"), pygame.image.load("medias/mage/bleu/sb24.png"), pygame.image.load("medias/mage/bleu/sb23.png"), pygame.image.load("medias/mage/bleu/sb22.png"), pygame.image.load("medias/mage/bleu/sb21.png"), pygame.image.load("medias/mage/bleu/sb20.png"), pygame.image.load("medias/mage/bleu/sb19.png"), pygame.image.load("medias/mage/bleu/sb18.png"), pygame.image.load("medias/mage/bleu/sb17.png"), pygame.image.load("medias/mage/bleu/sb16.png"), pygame.image.load("medias/mage/bleu/sb15.png"), pygame.image.load("medias/mage/bleu/sb14.png"), pygame.image.load("medias/mage/bleu/sb13.png"), pygame.image.load("medias/mage/bleu/sb12.png"), pygame.image.load("medias/mage/bleu/sb11.png"), pygame.image.load("medias/mage/bleu/sb10.png"), pygame.image.load("medias/mage/bleu/sb9.png"), pygame.image.load("medias/mage/bleu/sb8.png"), pygame.image.load("medias/mage/bleu/sb7.png"), pygame.image.load("medias/mage/bleu/sb6.png"), pygame.image.load("medias/mage/bleu/sb5.png"), pygame.image.load("medias/mage/bleu/sb4.png"), pygame.image.load("medias/mage/bleu/sb3.png"), pygame.image.load("medias/mage/bleu/sb2.png"), pygame.image.load("medias/mage/bleu/sb1.png")]],
+                [pygame.image.load("medias/personnages/mage/rouge/sr1.png"), pygame.image.load("medias/personnages/mage/rouge/sr2.png"), pygame.image.load("medias/personnages/mage/rouge/sr3.png"), pygame.image.load("medias/personnages/mage/rouge/sr4.png"), pygame.image.load("medias/personnages/mage/rouge/sr5.png"), pygame.image.load("medias/personnages/mage/rouge/sr6.png"), pygame.image.load("medias/personnages/mage/rouge/sr7.png"), pygame.image.load("medias/personnages/mage/rouge/sr8.png"), pygame.image.load("medias/personnages/mage/rouge/sr9.png"), pygame.image.load("medias/personnages/mage/rouge/sr10.png"), pygame.image.load("medias/personnages/mage/rouge/sr11.png"), pygame.image.load("medias/personnages/mage/rouge/sr12.png"), pygame.image.load("medias/personnages/mage/rouge/sr13.png"), pygame.image.load("medias/personnages/mage/rouge/sr14.png"), pygame.image.load("medias/personnages/mage/rouge/sr15.png"), pygame.image.load("medias/personnages/mage/rouge/sr16.png"), pygame.image.load("medias/personnages/mage/rouge/sr17.png"), pygame.image.load("medias/personnages/mage/rouge/sr18.png"), pygame.image.load("medias/personnages/mage/rouge/sr19.png"), pygame.image.load("medias/personnages/mage/rouge/sr20.png"), pygame.image.load("medias/personnages/mage/rouge/sr21.png"), pygame.image.load("medias/personnages/mage/rouge/sr22.png"), pygame.image.load("medias/personnages/mage/rouge/sr23.png"), pygame.image.load("medias/personnages/mage/rouge/sr24.png"), pygame.image.load("medias/personnages/mage/rouge/sr25.png"), pygame.image.load("medias/personnages/mage/rouge/sr26.png"), pygame.image.load("medias/personnages/mage/rouge/sr27.png"), pygame.image.load("medias/personnages/mage/rouge/sr28.png"), pygame.image.load("medias/personnages/mage/rouge/sr29.png"), pygame.image.load("medias/personnages/mage/rouge/sr30.png"), pygame.image.load("medias/personnages/mage/rouge/sr31.png"), pygame.image.load("medias/personnages/mage/rouge/sr32.png"), pygame.image.load("medias/personnages/mage/rouge/sr33.png"), pygame.image.load("medias/personnages/mage/rouge/sr32.png"), pygame.image.load("medias/personnages/mage/rouge/sr31.png"), pygame.image.load("medias/personnages/mage/rouge/sr30.png"), pygame.image.load("medias/personnages/mage/rouge/sr29.png"), pygame.image.load("medias/personnages/mage/rouge/sr28.png"), pygame.image.load("medias/personnages/mage/rouge/sr27.png"), pygame.image.load("medias/personnages/mage/rouge/sr26.png"), pygame.image.load("medias/personnages/mage/rouge/sr25.png"), pygame.image.load("medias/personnages/mage/rouge/sr24.png"), pygame.image.load("medias/personnages/mage/rouge/sr23.png"), pygame.image.load("medias/personnages/mage/rouge/sr22.png"), pygame.image.load("medias/personnages/mage/rouge/sr21.png"), pygame.image.load("medias/personnages/mage/rouge/sr20.png"), pygame.image.load("medias/personnages/mage/rouge/sr19.png"), pygame.image.load("medias/personnages/mage/rouge/sr18.png"), pygame.image.load("medias/personnages/mage/rouge/sr17.png"), pygame.image.load("medias/personnages/mage/rouge/sr16.png"), pygame.image.load("medias/personnages/mage/rouge/sr15.png"), pygame.image.load("medias/personnages/mage/rouge/sr14.png"), pygame.image.load("medias/personnages/mage/rouge/sr13.png"), pygame.image.load("medias/personnages/mage/rouge/sr12.png"), pygame.image.load("medias/personnages/mage/rouge/sr11.png"), pygame.image.load("medias/personnages/mage/rouge/sr10.png"), pygame.image.load("medias/personnages/mage/rouge/sr9.png"), pygame.image.load("medias/personnages/mage/rouge/sr8.png"), pygame.image.load("medias/personnages/mage/rouge/sr7.png"), pygame.image.load("medias/personnages/mage/rouge/sr6.png"), pygame.image.load("medias/personnages/mage/rouge/sr5.png"), pygame.image.load("medias/personnages/mage/rouge/sr4.png"), pygame.image.load("medias/personnages/mage/rouge/sr3.png"), pygame.image.load("medias/personnages/mage/rouge/sr2.png"), pygame.image.load("medias/personnages/mage/rouge/sr1.png")],
+                [pygame.image.load("medias/personnages/mage/bleu/sb1.png"), pygame.image.load("medias/personnages/mage/bleu/sb2.png"), pygame.image.load("medias/personnages/mage/bleu/sb3.png"), pygame.image.load("medias/personnages/mage/bleu/sb4.png"), pygame.image.load("medias/personnages/mage/bleu/sb5.png"), pygame.image.load("medias/personnages/mage/bleu/sb6.png"), pygame.image.load("medias/personnages/mage/bleu/sb7.png"), pygame.image.load("medias/personnages/mage/bleu/sb8.png"), pygame.image.load("medias/personnages/mage/bleu/sb9.png"), pygame.image.load("medias/personnages/mage/bleu/sb10.png"), pygame.image.load("medias/personnages/mage/bleu/sb11.png"), pygame.image.load("medias/personnages/mage/bleu/sb12.png"), pygame.image.load("medias/personnages/mage/bleu/sb13.png"), pygame.image.load("medias/personnages/mage/bleu/sb14.png"), pygame.image.load("medias/personnages/mage/bleu/sb15.png"), pygame.image.load("medias/personnages/mage/bleu/sb16.png"), pygame.image.load("medias/personnages/mage/bleu/sb17.png"), pygame.image.load("medias/personnages/mage/bleu/sb18.png"), pygame.image.load("medias/personnages/mage/bleu/sb19.png"), pygame.image.load("medias/personnages/mage/bleu/sb20.png"), pygame.image.load("medias/personnages/mage/bleu/sb21.png"), pygame.image.load("medias/personnages/mage/bleu/sb22.png"), pygame.image.load("medias/personnages/mage/bleu/sb23.png"), pygame.image.load("medias/personnages/mage/bleu/sb24.png"), pygame.image.load("medias/personnages/mage/bleu/sb25.png"), pygame.image.load("medias/personnages/mage/bleu/sb26.png"), pygame.image.load("medias/personnages/mage/bleu/sb27.png"), pygame.image.load("medias/personnages/mage/bleu/sb28.png"), pygame.image.load("medias/personnages/mage/bleu/sb29.png"), pygame.image.load("medias/personnages/mage/bleu/sb30.png"), pygame.image.load("medias/personnages/mage/bleu/sb31.png"), pygame.image.load("medias/personnages/mage/bleu/sb32.png"), pygame.image.load("medias/personnages/mage/bleu/sb33.png"),  pygame.image.load("medias/personnages/mage/bleu/sb32.png"), pygame.image.load("medias/personnages/mage/bleu/sb31.png"), pygame.image.load("medias/personnages/mage/bleu/sb30.png"), pygame.image.load("medias/personnages/mage/bleu/sb29.png"), pygame.image.load("medias/personnages/mage/bleu/sb28.png"), pygame.image.load("medias/personnages/mage/bleu/sb27.png"), pygame.image.load("medias/personnages/mage/bleu/sb26.png"), pygame.image.load("medias/personnages/mage/bleu/sb25.png"), pygame.image.load("medias/personnages/mage/bleu/sb24.png"), pygame.image.load("medias/personnages/mage/bleu/sb23.png"), pygame.image.load("medias/personnages/mage/bleu/sb22.png"), pygame.image.load("medias/personnages/mage/bleu/sb21.png"), pygame.image.load("medias/personnages/mage/bleu/sb20.png"), pygame.image.load("medias/personnages/mage/bleu/sb19.png"), pygame.image.load("medias/personnages/mage/bleu/sb18.png"), pygame.image.load("medias/personnages/mage/bleu/sb17.png"), pygame.image.load("medias/personnages/mage/bleu/sb16.png"), pygame.image.load("medias/personnages/mage/bleu/sb15.png"), pygame.image.load("medias/personnages/mage/bleu/sb14.png"), pygame.image.load("medias/personnages/mage/bleu/sb13.png"), pygame.image.load("medias/personnages/mage/bleu/sb12.png"), pygame.image.load("medias/personnages/mage/bleu/sb11.png"), pygame.image.load("medias/personnages/mage/bleu/sb10.png"), pygame.image.load("medias/personnages/mage/bleu/sb9.png"), pygame.image.load("medias/personnages/mage/bleu/sb8.png"), pygame.image.load("medias/personnages/mage/bleu/sb7.png"), pygame.image.load("medias/personnages/mage/bleu/sb6.png"), pygame.image.load("medias/personnages/mage/bleu/sb5.png"), pygame.image.load("medias/personnages/mage/bleu/sb4.png"), pygame.image.load("medias/personnages/mage/bleu/sb3.png"), pygame.image.load("medias/personnages/mage/bleu/sb2.png"), pygame.image.load("medias/personnages/mage/bleu/sb1.png")]],
             'monstre': [
-                [pygame.image.load("medias/monstre/avant/mb1.png"), pygame.image.load("medias/monstre/avant/mb2.png"), pygame.image.load("medias/monstre/avant/mb3.png"), pygame.image.load("medias/monstre/avant/mb4.png"), pygame.image.load("medias/monstre/avant/mb5.png"), pygame.image.load("medias/monstre/avant/mb6.png"), pygame.image.load("medias/monstre/avant/mb5.png"), pygame.image.load("medias/monstre/avant/mb4.png"), pygame.image.load("medias/monstre/avant/mb3.png"), pygame.image.load("medias/monstre/avant/mb2.png")],
-                [pygame.image.load("medias/monstre/m1.png"), pygame.image.load("medias/monstre/m1.png"), pygame.image.load("medias/monstre/m2.png"), pygame.image.load("medias/monstre/m3.png"), pygame.image.load("medias/monstre/m4.png"), pygame.image.load("medias/monstre/m4.png"), pygame.image.load("medias/monstre/m4.png"), pygame.image.load("medias/monstre/m3.png"), pygame.image.load("medias/monstre/m2.png"), pygame.image.load("medias/monstre/m1.png")]]
+                [pygame.image.load("medias/personnages/monstre/avant/mb1.png"), pygame.image.load("medias/personnages/monstre/avant/mb2.png"), pygame.image.load("medias/personnages/monstre/avant/mb3.png"), pygame.image.load("medias/personnages/monstre/avant/mb4.png"), pygame.image.load("medias/personnages/monstre/avant/mb5.png"), pygame.image.load("medias/personnages/monstre/avant/mb6.png"), pygame.image.load("medias/personnages/monstre/avant/mb5.png"), pygame.image.load("medias/personnages/monstre/avant/mb4.png"), pygame.image.load("medias/personnages/monstre/avant/mb3.png"), pygame.image.load("medias/personnages/monstre/avant/mb2.png")],
+                [pygame.image.load("medias/personnages/monstre/m1.png"), pygame.image.load("medias/personnages/monstre/m1.png"), pygame.image.load("medias/personnages/monstre/m2.png"), pygame.image.load("medias/personnages/monstre/m3.png"), pygame.image.load("medias/personnages/monstre/m4.png"), pygame.image.load("medias/personnages/monstre/m4.png"), pygame.image.load("medias/personnages/monstre/m4.png"), pygame.image.load("medias/personnages/monstre/m3.png"), pygame.image.load("medias/personnages/monstre/m2.png"), pygame.image.load("medias/personnages/monstre/m1.png")]]
                 }
         
         #Cadres de personnages :
         self.cadre = pygame.image.load("medias/cadres/cadre_personnage.png")
 
         self.cadres_personnages = {
-            'paladin': [[pygame.image.load("medias/selection/Jour/pr.png"), pygame.image.load("medias/selection/Jour/pb.png")], [pygame.image.load("medias/selection/Nuit/prn1.png"), pygame.image.load("medias/selection/Nuit/pbn.png")]],
-            'poulet': [[pygame.image.load("medias/selection/Jour/por.png"), pygame.image.load("medias/selection/Jour/pob.png")], [pygame.image.load("medias/selection/Nuit/pourn.png"), pygame.image.load("medias/selection/Nuit/poubn.png")]],
-            'geant': [[pygame.image.load("medias/selection/Jour/gr.png"), pygame.image.load("medias/selection/Jour/gb.png")], [pygame.image.load("medias/selection/Nuit/grn.png"), pygame.image.load("medias/selection/Nuit/gbn.png")]],
-            'cavalier': [[pygame.image.load("medias/selection/Jour/cr.png"), pygame.image.load("medias/selection/Jour/cb.png")], [pygame.image.load("medias/selection/Nuit/crn.png"), pygame.image.load("medias/selection/Nuit/cbn.png")]],
-            'archere': [[pygame.image.load("medias/selection/Jour/ar.png"), pygame.image.load("medias/selection/Jour/ab.png")], [pygame.image.load("medias/selection/Nuit/arn.png"), pygame.image.load("medias/selection/Nuit/abn.png")]],
-            'sorciere': [[pygame.image.load("medias/selection/Jour/sor.png"), pygame.image.load("medias/selection/Jour/sob.png")], [pygame.image.load("medias/selection/Nuit/sorn.png"), pygame.image.load("medias/selection/Nuit/sobn.png")]],
-            'cracheur de feu' : [[pygame.image.load("medias/selection/Jour/crr.png"), pygame.image.load("medias/selection/Jour/crb.png")], [pygame.image.load("medias/selection/Nuit/crrn.png"), pygame.image.load("medias/selection/Nuit/crbn.png")]],
-            'valkyrie' : [[pygame.image.load("medias/selection/Jour/vr.png"), pygame.image.load("medias/selection/Jour/vb.png")], [pygame.image.load("medias/selection/Nuit/vrn.png"), pygame.image.load("medias/selection/Nuit/vbn.png")]],
-            'ivrogne' : [[pygame.image.load("medias/selection/Jour/ir.png"), pygame.image.load("medias/selection/Jour/ib.png")], [pygame.image.load("medias/selection/Nuit/irn.png"), pygame.image.load("medias/selection/Nuit/ibn.png")]],
-            'barbare' : [[pygame.image.load("medias/selection/Jour/br.png"), pygame.image.load("medias/selection/Jour/bb.png")], [pygame.image.load("medias/selection/Nuit/brn.png"), pygame.image.load("medias/selection/Nuit/bbn.png")]],
-            'mage' : [[pygame.image.load("medias/selection/Jour/sr.png"), pygame.image.load("medias/selection/Jour/sb.png")], [pygame.image.load("medias/selection/Nuit/mrn.png"), pygame.image.load("medias/selection/Nuit/mbn.png")]],
-            'monstre' : [pygame.image.load("medias/selection/Jour/mj.png"), pygame.image.load("medias/selection/Nuit/mn.png")]
+            'paladin': [[pygame.image.load("medias/perso_selection/Jour/pr.png"), pygame.image.load("medias/perso_selection/Jour/pb.png")], [pygame.image.load("medias/perso_selection/Nuit/prn1.png"), pygame.image.load("medias/perso_selection/Nuit/pbn.png")]],
+            'poulet': [[pygame.image.load("medias/perso_selection/Jour/por.png"), pygame.image.load("medias/perso_selection/Jour/pob.png")], [pygame.image.load("medias/perso_selection/Nuit/pourn.png"), pygame.image.load("medias/perso_selection/Nuit/poubn.png")]],
+            'geant': [[pygame.image.load("medias/perso_selection/Jour/gr.png"), pygame.image.load("medias/perso_selection/Jour/gb.png")], [pygame.image.load("medias/perso_selection/Nuit/grn.png"), pygame.image.load("medias/perso_selection/Nuit/gbn.png")]],
+            'cavalier': [[pygame.image.load("medias/perso_selection/Jour/cr.png"), pygame.image.load("medias/perso_selection/Jour/cb.png")], [pygame.image.load("medias/perso_selection/Nuit/crn.png"), pygame.image.load("medias/perso_selection/Nuit/cbn.png")]],
+            'archere': [[pygame.image.load("medias/perso_selection/Jour/ar.png"), pygame.image.load("medias/perso_selection/Jour/ab.png")], [pygame.image.load("medias/perso_selection/Nuit/arn.png"), pygame.image.load("medias/perso_selection/Nuit/abn.png")]],
+            'sorciere': [[pygame.image.load("medias/perso_selection/Jour/sor.png"), pygame.image.load("medias/perso_selection/Jour/sob.png")], [pygame.image.load("medias/perso_selection/Nuit/sorn.png"), pygame.image.load("medias/perso_selection/Nuit/sobn.png")]],
+            'cracheur de feu' : [[pygame.image.load("medias/perso_selection/Jour/crr.png"), pygame.image.load("medias/perso_selection/Jour/crb.png")], [pygame.image.load("medias/perso_selection/Nuit/crrn.png"), pygame.image.load("medias/perso_selection/Nuit/crbn.png")]],
+            'valkyrie' : [[pygame.image.load("medias/perso_selection/Jour/vr.png"), pygame.image.load("medias/perso_selection/Jour/vb.png")], [pygame.image.load("medias/perso_selection/Nuit/vrn.png"), pygame.image.load("medias/perso_selection/Nuit/vbn.png")]],
+            'ivrogne' : [[pygame.image.load("medias/perso_selection/Jour/ir.png"), pygame.image.load("medias/perso_selection/Jour/ib.png")], [pygame.image.load("medias/perso_selection/Nuit/irn.png"), pygame.image.load("medias/perso_selection/Nuit/ibn.png")]],
+            'barbare' : [[pygame.image.load("medias/perso_selection/Jour/br.png"), pygame.image.load("medias/perso_selection/Jour/bb.png")], [pygame.image.load("medias/perso_selection/Nuit/brn.png"), pygame.image.load("medias/perso_selection/Nuit/bbn.png")]],
+            'mage' : [[pygame.image.load("medias/perso_selection/Jour/sr.png"), pygame.image.load("medias/perso_selection/Jour/sb.png")], [pygame.image.load("medias/perso_selection/Nuit/mrn.png"), pygame.image.load("medias/perso_selection/Nuit/mbn.png")]],
+            'monstre' : [pygame.image.load("medias/perso_selection/Jour/mj.png"), pygame.image.load("medias/perso_selection/Nuit/mn.png")]
         }
         #Rouge quand ils sont ednommagés
         self.personnages_endommages = {
-            'paladin': [pygame.image.load("medias/degats/pr.png"), pygame.image.load("medias/degats/pb.png")],
-            'poulet': [pygame.image.load("medias/degats/por.png"), pygame.image.load("medias/degats/pob.png")],
-            'geant': [[pygame.image.load("medias/degats/gr1.png"), pygame.image.load("medias/degats/gr2.png"), pygame.image.load("medias/degats/gr3.png"), pygame.image.load("medias/degats/gr4.png")], [pygame.image.load("medias/degats/gb1.png"), pygame.image.load("medias/degats/gb2.png"), pygame.image.load("medias/degats/gb3.png"), pygame.image.load("medias/degats/gb4.png")]],
-            'cavalier': [pygame.image.load("medias/degats/cr.png"), pygame.image.load("medias/degats/cb.png")],
-            'archere': [pygame.image.load("medias/degats/ar.png"), pygame.image.load("medias/degats/ab.png")],
-            'sorciere': [pygame.image.load("medias/degats/sor.png"), pygame.image.load("medias/degats/sob.png")],
-            'cracheur de feu' : [pygame.image.load("medias/degats/crr.png"), pygame.image.load("medias/degats/crb.png")],
-            'valkyrie' : [pygame.image.load("medias/degats/vr.png"), pygame.image.load("medias/degats/vb.png")],
-            'ivrogne' : [pygame.image.load("medias/degats/ir.png"), pygame.image.load("medias/degats/ib.png")],
-            'barbare' : [pygame.image.load("medias/degats/br.png"), pygame.image.load("medias/degats/bb.png")],
-            'mage' : [pygame.image.load("medias/degats/sr.png"), pygame.image.load("medias/degats/sb.png")],
-            'monstre' : [pygame.image.load("medias/degats/m.png")]
+            'paladin': [pygame.image.load("medias/perso_endommages/pr.png"), pygame.image.load("medias/perso_endommages/pb.png")],
+            'poulet': [pygame.image.load("medias/perso_endommages/por.png"), pygame.image.load("medias/perso_endommages/pob.png")],
+            'geant': [[pygame.image.load("medias/perso_endommages/gr1.png"), pygame.image.load("medias/perso_endommages/gr2.png"), pygame.image.load("medias/perso_endommages/gr3.png"), pygame.image.load("medias/perso_endommages/gr4.png")], [pygame.image.load("medias/perso_endommages/gb1.png"), pygame.image.load("medias/perso_endommages/gb2.png"), pygame.image.load("medias/perso_endommages/gb3.png"), pygame.image.load("medias/perso_endommages/gb4.png")]],
+            'cavalier': [pygame.image.load("medias/perso_endommages/cr.png"), pygame.image.load("medias/perso_endommages/cb.png")],
+            'archere': [pygame.image.load("medias/perso_endommages/ar.png"), pygame.image.load("medias/perso_endommages/ab.png")],
+            'sorciere': [pygame.image.load("medias/perso_endommages/sor.png"), pygame.image.load("medias/perso_endommages/sob.png")],
+            'cracheur de feu' : [pygame.image.load("medias/perso_endommages/crr.png"), pygame.image.load("medias/perso_endommages/crb.png")],
+            'valkyrie' : [pygame.image.load("medias/perso_endommages/vr.png"), pygame.image.load("medias/perso_endommages/vb.png")],
+            'ivrogne' : [pygame.image.load("medias/perso_endommages/ir.png"), pygame.image.load("medias/perso_endommages/ib.png")],
+            'barbare' : [pygame.image.load("medias/perso_endommages/br.png"), pygame.image.load("medias/perso_endommages/bb.png")],
+            'mage' : [pygame.image.load("medias/perso_endommages/sr.png"), pygame.image.load("medias/perso_endommages/sb.png")],
+            'monstre' : [pygame.image.load("medias/perso_endommages/m.png")]
         }
         #Vert quand ils sont soignés
         self.personnages_soins = {
-            'paladin': [pygame.image.load("medias/soins/pr.png"), pygame.image.load("medias/soins/pb.png")],
-            'poulet': [pygame.image.load("medias/soins/por.png"), pygame.image.load("medias/soins/pob.png")],
-            'geant': [[pygame.image.load("medias/soins/gr1.png"), pygame.image.load("medias/soins/gr2.png"), pygame.image.load("medias/soins/gr3.png"), pygame.image.load("medias/soins/gr4.png")], [pygame.image.load("medias/soins/gb1.png"), pygame.image.load("medias/soins/gb2.png"), pygame.image.load("medias/soins/gb3.png"), pygame.image.load("medias/soins/gb4.png")]],
-            'cavalier': [pygame.image.load("medias/soins/cr.png"), pygame.image.load("medias/soins/cb.png")],
-            'archere': [pygame.image.load("medias/soins/ar.png"), pygame.image.load("medias/soins/ab.png")],
-            'sorciere': [pygame.image.load("medias/soins/sor.png"), pygame.image.load("medias/soins/sob.png")],
-            'cracheur de feu' : [pygame.image.load("medias/soins/crr.png"), pygame.image.load("medias/soins/crb.png")],
-            'valkyrie' : [pygame.image.load("medias/soins/vr.png"), pygame.image.load("medias/soins/vb.png")],
-            'ivrogne' : [pygame.image.load("medias/soins/ir.png"), pygame.image.load("medias/soins/ib.png")],
-            'barbare' : [pygame.image.load("medias/soins/br.png"), pygame.image.load("medias/soins/bb.png")],
-            'mage' : [pygame.image.load("medias/soins/sr.png"), pygame.image.load("medias/soins/sb.png")],
-            'monstre' : [pygame.image.load("medias/soins/m.png")]
+            'paladin': [pygame.image.load("medias/perso_soins/pr.png"), pygame.image.load("medias/perso_soins/pb.png")],
+            'poulet': [pygame.image.load("medias/perso_soins/por.png"), pygame.image.load("medias/perso_soins/pob.png")],
+            'geant': [[pygame.image.load("medias/perso_soins/gr1.png"), pygame.image.load("medias/perso_soins/gr2.png"), pygame.image.load("medias/perso_soins/gr3.png"), pygame.image.load("medias/perso_soins/gr4.png")], [pygame.image.load("medias/perso_soins/gb1.png"), pygame.image.load("medias/perso_soins/gb2.png"), pygame.image.load("medias/perso_soins/gb3.png"), pygame.image.load("medias/perso_soins/gb4.png")]],
+            'cavalier': [pygame.image.load("medias/perso_soins/cr.png"), pygame.image.load("medias/perso_soins/cb.png")],
+            'archere': [pygame.image.load("medias/perso_soins/ar.png"), pygame.image.load("medias/perso_soins/ab.png")],
+            'sorciere': [pygame.image.load("medias/perso_soins/sor.png"), pygame.image.load("medias/perso_soins/sob.png")],
+            'cracheur de feu' : [pygame.image.load("medias/perso_soins/crr.png"), pygame.image.load("medias/perso_soins/crb.png")],
+            'valkyrie' : [pygame.image.load("medias/perso_soins/vr.png"), pygame.image.load("medias/perso_soins/vb.png")],
+            'ivrogne' : [pygame.image.load("medias/perso_soins/ir.png"), pygame.image.load("medias/perso_soins/ib.png")],
+            'barbare' : [pygame.image.load("medias/perso_soins/br.png"), pygame.image.load("medias/perso_soins/bb.png")],
+            'mage' : [pygame.image.load("medias/perso_soins/sr.png"), pygame.image.load("medias/perso_soins/sb.png")],
+            'monstre' : [pygame.image.load("medias/perso_soins/m.png")]
         }
         #Pour animations attaque   
         self.personnages_attaque = {
-            'archere': [[pygame.image.load("medias/archere/attaque/tir1.png"), pygame.image.load("medias/archere/attaque/tir2.png"), pygame.image.load("medias/archere/attaque/tir3.png"), pygame.image.load("medias/archere/attaque/tir4.png")],
-                        [pygame.image.load("medias/archere/attaque/tirb1.png"), pygame.image.load("medias/archere/attaque/tirb2.png"), pygame.image.load("medias/archere/attaque/tirb3.png"), pygame.image.load("medias/archere/attaque/tirb4.png")]]
+            'archere': [[pygame.image.load("medias/personnages/archere/attaque/tir1.png"), pygame.image.load("medias/personnages/archere/attaque/tir2.png"), pygame.image.load("medias/personnages/archere/attaque/tir3.png"), pygame.image.load("medias/personnages/archere/attaque/tir4.png")],
+                        [pygame.image.load("medias/personnages/archere/attaque/tirb1.png"), pygame.image.load("medias/personnages/archere/attaque/tirb2.png"), pygame.image.load("medias/personnages/archere/attaque/tirb3.png"), pygame.image.load("medias/personnages/archere/attaque/tirb4.png")]],
+            'geant' : [pygame.image.load("medias/personnages/geant/attaque/0.png"), pygame.image.load("medias/personnages/geant/attaque/1.png"), pygame.image.load("medias/personnages/geant/attaque/2.png"), pygame.image.load("medias/personnages/geant/attaque/3.png"), pygame.image.load("medias/personnages/geant/attaque/4.png"),  pygame.image.load("medias/personnages/geant/attaque/5.png"),  pygame.image.load("medias/personnages/geant/attaque/6.png"),  pygame.image.load("medias/personnages/geant/attaque/7.png"),  pygame.image.load("medias/personnages/geant/attaque/8.png"),  pygame.image.load("medias/personnages/geant/attaque/9.png")]
         }
         #Lors de leur déplacement
         self.personnages_deplacement = {
-            'paladin': [pygame.image.load("medias/en_deplacement/pr.png"), pygame.image.load("medias/en_deplacement/pb.png")],
-            'poulet': [pygame.image.load("medias/en_deplacement/por.png"), pygame.image.load("medias/en_deplacement/pob.png")],
+            'paladin': [pygame.image.load("medias/perso_en_deplacement/pr.png"), pygame.image.load("medias/perso_en_deplacement/pb.png")],
+            'poulet': [pygame.image.load("medias/perso_en_deplacement/por.png"), pygame.image.load("medias/perso_en_deplacement/pob.png")],
             'geant': [],
-            'cavalier': [pygame.image.load("medias/en_deplacement/cr.png"), pygame.image.load("medias/en_deplacement/cb.png")],
-            'archere': [pygame.image.load("medias/en_deplacement/ar.png"), pygame.image.load("medias/en_deplacement/ab.png")],
-            'sorciere': [pygame.image.load("medias/en_deplacement/sor.png"), pygame.image.load("medias/en_deplacement/sob.png")],
-            'cracheur de feu' : [pygame.image.load("medias/en_deplacement/crr.png"), pygame.image.load("medias/en_deplacement/crb.png")],
-            'valkyrie' : [pygame.image.load("medias/en_deplacement/vr.png"), pygame.image.load("medias/en_deplacement/vb.png")],
-            'ivrogne' : [pygame.image.load("medias/en_deplacement/ir.png"), pygame.image.load("medias/en_deplacement/ib.png")],
-            'barbare' : [pygame.image.load("medias/en_deplacement/br.png"), pygame.image.load("medias/en_deplacement/bb.png")],
-            'mage' : [pygame.image.load("medias/en_deplacement/sr.png"), pygame.image.load("medias/en_deplacement/sb.png")],
-            'monstre' : [pygame.image.load("medias/en_deplacement/m.png")]
+            'cavalier': [pygame.image.load("medias/perso_en_deplacement/cr.png"), pygame.image.load("medias/perso_en_deplacement/cb.png")],
+            'archere': [pygame.image.load("medias/perso_en_deplacement/ar.png"), pygame.image.load("medias/perso_en_deplacement/ab.png")],
+            'sorciere': [pygame.image.load("medias/perso_en_deplacement/sor.png"), pygame.image.load("medias/perso_en_deplacement/sob.png")],
+            'cracheur de feu' : [pygame.image.load("medias/perso_en_deplacement/crr.png"), pygame.image.load("medias/perso_en_deplacement/crb.png")],
+            'valkyrie' : [pygame.image.load("medias/perso_en_deplacement/vr.png"), pygame.image.load("medias/perso_en_deplacement/vb.png")],
+            'ivrogne' : [pygame.image.load("medias/perso_en_deplacement/ir.png"), pygame.image.load("medias/perso_en_deplacement/ib.png")],
+            'barbare' : [pygame.image.load("medias/perso_en_deplacement/br.png"), pygame.image.load("medias/perso_en_deplacement/bb.png")],
+            'mage' : [pygame.image.load("medias/perso_en_deplacement/sr.png"), pygame.image.load("medias/perso_en_deplacement/sb.png")],
+            'monstre' : [pygame.image.load("medias/perso_en_deplacement/m.png")]
         }
         #Potions :
         self.potions = [pygame.image.load("medias/potions/retirer.png"), pygame.image.load("medias/potions/soin.png"), pygame.image.load("medias/potions/tuer.png"), pygame.image.load("medias/potions/changer.png"),
@@ -354,7 +352,7 @@ class Affichage():
             'jaune' : [pygame.image.load("medias/bulles/jaune/0.png"), pygame.image.load("medias/bulles/jaune/1.png"), pygame.image.load("medias/bulles/jaune/2.png"), pygame.image.load("medias/bulles/jaune/3.png"), pygame.image.load("medias/bulles/jaune/4.png"), pygame.image.load("medias/bulles/jaune/5.png"), pygame.image.load("medias/bulles/jaune/6.png"), pygame.image.load("medias/bulles/jaune/7.png"), pygame.image.load("medias/bulles/jaune/8.png")],
             'vert' : [pygame.image.load("medias/bulles/vert/0.png"), pygame.image.load("medias/bulles/vert/1.png"), pygame.image.load("medias/bulles/vert/2.png"), pygame.image.load("medias/bulles/vert/3.png"), pygame.image.load("medias/bulles/vert/4.png"), pygame.image.load("medias/bulles/vert/5.png"), pygame.image.load("medias/bulles/vert/6.png"), pygame.image.load("medias/bulles/vert/7.png"), pygame.image.load("medias/bulles/vert/8.png")]
             }
-        
+
         #Boutons :
         self.boutons = {
             'jouer' : [pygame.image.load("medias/cadres/cadre_jouer0.png"), 
@@ -420,7 +418,7 @@ class Affichage():
         affiche les différents boutons du menu
         : pas de return
         '''
-        police = pygame.font.Font("medias/pixelec.ttf", 21)
+        police = pygame.font.Font("medias/polices/pixelec.ttf", 21)
         bouton_clique = self.attributs_jeu.acc_bouton_clique()
 
         #Bouton Jouer :
@@ -472,7 +470,7 @@ class Affichage():
         Affiche les différents boutons du menu options
         : pas de return
         '''
-        police = pygame.font.Font("medias/pixelec.ttf", 21)
+        police = pygame.font.Font("medias/polices/pixelec.ttf", 21)
         bouton_clique = self.attributs_jeu.acc_bouton_clique()
         
         #Texte On/Off
@@ -518,10 +516,10 @@ class Affichage():
         
         #Barre son :
         bouton_option_son = self.boutons['barre_son']
-        self.ecran.blit(bouton_option_son, (475, 550))
+        self.ecran.blit(bouton_option_son, (480, 580))
         
         pointeur_barre = self.boutons['pointeur_son']
-        self.ecran.blit(pointeur_barre, (self.attributs_jeu.acc_x_pointeur(), 550))
+        self.ecran.blit(pointeur_barre, (self.attributs_jeu.acc_x_pointeur(), 580))
         
         #Retour :
         if bouton_clique == 'retour_menu':
@@ -539,7 +537,7 @@ class Affichage():
         Affiche le menu options
         : pas de return
         '''
-        police = pygame.font.Font("medias/pixelec.ttf", 21)
+        police = pygame.font.Font("medias/polices/pixelec.ttf", 21)
         
         self.ecran.blit(self.fond_options, (455, 290)) 
         self.ecran.blit(police.render("Options" , 1, (152, 82, 51)), (580, 310))
@@ -550,6 +548,7 @@ class Affichage():
         texte_deplacements = police.render("Deplacements" , 1, (152, 82, 51))
         texte_attaques = police.render("/ Attaques" , 1, (152, 82, 51))
         texte_console = police.render("Console" , 1, (152, 82, 51))
+        texte_barre_son = police.render("Volume :" , 1, (152, 82, 51))
         
         #Affiche les Textes statiques :
         self.ecran.blit(texte_sols_de, (470, 350))
@@ -557,6 +556,7 @@ class Affichage():
         self.ecran.blit(texte_deplacements, (470, 418))
         self.ecran.blit(texte_attaques, (470, 435))
         self.ecran.blit(texte_console, (470, 485))
+        self.ecran.blit(texte_barre_son, (470, 550))
         
         self.afficher_boutons_options()
         
@@ -565,7 +565,7 @@ class Affichage():
         Affiche les différents modes de jeu à la disposition des joueurs
         : pas de return
         '''
-        police = pygame.font.Font("medias/pixelec.ttf", 21)
+        police = pygame.font.Font("medias/polices/pixelec.ttf", 21)
         bouton_clique = self.attributs_jeu.acc_bouton_clique()
         
         #Cadres :
@@ -682,19 +682,19 @@ class Affichage():
         Affiche le personnage sélectionné avec son image (Jour/Nuit) et des informations sur lui (Type/PV/Attaque)
         : pas de return
         '''
-        selection = self.attributs_jeu.acc_selection()
-        if isinstance(selection, module_personnage.Personnage): #si c'est un personnage
+        perso_selection = self.attributs_jeu.acc_selection()
+        if isinstance(perso_selection, module_personnage.Personnage): #si c'est un personnage
             #Index pour l'image
             if self.attributs_jeu.acc_temps() == 'Jour':
                 index = 0
             else :
                 index = 1
             #Image
-            personnage = selection.acc_personnage()
+            personnage = perso_selection.acc_personnage()
             if personnage == 'monstre':
                 image = self.cadres_personnages[personnage][0]
             else :
-                if selection.acc_equipe() == 'rouge' :
+                if perso_selection.acc_equipe() == 'rouge' :
                     image = self.cadres_personnages[personnage][index][0]
                 else :
                     image = self.cadres_personnages[personnage][index][1]
@@ -704,18 +704,18 @@ class Affichage():
         
             ######### Informations concernant le personnage
             ##type
-            police = pygame.font.Font("medias/pixelec.ttf", 17)
+            police = pygame.font.Font("medias/polices/pixelec.ttf", 17)
             texte = police.render("Type : " , 1, (152, 82, 51))
             self.ecran.blit(texte, (10, 150))
             
-            texte = police.render(selection.acc_personnage() , 1, (152, 82, 51))
+            texte = police.render(perso_selection.acc_personnage() , 1, (152, 82, 51))
             self.ecran.blit(texte, (10, 175))
             
             ##pv
             texte2 = police.render("Points de vie : ", 1, (152, 82, 51))
             self.ecran.blit(texte2, (10, 200))
             
-            texte2 = police.render(str(selection.pv) , 1, (152, 82, 51))
+            texte2 = police.render(str(perso_selection.pv) , 1, (152, 82, 51))
             self.ecran.blit(texte2, (10, 225))
             
             if personnage == 'sorciere':
@@ -726,7 +726,7 @@ class Affichage():
                 self.ecran.blit(texte3, (10, 250))
                 
                 ####longueur des files (nombre de potion)
-                if selection.acc_equipe() == 'bleu' : #équipe bleue
+                if perso_selection.acc_equipe() == 'bleu' : #équipe bleue
                     l = str(self.attributs_jeu.acc_potions_bleues()[2].acc_longueur())
                     l2 = str(self.attributs_jeu.acc_potions_bleues()[3].acc_longueur())
                     l3 = str(self.attributs_jeu.acc_potions_bleues()[4].acc_longueur())
@@ -742,7 +742,7 @@ class Affichage():
                 self.ecran.blit(infini,(70, 350))
                 
                 ###SORCIERE DE L'EQUIPE QUI JOUE
-                if selection.acc_equipe() == self.attributs_jeu.acc_equipe_en_cours() : #le joueur ne peut regarder que ses personnages
+                if perso_selection.acc_equipe() == self.attributs_jeu.acc_equipe_en_cours() : #le joueur ne peut regarder que ses personnages
                     ##en haut à gauche
                     self.ecran.blit(self.potions[0], (47, 290))
                     ##en haut à droite
@@ -764,7 +764,7 @@ class Affichage():
                         self.ecran.blit(self.potions[3], (154, 404))
                     self.ecran.blit(police.render(l3 , 1, (0, 0, 0)), (200, 495))
                     
-                    ###POTION SELECTIONNEE
+                    ###POTION perso_selectionNEE
                     dic_position_rec = {1 : (33, 286, 88),
                                     2 : (133, 286, 87),
                                     3 : (22, 400, 95),
@@ -780,7 +780,7 @@ class Affichage():
                     ####INFOBULLE
                     dic_phrase = {1 : 'inflige des dégâts',
                                   2 : 'soigne',
-                                  3 : 'tue instantanément',
+                                  3 : 'tue',
                                   4 : "fais changer d'équipe"
                                  }
                     pos_souris = self.clavier_souris.acc_position_curseur()
@@ -813,10 +813,10 @@ class Affichage():
                 #si c'est un personnage lambda, on lui affiche ses dégats d'attaque
                 texte3 = police.render("Attaque : " , 1, (152, 82, 51))
                 self.ecran.blit(texte3, (10, 250))
-                if selection.acc_equipe() == 'bleu' :
-                    texte3 = police.render(str(module_personnage.DIC_ATTAQUES_BLEU[selection.acc_personnage()]) , 1, (152, 82, 51))
+                if perso_selection.acc_equipe() == 'bleu' :
+                    texte3 = police.render(str(module_personnage.DIC_ATTAQUES_BLEU[perso_selection.acc_personnage()]) , 1, (152, 82, 51))
                 else:
-                    texte3 = police.render(str(module_personnage.DIC_ATTAQUES_ROUGE[selection.acc_personnage()]) , 1, (152, 82, 51))
+                    texte3 = police.render(str(module_personnage.DIC_ATTAQUES_ROUGE[perso_selection.acc_personnage()]) , 1, (152, 82, 51))
                 self.ecran.blit(texte3, (10, 275))
                 
     def afficher_equipe_en_cours(self):
@@ -824,7 +824,7 @@ class Affichage():
         Affiche l'équipe en cours avec le nombre d'action qui lui reste
         : pas de return
         '''
-        police = pygame.font.Font("medias/pixelec.ttf", 17)
+        police = pygame.font.Font("medias/polices/pixelec.ttf", 17)
         
         #Tour du Joueur :
         texte = police.render("Tour du joueur :" , 1, (152, 82, 51))
@@ -845,7 +845,7 @@ class Affichage():
         affiche le console où sera écrit chaque action des équipes
         : pas de return
         '''
-        police = pygame.font.Font("medias/police_console.ttf", 13)
+        police = pygame.font.Font("medias/polices/police_console.ttf", 13)
         pile = self.attributs_jeu.acc_console()
         stock = module_lineaire.Pile()
         hauteur = 570 #Hauteur où s'affiche la phrase sur la fenêtre pygame
@@ -896,7 +896,7 @@ class Affichage():
             self.ecran.blit(filtre_annonce, (250, 0))
             
             couleur_texte = (255, 0, 0, 100 - int(self.opacite))# Couleur du texte (rouge) avec une transparence de 128 (sur 255)
-            police = pygame.font.Font("medias/pixelec.ttf", 30)
+            police = pygame.font.Font("medias/polices/pixelec.ttf", 30)
             texte_surface = police.render(self.rep_contenu[self.attributs_jeu.event_coffre], True, couleur_texte) #le True, est pour l'antialiasing, pour rendre les bords du texte plus lisses en ajoutant des pixels semi-transparents autour des bords
             position_texte = (300, 300)
             self.ecran.blit(texte_surface, position_texte)
@@ -906,7 +906,7 @@ class Affichage():
         Affiche les différents boutons du jeu
         : pas de return
         '''
-        police = pygame.font.Font("medias/pixelec.ttf", 21)
+        police = pygame.font.Font("medias/polices/pixelec.ttf", 21)
         bouton_clique = self.attributs_jeu.acc_bouton_clique()
         
         if bouton_clique == 'options':
@@ -978,9 +978,44 @@ class Affichage():
                         self.ecran.blit(self.sol_geants[equipe], (x, y))
                 else :
                     self.ecran.blit(self.sol_personnages[equipe], (x , y))
-
+            
+            ##Si le personnage est en train d'attaque un autre personnage (seules les animations d'attaque de l'personnages/archere son disponibles)            
+            if attaque and (nom == 'archere' or nom == 'geant'): 
+                attaques = self.personnages_attaque[nom] #Appel les différentes images du personnage
+                nb = self.attributs_jeu.acc_attaque_temps()
+                if nom == 'archere' :
+                    #réglages pour l'animation
+                    if nb <= 1 or nb >= 17 :
+                        nb = 0
+                    elif nb <= 3 or nb >= 15:
+                        nb = 1
+                    elif nb <= 5 or nb >= 13:
+                        nb = 2
+                    else :
+                        nb = 3
+                    #Si le personnage est de l'équipe rouge :
+                    if equipe == 'rouge' :
+                        self.ecran.blit(attaques[0][nb], (x , y))
+                    #Sinon, le personnage est de l'équipe bleu :
+                    else :
+                        self.ecran.blit(attaques[1][nb], (x , y))
+                else:
+                    print(nb)
+                    dic_geant = {0 : (38, 38),
+                                 1 : (76, 38),
+                                 2 : (38, 76),
+                                 3 : (76, 76)
+                                 }
+                    if nb == 20:
+                        nb = 0
+                    elif nb > 9:
+                        nb = 19 - nb
+                    
+                    print(nb)
+                    self.ecran.blit(attaques[nb], (x - dic_geant[personnage.acc_numero_geant()][0] , y - dic_geant[personnage.acc_numero_geant()][1]))
+                        
             ##si le personnage est endommagé ou soigné :
-            if endommage or soigne :
+            elif endommage or soigne :
                 if endommage :
                     tableau = self.personnages_endommages[nom] #Appel les différentes images du personnage
                 else :
@@ -1004,29 +1039,9 @@ class Affichage():
                     #Sinon, le personnage est "classique"
                     else :
                         self.ecran.blit(tableau[1], (x , y))
-                        
-            ##Si le personnage est en train d'attaque un autre personnage (seules les animations d'attaque de l'archere son disponibles)           
-            elif attaque and nom == 'archere': 
-                attaques = self.personnages_attaque[nom] #Appel les différentes images du personnage
-                #réglages pour l'animation
-                nb = self.attributs_jeu.acc_attaque_temps()
-                if nb <= 1 or nb >=17 :
-                    nb = 0
-                elif nb <= 3 or nb >= 15:
-                    nb = 1
-                elif nb <= 5 or nb >= 13:
-                    nb = 2
-                else :
-                    nb = 3
-                #Si le personnage est de l'équipe rouge :
-                if equipe == 'rouge' :
-                    self.ecran.blit(attaques[0][nb], (x , y))
-                #Sinon, le personnage est de l'équipe bleu :
-                else :
-                    self.ecran.blit(attaques[1][nb], (x , y))
                 
             #Animations (sinon si le personnage n'est pas en déplacement):
-            elif self.attributs_jeu.acc_personnage_en_deplacement() != personnage :
+            if self.attributs_jeu.acc_personnage_en_deplacement() != personnage :
                 images_personnage = self.personnages[nom] #Appelle les différentes images du personnage
                 nombre_images = len(images_personnage[0])
                 index_image = int(self.attributs_jeu.acc_compteur() / 70 * nombre_images)
@@ -1136,10 +1151,8 @@ class Affichage():
                 monstre.mut_futur_coordo_y(monstre.acc_futur_y() * 38)
                 
             if monstre.acc_coordo_x() != monstre.acc_futur_coordo_x() :
-                dx = min(max(monstre.acc_futur_coordo_x() - monstre.acc_coordo_x(), -3), 3)
                 monstre.mut_coordo_x(monstre.acc_coordo_x() + dx)
             if monstre.acc_coordo_y() != monstre.acc_futur_coordo_y() :
-                dy = min(max(monstre.acc_futur_coordo_y() - monstre.acc_coordo_y(), -3), 3)
                 monstre.mut_coordo_x(monstre.acc_coordo_x() + dx)
 
             # affichage du monstre :
@@ -1229,7 +1242,7 @@ class Affichage():
         self.ecran.blit(self.menu_fin, (455, self.attributs_jeu.acc_position_y_menu_fin()))
         
         #Affichage le texte :
-        police = pygame.font.Font("medias/pixelec.ttf", 30)
+        police = pygame.font.Font("medias/polices/pixelec.ttf", 30)
         
         #Si l'équipe gagnante est l'équipe bleu, affiche la phrase et la couleur correspondante :
         if self.attributs_jeu.acc_equipe_gagnante() == 'bleu':
@@ -1246,7 +1259,7 @@ class Affichage():
             self.ecran.blit(annonce2, (570, self.attributs_jeu.acc_position_y_menu_fin() + 50))
         
         #Affichage les boutons :
-        police2 = pygame.font.Font("medias/pixelec.ttf", 21)
+        police2 = pygame.font.Font("medias/polices/pixelec.ttf", 21)
         
         if self.attributs_jeu.acc_bouton_clique() == 'rejouer':
             bouton_rejouer = self.boutons['rejouer'][1]
@@ -1277,7 +1290,7 @@ class Affichage():
         '''
         position_case = self.clavier_souris.acc_position_case()
         if position_case[0] >= 0 and position_case[0] <= 20 and position_case[1] >= 0 and position_case[1] <= 20:
-            police = pygame.font.Font("medias/pixelec.ttf", 17)
+            police = pygame.font.Font("medias/polices/pixelec.ttf", 17)
             texte = police.render("Case : (" + self.attributs_jeu.acc_dic_alphabet()[position_case[0]] + ", " + str(position_case[1]) + ")", 1, (152, 82, 51))
             
             self.ecran.blit(texte, (10, 570))

@@ -128,7 +128,7 @@ class Jeu() :
         self.attributs_jeu.mut_famille_geant_bleu([[geant1b, geant2b, geant3b, geant4b], [geant5b, geant6b, geant7b, geant8b]]) ##La famille des géants    
         
         self.attributs_jeu.mut_tab_personnages([
-            
+        
         #rouge :
         
         module_personnage.Personnage('paladin', 'rouge', 6, 2),#personnage, equipe, x, y
@@ -166,6 +166,7 @@ class Jeu() :
         module_objets.Coffre(1, 14),
         module_objets.Coffre(19, 6)
         ])
+        
         self.placer()
             
     ######################################################
@@ -279,16 +280,15 @@ class Jeu() :
     def mort_personnage_console(self, personnage) :
         '''
         Ajoute dans la console qu'un personnage est mort.
-        : params
-            personnage (module_personnage.Personnage)
+        : param personnage (module_personnage.Personnage)
         : pas de return
         '''
         #Assertions :
         assert isinstance(personnage, module_personnage.Personnage), 'Le paramètre doit être un personnage de la classe Personnage (module_personnage) !'
         #Code :
         if personnage.acc_personnage() != 'geant' or (personnage.acc_personnage() == 'geant' and personnage.acc_numero_geant() == 0) :
-            self.attributs_jeu.ajouter_console(["·" + personnage.acc_personnage() + " (" + personnage.acc_equipe() + ") est mort.", 'noir'])
-    
+            self.attributs_jeu.ajouter_console(["·" + personnage.acc_personnage() + " (" + personnage.acc_equipe() + ") est mort", 'noir'])
+            
     ######################################################
     ### Déplacements :
     ######################################################
@@ -817,7 +817,7 @@ class Jeu() :
             potion = self.attributs_jeu.enleve_potions_rouges() #la première de la file
           
         ##les cases atteintes par la potion
-        cases = module_objets.Potion.definir_cases_atteintes(x, y, potion.acc_etendue())
+        cases = potion.definir_cases_atteintes(x, y, self.terrain)
         
         ########################################################
         #### ATTAQUE PERSONNAGE
@@ -838,13 +838,14 @@ class Jeu() :
                     else :
                         perso.est_attaque('sorciere', pv) #on retire le bon nombre de pv
                         perso.mut_endommage()
-            ##la file ne doit pas être vide
-            if equipe == 'bleu':
-                self.attributs_jeu.ajouter_potions_bleues(module_objets.Potion(1))
-            else:
-                self.attributs_jeu.ajouter_potions_rouges(module_objets.Potion(1))
-            ##console
+
             if a_attaque :
+                ##la file ne doit pas être vide
+                if equipe == 'bleu':
+                    self.attributs_jeu.ajouter_potions_bleues(module_objets.Potion(1))
+                else:
+                    self.attributs_jeu.ajouter_potions_rouges(module_objets.Potion(1))
+                ##console
                 self.attaque_sorciere_console(equipe)
             
         ########################################################
@@ -855,21 +856,14 @@ class Jeu() :
                 perso = self.terrain.acc_terrain(case[0], case[1])
                 if isinstance(perso, module_personnage.Personnage) and perso.acc_equipe() == self.attributs_jeu.acc_equipe_en_cours():
                     a_attaque = True
-                    ###géant
-                    if perso.acc_personnage() == 'geant':
-                        famille = self.famille_geant((perso.acc_x(), perso.acc_y()), perso.acc_equipe())
-                        for elt in famille:
-                            elt.est_attaque('sorciere', -10) #on ajoute 10 pv
-                            elt.mut_soigne()
-                    ###personnage "normal"
-                    else :
-                        perso.est_attaque('sorciere', -10) #on ajoute 10 pv
-                        perso.mut_soigne()
+                    perso.est_attaque('sorciere', -10) #on ajoute 10 pv
+                    perso.mut_soigne()
                     ###affiche dans la console
-                    self.guerison_console(perso)
+            if a_attaque : 
+                self.guerison_console(perso)
             
         ########################################################
-        #### MORT INSTANTANNEE
+        #### MORT DU PERSONNAGE
         ########################################################
         if potion.acc_contenu() == 3:
             perso = self.terrain.acc_terrain(x, y)
@@ -904,11 +898,17 @@ class Jeu() :
                     perso.mut_equipe() #le personnage change d'équipe
                 self.changement_equipe_personnage_console(perso)
           
-         ###Attributs attaques
+        ###Attributs attaques
         if a_attaque : #si la sorcière a attaqué un personnage
             self.attributs_jeu.mut_attaque_en_cours(True)
             self.attributs_jeu.mut_attaque_temps(0)
             self.attributs_jeu.mut_cases_potions(cases)
+        else :
+            #si pas d'attaque, on réenfile la potion
+            if equipe == 'bleu':
+                self.attributs_jeu.ajouter_potions_bleues(potion)
+            else:
+                self.attributs_jeu.ajouter_potions_rouges(potion)
         return a_attaque
     
     ######################################################
@@ -953,7 +953,7 @@ class Jeu() :
             #Si la sorcière attaque
             if self.attributs_jeu.acc_selection().acc_personnage() == 'sorciere' :
                 a_attaque = self.ouverture_potion(position_case[0], position_case[1])
-            
+                self.gestionnaire_son.jouer_effet_sonore("potion")
             #Si le géant attaque
             elif self.attributs_jeu.acc_selection().acc_personnage() == 'geant' :
                 for case in self.attributs_jeu.acc_attaques():
@@ -972,6 +972,7 @@ class Jeu() :
                         
                 #Sinon, le personnage est "classique" :
                 else :
+                    self.gestionnaire_son.jouer_effet_sonore("lame")
                     personnage_qui_subit.est_attaque(self.attributs_jeu.acc_selection().acc_personnage())
                     personnage_qui_subit.mut_endommage()
                     
@@ -999,18 +1000,18 @@ class Jeu() :
         #vérification d'un joueur autour
         coffre = self.attributs_jeu.acc_coffre_selection()
         if not coffre.acc_est_ouvert(): #si le coffre n'a pas déjà été ouvert
-            present = coffre.est_present_autour(self.terrain, self.attributs_jeu.acc_equipe_en_cours())
+            present = coffre.est_present_autour(self.terrain, self.attributs_jeu.acc_selection())
             #si oui, ouverture du coffre
             if present :
                 coffre.ouverture()
                 self.ouverture_coffre(coffre)
                 self.coffre_console(coffre.acc_contenu())
                 
-        if not self.attributs_jeu.acc_annonce_coffre() :
-            self.attributs_jeu.mut_annonce_coffre(True)
-           
-        self.jouer_monstres() #on fait jouer les monstres
-        self.attributs_jeu.mut_nombre_action(self.attributs_jeu.acc_nombre_action() + 1)
+                if not self.attributs_jeu.acc_annonce_coffre() :
+                    self.attributs_jeu.mut_annonce_coffre(True)
+                   
+                self.jouer_monstres() #on fait jouer les monstres
+                self.attributs_jeu.mut_nombre_action(self.attributs_jeu.acc_nombre_action() + 1)
     
     ######################################################
     ### Événements pendant une partie :
@@ -1055,6 +1056,7 @@ class Jeu() :
         self.effacer_actions()
         self.changer_personnage(' ') #Enlève le personnage sélectionné
         self.attributs_jeu.mut_nombre_action(0) #Met le nombre d'action à 0
+        self.attributs_jeu.augmente_nombre_tour() #Augmente le nombre de tour de 1
         self.equipe_console(self.attributs_jeu.acc_equipe_en_cours()) #Indique dans la console (du jeu) qu'il y a eu un changement d'équipe
         
     def personnages_sont_mort(self):
@@ -1192,7 +1194,6 @@ class Jeu() :
             self.attributs_jeu.mut_compteur((self.attributs_jeu.acc_compteur() + 1) % 70)  
             #Arrête toutes les animations de déplacement.
             self.arreter_animation_deplacement() 
-            
             ######################################################
             ### Menu :
             ######################################################
