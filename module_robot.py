@@ -35,7 +35,6 @@ class Robot():
         self.attributs_jeu = attributs_jeu
         
         #Attributs :
-        self.personnage_deplace = []
         self.en_attente = False
         self.temps_attente = None
         
@@ -93,7 +92,7 @@ class Robot():
                 while i_case < len(terrain.attributs_jeu.acc_deplacements()) and tab_perso_case == [] :
                     
                     if personnage.acc_personnage() == 'cavalier' :   
-                        perso_annexe = module_personnage.Cavalier(personnage.acc_equipe(), self.attributs_jeu.acc_deplacements_cavalier()[i_case][0], self.attributs_jeu.acc_deplacements_cavalier()[i_case][1])
+                        perso_annexe = module_personnage.Cavalier(personnage.acc_equipe(), self.attributs_jeu.acc_deplacements()[i_case][0], self.attributs_jeu.acc_deplacements()[i_case][1])
                     elif personnage.acc_personnage() == 'geant':
                         perso_annexe = module_personnage.Geant(personnage.acc_equipe(), self.attributs_jeu.acc_deplacements()[i_case][0], self.attributs_jeu.acc_deplacements()[i_case][1], personnage.acc_numero_geant())
                     else:
@@ -102,11 +101,8 @@ class Robot():
                     
                     ennemi_a_attaquer = self.attaquer_ennemi_proche(perso_annexe, terrain)
             
-                    if ennemi_a_attaquer != None : 
-                        if personnage.personnage == 'cavalier' :
-                            tab_perso_case = [personnage, self.attributs_jeu.acc_deplacements_cavalier()[i_case]]
-                        else :
-                            tab_perso_case = [personnage, self.attributs_jeu.acc_deplacements()[i_case]]
+                    if ennemi_a_attaquer != None :
+                        tab_perso_case = [personnage, self.attributs_jeu.acc_deplacements()[i_case]]
 
                     i_case += 1
                 i_personnage += 1
@@ -119,18 +115,24 @@ class Robot():
                 personnage = random.choice(tab_personnages_rouges)
                 self.jeu.changer_personnage(personnage)
             
-            if personnage.personnage == 'cavalier' :
-                case = random.choice(self.attributs_jeu.acc_deplacements_cavalier())
-            else :
-                case = random.choice(self.attributs_jeu.acc_deplacements())
-            
-            while case[1] <= 0 :
+            case_correcte = False
+            case = None
+            while not case_correcte :
+                
                 personnage = random.choice(tab_personnages_rouges)
                 self.jeu.changer_personnage(personnage)
-                if personnage.personnage == 'cavalier' :
-                    case = random.choice(self.attributs_jeu.acc_deplacements_cavalier())
-                else :
+                
+                if self.attributs_jeu.acc_deplacements() != [] :
                     case = random.choice(self.attributs_jeu.acc_deplacements())
+                else :
+                    case = None
+                    
+                if case != None :
+                    
+                    if personnage.acc_y() <= 4 and case[1] - personnage.acc_y() > 0 :
+                        case_correcte = True
+                    elif personnage.acc_y() >= 16 and personnage.acc_y() - case[1] < 0 :
+                        case_correcte = True
             
             tab_perso_case = [personnage, case]
         
@@ -150,15 +152,15 @@ class Robot():
         #Code
         tab_perso_case = self.choisir_personnage_deplacement(tab_personnages_rouges, terrain)
         
-        if self.attributs_jeu.acc_selection().acc_personnage() == 'geant':
+        if self.attributs_jeu.acc_selection().acc_personnage() == 'geant' :
             self.jeu.deplacer_geant(tab_perso_case[1][0], tab_perso_case[1][1])  
         else :
             self.jeu.deplacer(tab_perso_case[1][0], tab_perso_case[1][1])
         
+        print(tab_perso_case[0].personnage, tab_perso_case[1])
         self.jeu.deplacement_console(self.attributs_jeu.acc_selection(), tab_perso_case[1]) #Ajoute une phrase de déplacement dans la console du jeu
         self.jeu.effacer_actions()
         self.attributs_jeu.mut_nombre_action(self.attributs_jeu.acc_nombre_action() + 1) #Augmente le nombre d'action de 1
-        self.personnage_deplace.append(tab_perso_case[0])
         
     ######################################################
     ### Méthodes Attaquer Personnages :
@@ -182,12 +184,12 @@ class Robot():
         if not une_case_proche :
             if allie.acc_personnage() == 'geant' :
                 tab = [(0, -1), (-1, 0), (-1, 1), (1, -1), (0, 2), (2, 0), (2, 1), (1, 2), (-1, -1), (-1, 2), (2, -1), (2, 2)]
-                tab = module_terrain.Terrain.tuples_en_coordonnees((allie.acc_x(), allie.acc_y()), tab, allie.acc_numero_geant())
+                tab = module_terrain.tuples_en_coordonnees((allie.acc_x(), allie.acc_y()), tab, allie.acc_numero_geant())
             else :
                 tab = allie.cases_valides_attaques(terrain)
         else :
             tab = [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]
-            tab = module_terrain.Terrain.tuples_en_coordonnees((allie.acc_x(), allie.acc_y()), tab)
+            tab = module_terrain.tuples_en_coordonnees((allie.acc_x(), allie.acc_y()), tab)
         
         ennemi = None
         i = 0
@@ -271,6 +273,12 @@ class Robot():
             allie = tab_allie_ennemi[0]
             ennemi = tab_allie_ennemi[1]
             
+            if allie.acc_personnage() == 'geant' :
+                for case in self.attributs_jeu.acc_attaques():
+                        perso = terrain.acc_terrain(case[0], case[1])
+                        perso.est_attaque('geant')
+                        perso.mut_endommage()
+                
             if ennemi.acc_personnage() == 'geant':
                 famille = self.jeu.famille_geant((ennemi.acc_x(), ennemi.acc_y()))[0]
                 for geant in famille :
@@ -288,7 +296,7 @@ class Robot():
             self.jeu.changer_personnage(' ') #Enlève le personnage sélectionner par le joueur (rien sélectionné)
             self.attributs_jeu.mut_nombre_action(self.attributs_jeu.acc_nombre_action() + 1) #Augmente le nombre d'action de 1
             self.jeu.effacer_actions()
-            self.jeu.jouer_monstres()
+            self.attributs_jeu.mut_personnage_qui_attaque(True)
             return True
         
         return False
@@ -316,19 +324,16 @@ class Robot():
         '''
         #Assertions
         assert isinstance(terrain, module_terrain.Terrain), "le terrain doit être de la classe Terrain"
-        #Code
+        #Code :
         if self.attributs_jeu.acc_equipe_en_cours() == 'rouge' :
-            
+           
             if self.temps_attente == None and not self.attributs_jeu.acc_deplacement_en_cours() and not self.attributs_jeu.acc_attaque_en_cours() :
                 self.temps_attente = time.time()
             
-            elif self.temps_attente != None and time.time() - self.temps_attente > 2 :
+            elif self.temps_attente != None and time.time() - self.temps_attente > 1 :
                 tab_personnages_rouges = self.acc_tab_personnages_rouges()
                 
                 if not self.attaquer_ennemi(tab_personnages_rouges, terrain) :
                     self.deplacer_personnage(tab_personnages_rouges, terrain)
                 
                 self.temps_attente = None
-                
-        else :
-            self.personnage_deplace = []

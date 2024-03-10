@@ -15,6 +15,7 @@ import module_attributs_jeu
 ######################################################
 ### Fonctions hors-classe :
 ######################################################
+
 def cases_autour(coordo):
     '''
     renvoie les 8 cases se situant autour de la case de coordonnées (coordo):

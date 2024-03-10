@@ -174,9 +174,7 @@ class Clavier_Souris() :
                 self.attributs_jeu.mut_menu_modes(False)
                 
             elif self.attributs_jeu.acc_bouton_clique() == 'robot' :
-                self.jeu.reinitialiser_attributs(True)
-                self.attributs_jeu.mut_mode_robot(True)
-                self.attributs_jeu.mut_menu_modes(False)
+                self.jeu.reinitialiser_attributs(par_defaut=True, mode_robot=True)
                 
             #Sinon si le bouton est quitter, ferme la fenêtre pygame en "désactivant" la boucle.
             elif self.attributs_jeu.acc_bouton_clique() == 'quitter':
@@ -188,7 +186,7 @@ class Clavier_Souris() :
                 
             #Sinon si le bouton est sauvegarder, sauvegarde la partie en cours et signale au joueur par phrase dans la console du jeu (Succès ou Échec).
             elif self.attributs_jeu.acc_bouton_clique() == 'sauvegarder':
-                phrase = self.sauvegarde.sauvegarder()
+                phrase = self.sauvegarde.sauvegarder(self.attributs_jeu)
                 self.attributs_jeu.ajouter_console([phrase, "noir"])
                 
             #Sinon si le bouton est charger, charge la partie sélectionné et signale au joueur par phrase dans la console du jeu (Succès ou Échec).

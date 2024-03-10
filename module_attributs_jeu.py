@@ -43,6 +43,8 @@ class Attributs_Jeu() :
         self.equipe_en_cours = 'bleu' #Chaine de caractères de l'équipe qui joue
         self.coffre_selection = None #le coffre sélectionné
         
+        self.personnage_qui_attaque = False
+        
         #Famille Geant :
         self.famille_geant_bleu = []
         self.famille_geant_rouge = []
@@ -178,6 +180,13 @@ class Attributs_Jeu() :
     ######################################################
     ### Accesseurs :
     ######################################################
+    
+    def acc_personnage_qui_attaque(self):
+        '''
+        renvoie l'attribut personnage_qui_attaque
+        : return (list)
+        '''
+        return self.personnage_qui_attaque
     
     def acc_famille_geant_rouge(self):
         '''
@@ -434,7 +443,7 @@ class Attributs_Jeu() :
     def acc_personnage_en_deplacement(self):
         '''
         Renvoie l'attribut personnage_en_deplacement
-        : return (bool)
+        : return (Personnage)
         '''
         return self.personnage_en_deplacement
     
@@ -567,6 +576,17 @@ class Attributs_Jeu() :
     ######################################################
     ### Mutateurs :
     ######################################################
+    
+    def mut_personnage_qui_attaque(self, valeur):
+        '''
+        modifie l'attribut personnage_qui_attaque
+        : param valeur (bool)
+        : pas de return
+        '''
+        #assertions
+        assert isinstance(valeur, bool), "Le paramètre doit être booléen !"
+        #code
+        self.personnage_qui_attaque = valeur
     
     def mut_famille_geant_rouge(self, tab):
         '''
@@ -1128,14 +1148,25 @@ class Attributs_Jeu() :
         #Code :
         self.monstres_deja_deplaces = valeur
         
-    def enleve_monstres_a_deplacer(self, monstre) :
+    def ajouter_monstres_a_deplacer(self, monstre) :
         '''
         Modifie l'attribut monstres_a_deplacer
-        : param monstre (module_personnage.Personnage)
+        : param monstre (module_personnage.Monstre)
         : pas de return
         '''
         #Précondition :
-        assert isinstance(monstre, module_personnage.Personnage), 'Le paramètre doit être de la classe Personnage !'
+        assert isinstance(monstre, module_personnage.Monstre), 'Le paramètre doit être de la classe Monstre !'
+        #Code :
+        self.monstres_a_deplacer.append(monstre)
+        
+    def enlever_monstres_a_deplacer(self, monstre) :
+        '''
+        Modifie l'attribut monstres_a_deplacer
+        : param monstre (module_personnage.Monstre)
+        : pas de return
+        '''
+        #Précondition :
+        assert isinstance(monstre, module_personnage.Monstre), 'Le paramètre doit être de la classe Monstre !'
         #Code :
         self.monstres_a_deplacer.remove(monstre)
        

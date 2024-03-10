@@ -1041,13 +1041,13 @@ class Affichage():
                         self.ecran.blit(tableau[1], (x , y))
                 
             #Animations (sinon si le personnage n'est pas en déplacement):
-            if self.attributs_jeu.acc_personnage_en_deplacement() != personnage :
+            elif self.attributs_jeu.acc_personnage_en_deplacement() != personnage :
                 images_personnage = self.personnages[nom] #Appelle les différentes images du personnage
                 nombre_images = len(images_personnage[0])
                 index_image = int(self.attributs_jeu.acc_compteur() / 70 * nombre_images)
                 
                 #Si le personnage est un monstre :
-                if nom == 'monstre':
+                if nom == 'monstre' and not personnage in self.attributs_jeu.acc_monstres_a_deplacer() :
                     #Si le monstre est sous terre :
                     if personnage.acc_etat() == 1: 
                         self.ecran.blit(images_personnage[0][index_image], (x, y))
@@ -1055,7 +1055,7 @@ class Affichage():
                     else: 
                         self.ecran.blit(images_personnage[1][index_image], (x, y))
                 #Sinon, le personnage n'est pas un monstre
-                else :   
+                elif nom != 'monstre' :   
                     #Si le personnage est de l'équipe rouge :
                     if equipe == 'rouge' :
                         #Si le personnage est un Géant :
@@ -1143,28 +1143,35 @@ class Affichage():
         '''
         for monstre in self.attributs_jeu.acc_monstres_a_deplacer() : #chaque monstre à déplacer
             
+            
             if monstre.acc_futur_x() == None and monstre.acc_futur_y() == None:
-                case = monstre.prochaines_coordonnees(self.terrain)
+                case = monstre.prochaines_coordonnees(self.terrain, self.attributs_jeu.acc_equipe_en_cours())
                 monstre.mut_futur_x(case[0])
                 monstre.mut_futur_y(case[1])
                 monstre.mut_futur_coordo_x(250 + monstre.acc_futur_x() * 38)
                 monstre.mut_futur_coordo_y(monstre.acc_futur_y() * 38)
                 
-            if monstre.acc_coordo_x() != monstre.acc_futur_coordo_x() :
-                monstre.mut_coordo_x(monstre.acc_coordo_x() + dx)
-            if monstre.acc_coordo_y() != monstre.acc_futur_coordo_y() :
-                monstre.mut_coordo_x(monstre.acc_coordo_x() + dx)
+            if monstre.coordo_x != monstre.futur_coordo_x :
+                dx = min(max(monstre.futur_coordo_x - monstre.coordo_x, -3), 3)
+                monstre.coordo_x += dx
+            if monstre.coordo_y != monstre.futur_coordo_y :
+                dy = min(max(monstre.futur_coordo_y - monstre.coordo_y, -3), 3)
+                monstre.coordo_y += dy
 
             # affichage du monstre :
             image_monstre = self.personnages_deplacement['monstre'][0]
             self.ecran.blit(image_monstre, (monstre.acc_coordo_x(), monstre.acc_coordo_y()))
             
             if monstre.acc_coordo_x() == monstre.acc_futur_coordo_x() and monstre.acc_coordo_y() == monstre.acc_futur_coordo_y() :
+                self.terrain.mut_terrain(monstre.acc_x(), monstre.acc_y(), ' ') #un vide à la place de l'ancienne case
                 monstre.deplacer(monstre.acc_futur_x(), monstre.acc_futur_y()) # déplace le monstre
                 self.terrain.mut_terrain(monstre.acc_x(), monstre.acc_y(), monstre) # place le monstre à sa nouvelle position
-                self.attributs_jeu.enleve_monstres_a_deplacer(monstre)
+                self.attributs_jeu.enlever_monstres_a_deplacer(monstre)
                 monstre.mut_futur_x(None)
                 monstre.mut_futur_y(None)
+            
+            if self.attributs_jeu.acc_monstres_a_deplacer() == [] :
+                self.attributs_jeu.mut_deplacement_en_cours(False)
             
     def afficher_attaques(self):
         '''

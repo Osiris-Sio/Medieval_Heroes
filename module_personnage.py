@@ -309,8 +309,9 @@ class Personnage():
             perso = terrain.acc_terrain(attaque[0], attaque[1])
             if isinstance(perso, Personnage) and (not perso.acc_equipe() == self.equipe or self.personnage == 'sorciere') : #on vérifie que c'est un personnage de l'équipe adverse
                 #si c'est un monstre
-                if isinstance(perso, Monstre) and not perso.acc_etat() == 1 :#si le monstre n'est pas sous-terre
-                    attaques_valides.append(attaque) # si elle est bonne, on l'ajoute
+                if isinstance(perso, Monstre) :
+                    if perso.acc_etat() != 1 : #si le monstre n'est pas sous-terre
+                        attaques_valides.append(attaque) # si elle est bonne, on l'ajoute
                 #géant
                 elif perso.acc_personnage() == 'geant':
                     famille = trouve_famille_geant(perso) #tous les membres du géant
@@ -736,22 +737,22 @@ class Monstre(Personnage):
     def mut_futur_x(self, val):
         '''
         modifie l'attribut futur_x
-        : param val (int)
+        : param val (int or None)
         : pas de return
         '''
         #Assertion
-        assert isinstance(val, int), "la valeur doit être un entier"
+        assert isinstance(val, int) or val == None, "la valeur doit être un entier ou None"
         #Code
         self.futur_x = val
         
     def mut_futur_y(self, val):
         '''
         modifie l'attribut futur_y
-        : param val (int)
+        : param val (int or None)
         : pas de return
         '''
         #Assertion
-        assert isinstance(val, int), "la valeur doit être un entier"
+        assert isinstance(val, int) or val == None, "la valeur doit être un entier ou None"
         #Code
         self.futur_y = val
         

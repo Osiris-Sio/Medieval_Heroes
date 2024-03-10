@@ -49,40 +49,6 @@ class Jeu() :
         return self.horloge
     
     ######################################################
-    ### Mutateurs :
-    ######################################################
-    
-    def mut_terrain(self, valeur) :
-        '''
-        Modifie l'attribut terrain
-        : param valeur (module_terrain.Terrain)
-        '''
-        #Précondition :
-        assert isinstance(valeur, module_terrain.Terrain), 'Le paramètre doit être de la classe Terrain !'
-        #Code :
-        self.terrain = valeur
-    
-    def mut_clavier_souris(self, valeur) :
-        '''
-        Modifie l'attribut clavier_souris
-        : param valeur (module_clavier_souris.Clavier_Souris)
-        '''
-        #Précondition :
-        assert isinstance(valeur, module_clavier_souris.Clavier_Souris), 'Le paramètre doit être de la classe Clavier_Souris !'
-        #Code :
-        self.clavier_souris = valeur
-    
-    def mut_affichage(self, valeur) :
-        '''
-        Modifie l'attribut affichage
-        : param valeur (module_afficher.Affichage)
-        '''
-        #Précondition :
-        assert isinstance(valeur, module_afficher.Affichage), 'Le paramètre doit être de la classe Affichage !'
-        #Code :
-        self.affichage = valeur
-    
-    ######################################################
     ### Placement :
     ######################################################
     
@@ -289,11 +255,18 @@ class Jeu() :
         if personnage.acc_personnage() != 'geant' or (personnage.acc_personnage() == 'geant' and personnage.acc_numero_geant() == 0) :
             self.attributs_jeu.ajouter_console(["·" + personnage.acc_personnage() + " (" + personnage.acc_equipe() + ") est mort", 'noir'])
             
+    def equipe_gagnante_console(self):
+        '''
+        Ajoute dans la console l'équipe qui a gagné.
+        : pas de return
+        '''
+        self.attributs_jeu.ajouter_console(["· L'équipe " + self.attributs_jeu.acc_equipe_gagnante() + "a gagné !", 'noir'])
+            
     ######################################################
     ### Déplacements :
     ######################################################
     
-    def deplacer(self, x, y):
+    def deplacer(self, x, y, monstre = None):
         '''
         déplace un personnage sur la grille
         : params
@@ -306,7 +279,8 @@ class Jeu() :
         ######PARTIE AFFICHAGE DU DEPLACEMENT
         
         #Récupération du bon chemin :
-        perso = self.attributs_jeu.acc_selection()
+        if monstre == None :   
+            perso = self.attributs_jeu.acc_selection()
         coordonnees = (perso.acc_x(), perso.acc_y())
         if perso.acc_personnage() == 'cavalier' : #si c'est un cavalier
             dep = self.attributs_jeu.acc_deplacements_cavalier()
@@ -474,6 +448,10 @@ class Jeu() :
                     personnage.mut_attaque() #Change son attribut en son inverse (dans ce cas True devient False)
                     
             self.attributs_jeu.mut_cases_potions([]) #la potion n'agit plus
+            
+        if self.attributs_jeu.acc_personnage_qui_attaque() :
+            self.jouer_monstres()
+            self.attributs_jeu.mut_personnage_qui_attaque(False)
     
     ######################################################
     ### Monstres :
@@ -511,20 +489,6 @@ class Jeu() :
             #Monstres déjà déplacés
             self.attributs_jeu.mut_monstres_active(False) #Active la possibilité d’interactions
             self.attributs_jeu.mut_monstres_deja_deplaces(True)
-    
-    def deplacer_monstre(self, monstre):
-        '''
-        Déplace le monstre aux nouvelles coordonnées
-        : param monstre (module_personnage.Monstre)
-        : pas de return
-        '''
-        #Assertion :
-        assert isinstance(monstre, module_personnage.Monstre), 'Le paramètre doit être un monstre de la classe Monstre du module_personnage !'
-        #Code :
-        prochaines_coordonnees = monstre.prochaines_coordonnees(self.terrain, self.attributs_jeu.acc_equipe_en_cours())
-        self.terrain.mut_terrain(monstre.acc_x(), monstre.acc_y(), ' ') #un vide à la place de l'ancienne case
-        monstre.deplacer(prochaines_coordonnees[0], prochaines_coordonnees[1])
-        self.terrain.mut_terrain(monstre.acc_x(), monstre.acc_y(), monstre) #le monstre à sa nouvelle place
         
     def attaquer_monstre(self, monstre) :
         '''
@@ -570,13 +534,14 @@ class Jeu() :
             if monstre.acc_etat() == 1 :
                 
                 #Si le nombre de tour est un multiple de 4 (hors 0), le monstre sort de terre :
-                if self.attributs_jeu.acc_nombre_tour() % 4 == 3 and self.attributs_jeu.acc_nombre_action() == 3:
+                if self.attributs_jeu.acc_nombre_tour() % 4 == 3 and self.attributs_jeu.acc_nombre_action() == 3 :
                     monstre.mut_etat(2)
             
             #Si le monstre était déjà sortis de terre
             else :
                 if not self.attaquer_monstre(monstre) :
-                    self.deplacer_monstre(monstre)
+                    self.attributs_jeu.ajouter_monstres_a_deplacer(monstre)
+                    self.attributs_jeu.mut_deplacement_en_cours(True)
                     
     ########################################################
     #### Méthodes Coffre :
@@ -961,20 +926,20 @@ class Jeu() :
                     perso.est_attaque('geant')
                     perso.mut_endommage()
                 
+        
+            #Si le personnage_qui_subit est le Géant :
+            if personnage_qui_subit.acc_personnage() == 'geant':
+                famille = self.famille_geant((personnage_qui_subit.acc_x(), personnage_qui_subit.acc_y()), personnage_qui_subit.acc_equipe())
+                #Pour chaque partie du geant :
+                for geant in famille :
+                    geant.est_attaque(self.attributs_jeu.acc_selection().acc_personnage())
+                    geant.mut_endommage()
+                    
+            #Sinon, le personnage est "classique" :
             else :
-                #Si le personnage_qui_subit est le Géant :
-                if personnage_qui_subit.acc_personnage() == 'geant':
-                    famille = self.famille_geant((personnage_qui_subit.acc_x(), personnage_qui_subit.acc_y()), personnage_qui_subit.acc_equipe())
-                    #Pour chaque partie du geant :
-                    for geant in famille :
-                        geant.est_attaque(self.attributs_jeu.acc_selection().acc_personnage())
-                        geant.mut_endommage()
-                        
-                #Sinon, le personnage est "classique" :
-                else :
-                    self.gestionnaire_son.jouer_effet_sonore("lame")
-                    personnage_qui_subit.est_attaque(self.attributs_jeu.acc_selection().acc_personnage())
-                    personnage_qui_subit.mut_endommage()
+                self.gestionnaire_son.jouer_effet_sonore("lame")
+                personnage_qui_subit.est_attaque(self.attributs_jeu.acc_selection().acc_personnage())
+                personnage_qui_subit.mut_endommage()
                     
                 self.attaque_console(self.attributs_jeu.acc_selection(), personnage_qui_subit) #Ajoute une phrase d'attaque dans la console du jeu
             
@@ -987,7 +952,7 @@ class Jeu() :
             
             self.changer_personnage(' ') #Enlève le personnage sélectionner par le joueur (rien sélectionné)
             self.effacer_actions()
-            self.jouer_monstres()
+            self.attributs_jeu.mut_personnage_qui_attaque(True)
             return True
             
         return False
@@ -1045,6 +1010,7 @@ class Jeu() :
         #Sinon (si clique sur autre chose) :
         else :
             self.effacer_actions()
+            print('lol')
     
     def changer_equipe(self):
         '''
@@ -1137,6 +1103,7 @@ class Jeu() :
             self.attributs_jeu.mut_partie_terminee(not (bleu_present and rouge_present)) 
             equipe_qui_gagne = self.qui_gagne(bleu_present, rouge_present)
             self.attributs_jeu.mut_equipe_gagnante(equipe_qui_gagne)
+            self.equipe_gagnante_console()
         
         return self.attributs_jeu.acc_partie_terminee()
         
@@ -1144,39 +1111,32 @@ class Jeu() :
     ### Fonction Réinitialiser :
     ######################################################
         
-    def reinitialiser_attributs(self, par_defaut = False) :
+    def reinitialiser_attributs(self, par_defaut = False, mode_robot = False) :
         '''
         Réinitialise quelques attributs du jeu quand le joueur charge une partie
         : pas de return
         '''
-        self.mut_terrain(module_terrain.Terrain(self.attributs_jeu))
-        self.mut_clavier_souris(module_clavier_souris.Clavier_Souris(self, self.attributs_jeu, self.sauvegarde, self.terrain, self.gestionnaire_son))
-        self.mut_affichage(module_afficher.Affichage(self.attributs_jeu, self.terrain, self.ecran, self.clavier_souris))
-        self.attributs_jeu.mut_console(module_lineaire.Pile()) #Réinitialise la console du jeu
-        
-        #Si jamais la partie est terminée ou qu'aucune partie n'est lancé, réinitialise les attributs suivant du module_attributs_jeu :
-        self.attributs_jeu.mut_partie_terminee(False)
-        self.attributs_jeu.mut_equipe_gagnante(None)
+        #Attributs Jeu :
+        self.attributs_jeu = module_attributs_jeu.Attributs_Jeu()
         self.attributs_jeu.mut_menu(False)
+        
+        #Attributs des Importations :
+        self.terrain = module_terrain.Terrain(self.attributs_jeu)
+        self.clavier_souris = module_clavier_souris.Clavier_Souris(self, self.attributs_jeu, self.sauvegarde, self.terrain, self.gestionnaire_son)
+        self.affichage = module_afficher.Affichage(self.attributs_jeu, self.terrain, self.ecran, self.clavier_souris)
+        self.robot = module_robot.Robot(self, self.attributs_jeu)
         
         #Désactive un nouveau placement de monstres :
         self.attributs_jeu.mut_monstres_deja_deplaces(True)
         
-        self.attributs_jeu.mut_dernier_personnage_mort_bleu(None)
-        self.attributs_jeu.mut_dernier_personnage_mort_rouge(None)
-        
-        #Remet le jour si jamais :
-        self.attributs_jeu.mut_temps('Jour')
-        self.attributs_jeu.mut_temps_active(False)
-        
-        if not par_defaut :
-            self.placer() #Place les personnages, monstres et coffres de la partie qui a été chargé.
-        else :
+        if par_defaut :
             self.partie_commence_console()
-            self.attributs_jeu.mut_equipe_en_cours('bleu')
-            self.attributs_jeu.mut_nombre_action(0)
-            self.attributs_jeu.mut_nombre_tour(0)
             self.placer_par_defaut()
+            
+        if mode_robot :
+            self.attributs_jeu.mut_mode_robot(True)
+
+        return self.attributs_jeu
         
     ######################################################
     ### Fonction Boucle :
@@ -1226,7 +1186,7 @@ class Jeu() :
                 
                 #Si il n'y a pas de déplacement et/ou d'attaque de personnage en cours :
                 if not self.attributs_jeu.acc_deplacement_en_cours() and not self.attributs_jeu.acc_attaque_en_cours() :
-                    self.personnages_sont_mort() #Vérifie s'il y a des morts (personnages et monstres)
+                    self.personnages_sont_mort() #Vérifie s'il y a des morts (personnages et monstres) 
                     self.est_fini() #Vérifie si la partie est fini
                     
                     #Change d'équipe au bout de 3 actions :

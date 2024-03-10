@@ -72,8 +72,8 @@ class Sauvegarde() :
         chaine_coffres += ']' 
         tab_chaines.append(chaine_coffres)  
             
-        # Equipe / Action / Tour / Robot :
-        tab_chaines.append('[' + self.attributs_jeu.acc_equipe_en_cours() + ',' + str(self.attributs_jeu.acc_nombre_action()) + ',' + str(self.attributs_jeu.acc_nombre_tour()) + ',' + str(self.attributs_jeu.acc_mode_robot()) + ']')
+        # Equipe / Action / Tour / Nombres_Monstres / PV_Monstres / Robot :
+        tab_chaines.append('[' + self.attributs_jeu.acc_equipe_en_cours() + ',' + str(self.attributs_jeu.acc_nombre_action()) + ',' + str(self.attributs_jeu.acc_nombre_tour()) + ',' + str(self.attributs_jeu.acc_nombre_monstre_a_ajoute()) + ',' + str(self.attributs_jeu.acc_pv_monstre()) + ',' + str(self.attributs_jeu.acc_mode_robot()) + ']')
 
         # Tombes :
         chaine_tombes = '['
@@ -84,12 +84,13 @@ class Sauvegarde() :
         
         return tab_chaines
         
-    def sauvegarder(self) :
+    def sauvegarder(self, attributs_jeu) :
         '''
         Sauvegarde la partie
         : return (str), une phrase qui sera ajouté dans la console du jeu.
         '''
         #Demande le chemin où sera sauvegardé le fichier :
+        self.attributs_jeu = attributs_jeu
         fichier = filedialog.asksaveasfilename(
         defaultextension = ".txt",
         filetypes = [("Fichiers texte", "*.txt"), ("Tous les fichiers", "*.*")]
@@ -146,17 +147,9 @@ class Sauvegarde() :
         tab_converti = []
         for chaine in tab :
             tab_converti.append(self.convertir_chaine_list(chaine[:-1]))
-            
-        self.attributs_jeu.mut_selection(' ')
-        self.attributs_jeu.mut_deplacements([])
-        self.attributs_jeu.mut_deplacements_cavalier([])
-        self.attributs_jeu.mut_attaques([])
         
         # Personnages :
         tab_personnages = tab_converti[0]
-        self.attributs_jeu.mut_tab_personnages([])
-        self.attributs_jeu.mut_famille_geant_bleu([])
-        self.attributs_jeu.mut_famille_geant_rouge([])
         
         geant_bleu = []
         geant_rouge = []
@@ -197,19 +190,21 @@ class Sauvegarde() :
         
         # Coffre :
         tab_coffres = tab_converti[2]
-        self.attributs_jeu.tab_coffres = []
+        self.attributs_jeu.mut_tab_coffres([])
         for coffre in tab_coffres :
             self.attributs_jeu.tab_coffres.append(module_objets.Coffre(int(coffre[0]), int(coffre[1])))
         
-        # Equipe / Action / Tour / Robot :
+        # Equipe / Action / Tour / Nombres_Monstres / PV_Monstres / Robot :
         tab_param = tab_converti[3][0]
         
         self.attributs_jeu.mut_equipe_en_cours(tab_param[0])
         self.attributs_jeu.mut_nombre_action(int(tab_param[1]))
         self.attributs_jeu.mut_nombre_tour(int(tab_param[2]))
+        self.attributs_jeu.mut_nombre_monstre_a_ajoute(int(tab_param[3]))
+        self.attributs_jeu.mut_pv_monstre(int(tab_param[4]))
         
         dic = {'True' : True, 'False' : False}
-        self.attributs_jeu.mut_mode_robot(dic[tab_param[3]])
+        self.attributs_jeu.mut_mode_robot(dic[tab_param[5]])
         
         # Tombe :
         tab_tombes = tab_converti[4]
@@ -235,8 +230,9 @@ class Sauvegarde() :
             lecture = open(fichier,'r',encoding='utf_8')
             tab = lecture.readlines()
             lecture.close()
+            self.attributs_jeu = self.jeu.reinitialiser_attributs() #Réinitialise les attributs du jeu
             self.restorer_partie(tab)
-            self.jeu.reinitialiser_attributs() #Réinitialise les attributs du jeu
+            self.jeu.placer()
             return "Partie Chargé !" 
         except :
             return "Erreur de Chargement !" 
