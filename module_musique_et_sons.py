@@ -7,7 +7,7 @@ Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul
 ######################################################
 ### Importation Modules :
 ######################################################
-import pygame
+import pygame, random
 
 ######################################################
 ### GestionnaireSon :
@@ -28,7 +28,11 @@ class GestionnaireSon:
         self.effets_sonores = {"feu" : pygame.mixer.Sound("medias/sons/feu.WAV"),
                                "lame" : pygame.mixer.Sound("medias/sons/lame.WAV"),
                                "potion" : pygame.mixer.Sound("medias/sons/potion.WAV"),
-                               "marche" : pygame.mixer.Sound("medias/sons/marche.WAV")
+                               "marche" : pygame.mixer.Sound("medias/sons/marche.WAV"),
+                               "poing1" : pygame.mixer.Sound("medias/sons/poing1.MP3"),
+                               "poing2" : pygame.mixer.Sound("medias/sons/poing2.MP3"),
+                               "tir" : pygame.mixer.Sound("medias/sons/tir.WAV"),
+                               "whoosh" : pygame.mixer.Sound("medias/sons/whoosh.WAV"),
                                }
         self.regler_volume()
 
@@ -49,6 +53,12 @@ class GestionnaireSon:
         #Assertion
         assert isinstance(nom, str), "le nom doit être une chaîne de caractères"
         #Code
+        if nom == "poing":
+            x = random.randint(0, 2)
+            if x == 0:
+                self.effets_sonores["poing1"].play()
+            else :
+                self.effets_sonores["poing2"].play()
         if nom in self.effets_sonores:
             self.effets_sonores[nom].play()
     

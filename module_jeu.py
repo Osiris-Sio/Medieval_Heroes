@@ -904,6 +904,20 @@ class Jeu() :
             return True
             
         return False
+    def jouer_son_attaque(self):
+        '''
+        joue le son d'attaue en fonction du personnage
+        '''
+        if self.attributs_jeu.acc_selection().acc_personnage() == 'sorciere' :
+            self.gestionnaire_son.jouer_effet_sonore("potion")
+        elif self.attributs_jeu.acc_selection().acc_personnage() == 'poulet' or self.attributs_jeu.acc_selection().acc_personnage() == 'ivrogne':
+            self.gestionnaire_son.jouer_effet_sonore("poing")
+        elif self.attributs_jeu.acc_selection().acc_personnage() == 'cracheur de feu' or self.attributs_jeu.acc_selection().acc_personnage() == 'mage' :
+            self.gestionnaire_son.jouer_effet_sonore("feu")
+        elif self.attributs_jeu.acc_selection().acc_personnage() == 'archere':
+            self.gestionnaire_son.jouer_effet_sonore("tir")
+        else :
+            self.gestionnaire_son.jouer_effet_sonore("lame")
             
     def attaque_est_clique(self):
         '''
@@ -915,10 +929,11 @@ class Jeu() :
         if self.attributs_jeu.est_meme_equipe() and position_case in self.attributs_jeu.acc_attaques() :
             personnage_qui_subit = self.terrain.acc_terrain(position_case[0], position_case[1]) #Sélectionne le personnage qui va subir les attaques
             a_attaque = True #par défaut, on a attaqué
+            self.jouer_son_attaque() #on appelle la fonction pour jouer un son d'attaque
             #Si la sorcière attaque
             if self.attributs_jeu.acc_selection().acc_personnage() == 'sorciere' :
                 a_attaque = self.ouverture_potion(position_case[0], position_case[1])
-                self.gestionnaire_son.jouer_effet_sonore("potion")
+                
             #Si le géant attaque
             elif self.attributs_jeu.acc_selection().acc_personnage() == 'geant' :
                 for case in self.attributs_jeu.acc_attaques():
@@ -926,7 +941,6 @@ class Jeu() :
                     perso.est_attaque('geant')
                     perso.mut_endommage()
                 
-        
             #Si le personnage_qui_subit est le Géant :
             if personnage_qui_subit.acc_personnage() == 'geant':
                 famille = self.famille_geant((personnage_qui_subit.acc_x(), personnage_qui_subit.acc_y()), personnage_qui_subit.acc_equipe())
@@ -937,7 +951,6 @@ class Jeu() :
                     
             #Sinon, le personnage est "classique" :
             else :
-                self.gestionnaire_son.jouer_effet_sonore("lame")
                 personnage_qui_subit.est_attaque(self.attributs_jeu.acc_selection().acc_personnage())
                 personnage_qui_subit.mut_endommage()
                     
@@ -1010,7 +1023,6 @@ class Jeu() :
         #Sinon (si clique sur autre chose) :
         else :
             self.effacer_actions()
-            print('lol')
     
     def changer_equipe(self):
         '''
