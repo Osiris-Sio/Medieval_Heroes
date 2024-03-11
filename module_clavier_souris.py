@@ -219,20 +219,20 @@ class Clavier_Souris() :
         if 675 <= position_curseur[0] <= 775 :
             #Sols de couleur :
             if 340 < position_curseur[1] < 390 :
-                self.attributs_jeu.mut_sols_de_couleur(not self.attributs_jeu.acc_sols_de_couleur()) 
+                self.jeu.mut_sols_de_couleur(not self.jeu.acc_sols_de_couleur()) 
             #Deplacements/Attaques : 
             if 417 < position_curseur[1] < 467 :
-                self.attributs_jeu.mut_deplacements_attaques(not self.attributs_jeu.acc_deplacements_attaques())  
+                self.jeu.mut_deplacements_attaques(not self.jeu.acc_deplacements_attaques())  
             #Console :
             if 470 < position_curseur[1] < 520 :
-                self.attributs_jeu.mut_option_console(not self.attributs_jeu.acc_option_console())
+                self.jeu.mut_option_console(not self.jeu.acc_option_console())
         #Si la position de la souris est sur le bouton 'Retour' :
         if 515 <= position_curseur[0] <= 753 and 650 < position_curseur[1] < 715 :
             self.attributs_jeu.mut_bouton_clique('retour_menu')
             self.attributs_jeu.mut_temps_appui_bouton(time.time())
         #Si la position de la souris est sur la barre de volume :
         if 480 <= position_curseur[0] <= 775 and 580 < position_curseur[1] < 627 :
-            self.attributs_jeu.mut_x_pointeur(position_curseur[0])
+            self.jeu.mut_x_pointeur(position_curseur[0])
             volume_sonore = (position_curseur[0] - 490)/ 300 # la bonne valeur est de base 480 mais j'ai augmenté pour que les joueurs puissent plus facilement selectionner un volume de 0
             if volume_sonore < 0 :
                 volume_sonore = 0

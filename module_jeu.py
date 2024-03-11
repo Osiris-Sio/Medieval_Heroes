@@ -35,8 +35,14 @@ class Jeu() :
         self.gestionnaire_son = module_musique_et_sons.GestionnaireSon()
         self.terrain = module_terrain.Terrain(self.attributs_jeu)
         self.clavier_souris = module_clavier_souris.Clavier_Souris(self, self.attributs_jeu, self.sauvegarde, self.terrain, self.gestionnaire_son)
-        self.affichage = module_afficher.Affichage(self.attributs_jeu, self.terrain, self.ecran, self.clavier_souris)
+        self.affichage = module_afficher.Affichage(self, self.attributs_jeu, self.terrain, self.ecran, self.clavier_souris)
         self.robot = module_robot.Robot(self, self.attributs_jeu)
+        
+        #Options :
+        self.sols_de_couleur = True
+        self.deplacements_attaques = True
+        self.option_console = True
+        self.x_pointeur = 625
                                            
     ######################################################
     ### Accesseurs :
@@ -47,6 +53,82 @@ class Jeu() :
         Renvoie l'attribut horloge
         '''
         return self.horloge
+    
+    def acc_sols_de_couleur(self):
+        '''
+        Renvoie l'attribut sols_de_couleur
+        : return (bool)
+        '''
+        return self.sols_de_couleur
+    
+    def acc_deplacements_attaques(self):
+        '''
+        Renvoie l'attribut deplacements_attaques
+        : return (bool)
+        '''
+        return self.deplacements_attaques
+    
+    def acc_option_console(self):
+        '''
+        Renvoie l'attribut option_console
+        : return (bool)
+        '''
+        return self.option_console
+    
+    def acc_x_pointeur(self):
+        '''
+        renvoie l'attribut x_pointeur
+        : return (int)
+        '''
+        return self.x_pointeur
+    
+    ######################################################
+    ### Mutateurs :
+    ######################################################   
+    
+    def mut_sols_de_couleur(self, valeur) :
+        '''
+        Modifie l'attribut sols_de_couleur
+        : param valeur (boolean)
+        : pas de return, modifie l'attribut sols_de_couleur
+        '''
+        #Assertion :
+        assert isinstance(valeur, bool), 'Le paramètre doit être soit True, soit False !'
+        #Code :
+        self.sols_de_couleur = valeur
+        
+    def mut_deplacements_attaques(self, valeur) :
+        '''
+        Modifie l'attribut deplacements_attaques
+        : param valeur (boolean)
+        : pas de return, modifie l'attribut deplacements_attaques
+        '''
+        #Assertion :
+        assert isinstance(valeur, bool), 'Le paramètre doit être soit True, soit False !'
+        #Code :
+        self.deplacements_attaques = valeur
+        
+    def mut_option_console(self, valeur) :
+        '''
+        Modifie l'attribut option_console
+        : param valeur (boolean)
+        : pas de return, modifie l'attribut option_console
+        '''
+        #Assertion :
+        assert isinstance(valeur, bool), 'Le paramètre doit être soit True, soit False !'
+        #Code :
+        self.option_console = valeur
+    
+    def mut_x_pointeur(self, x):
+        '''
+        modifie le x de l'attribut x_pointeur
+        : param x (int)
+        : pas de return
+        '''
+        #Assertion
+        assert isinstance(x, int), "x doit être un entier"
+        #Code
+        self.x_pointeur = x
     
     ######################################################
     ### Placement :
@@ -449,9 +531,10 @@ class Jeu() :
                     
             self.attributs_jeu.mut_cases_potions([]) #la potion n'agit plus
             
-        if self.attributs_jeu.acc_personnage_qui_attaque() :
-            self.jouer_monstres()
-            self.attributs_jeu.mut_personnage_qui_attaque(False)
+            if self.attributs_jeu.acc_personnage_qui_attaque() :
+                self.personnages_sont_mort()
+                self.jouer_monstres()
+                self.attributs_jeu.mut_personnage_qui_attaque(False)
     
     ######################################################
     ### Monstres :
@@ -977,7 +1060,7 @@ class Jeu() :
         '''
         #vérification d'un joueur autour
         coffre = self.attributs_jeu.acc_coffre_selection()
-        if not coffre.acc_est_ouvert(): #si le coffre n'a pas déjà été ouvert
+        if not coffre.acc_est_ouvert() and isinstance(self.attributs_jeu.acc_selection(), module_personnage.Personnage) : #si le coffre n'a pas déjà été ouvert
             present = coffre.est_present_autour(self.terrain, self.attributs_jeu.acc_selection())
             #si oui, ouverture du coffre
             if present :
@@ -1135,7 +1218,7 @@ class Jeu() :
         #Attributs des Importations :
         self.terrain = module_terrain.Terrain(self.attributs_jeu)
         self.clavier_souris = module_clavier_souris.Clavier_Souris(self, self.attributs_jeu, self.sauvegarde, self.terrain, self.gestionnaire_son)
-        self.affichage = module_afficher.Affichage(self.attributs_jeu, self.terrain, self.ecran, self.clavier_souris)
+        self.affichage = module_afficher.Affichage(self, self.attributs_jeu, self.terrain, self.ecran, self.clavier_souris)
         self.robot = module_robot.Robot(self, self.attributs_jeu)
         
         #Désactive un nouveau placement de monstres :

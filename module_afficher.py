@@ -10,7 +10,7 @@ Auteurs : AMEDRO Louis / LAPÔTRE Marylou / MAILLET Paul
 ### Importation Modules :
 ######################################################
 
-import pygame, random, module_attributs_jeu, module_clavier_souris, module_terrain, module_personnage
+import pygame, random, module_attributs_jeu, module_clavier_souris, module_terrain, module_personnage, module_jeu
 from graphe import module_lineaire
 
 ######################################################
@@ -120,7 +120,7 @@ class Affichage():
     Une classe Affichage qui gére les objets à afficher.
     '''
 
-    def __init__(self, attributs_jeu, terrain, ecran, clavier_souris):
+    def __init__(self, jeu, attributs_jeu, terrain, ecran, clavier_souris):
         '''
         Initialise l'affichage
         : params
@@ -130,11 +130,13 @@ class Affichage():
             clavier_souris (module_clavier_souris.Clavier_Souris)
         '''
         #Assertions :
+        assert isinstance(jeu, module_jeu.Jeu), 'jeu doit être de la classe Jeu du module_jeu !'
         assert isinstance(attributs_jeu, module_attributs_jeu.Attributs_Jeu), 'attributs_jeu doit être de la classe Attributs_Jeu du module_attributs_jeu !'
         assert isinstance(terrain, module_terrain.Terrain), 'terrain doit être de la classe Terrain du module_terrain !'
         assert isinstance(clavier_souris, module_clavier_souris.Clavier_Souris), 'clavier_souris doit être de la classe Clavier_Souris du module_clavier_souris !'
         
         #Attributs des Paramètres :
+        self.jeu = jeu
         self.attributs_jeu = attributs_jeu
         self.terrain = terrain
         self.ecran = ecran
@@ -479,7 +481,7 @@ class Affichage():
         
         #Sol de couleur :
         #On :
-        if self.attributs_jeu.acc_sols_de_couleur() :
+        if self.jeu.acc_sols_de_couleur() :
             bouton_sols_de_couleur = self.boutons['on_off'][0]
             self.ecran.blit(texte_on, (715, 357))
         #Off :
@@ -491,7 +493,7 @@ class Affichage():
         
         #Deplacement/Attaque :
         #On :
-        if self.attributs_jeu.acc_deplacements_attaques() :
+        if self.jeu.acc_deplacements_attaques() :
             bouton_sols_de_couleur = self.boutons['on_off'][0]
             self.ecran.blit(texte_on, (715, 422))
         #Off :
@@ -503,7 +505,7 @@ class Affichage():
         
         #Console :
         #On :
-        if self.attributs_jeu.acc_option_console() :
+        if self.jeu.acc_option_console() :
             bouton_sols_de_couleur = self.boutons['on_off'][0]
             self.ecran.blit(texte_on, (715, 487))
         #Off :
@@ -519,7 +521,7 @@ class Affichage():
         self.ecran.blit(bouton_option_son, (480, 580))
         
         pointeur_barre = self.boutons['pointeur_son']
-        self.ecran.blit(pointeur_barre, (self.attributs_jeu.acc_x_pointeur(), 580))
+        self.ecran.blit(pointeur_barre, (self.jeu.acc_x_pointeur(), 580))
         
         #Retour :
         if bouton_clique == 'retour_menu':
@@ -972,7 +974,7 @@ class Affichage():
             attaque = personnage.acc_attaque()
             
             #Contour de couleur (si l'option est activé, le personnage est de l'équipe en cours et que le personnage n'est pas en déplacement) :   
-            if self.attributs_jeu.acc_sols_de_couleur() and equipe == self.attributs_jeu.acc_equipe_en_cours() and self.attributs_jeu.acc_personnage_en_deplacement() != personnage :
+            if self.jeu.acc_sols_de_couleur() and equipe == self.attributs_jeu.acc_equipe_en_cours() and self.attributs_jeu.acc_personnage_en_deplacement() != personnage :
                 if nom == 'geant':
                     if personnage.acc_numero_geant() == 0:
                         self.ecran.blit(self.sol_geants[equipe], (x, y))
@@ -1339,7 +1341,7 @@ class Affichage():
         self.afficher_cases_potions()
         
         #Si l'option deplacement/attaques est activé, alors on affiche l'aide de déplacements/attaques :
-        if self.attributs_jeu.acc_deplacements_attaques() :
+        if self.jeu.acc_deplacements_attaques() :
             self.afficher_deplacements()
             self.afficher_attaques()
             
@@ -1355,7 +1357,7 @@ class Affichage():
         self.afficher_boutons_jeu()
         
         #Si l'option console est activé, alors on l'affiche :
-        if self.attributs_jeu.acc_option_console() :   
+        if self.jeu.acc_option_console() :   
             self.afficher_console()
         
         #Côté Gauche :

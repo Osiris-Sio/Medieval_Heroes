@@ -92,12 +92,6 @@ class Attributs_Jeu() :
         #Console (pile) :
         self.console = module_lineaire.Pile() #Une pile où sera ajouté des tableaux contenant une phrase et sa couleur pour ensuite l'afficher.
         
-        #Options :
-        self.sols_de_couleur = True
-        self.deplacements_attaques = True
-        self.option_console = True
-        self.x_pointeur = 625
-        
         #Attributs pour le déplacement avec le chemin (graphe) :
         self.chemin = []
         self.coordonnees_personnage = None
@@ -215,13 +209,6 @@ class Attributs_Jeu() :
         : return (int)
         '''
         return self.nombre_monstre_a_ajoute
-    
-    def acc_x_pointeur(self):
-        '''
-        renvoie l'attribut x_pointeur
-        : return (int)
-        '''
-        return self.x_pointeur
         
     def acc_mode_robot(self):
         '''
@@ -243,27 +230,6 @@ class Attributs_Jeu() :
         : return (dic)
         '''
         return self.dic_alphabet
-    
-    def acc_sols_de_couleur(self):
-        '''
-        Renvoie l'attribut sols_de_couleur
-        : return (bool)
-        '''
-        return self.sols_de_couleur
-    
-    def acc_deplacements_attaques(self):
-        '''
-        Renvoie l'attribut deplacements_attaques
-        : return (bool)
-        '''
-        return self.deplacements_attaques
-    
-    def acc_option_console(self):
-        '''
-        Renvoie l'attribut option_console
-        : return (bool)
-        '''
-        return self.option_console
     
     def acc_annonce_coffre(self):
         '''
@@ -650,17 +616,6 @@ class Attributs_Jeu() :
         assert isinstance(tab, list), "les nouvelles cases des potions doivent être dans un tableau !"
         #code
         self.cases_potions = tab
-             
-    def mut_x_pointeur(self, x):
-        '''
-        modifie le x de l'attribut x_pointeur
-        : param x (int)
-        : pas de return
-        '''
-        #Assertion
-        assert isinstance(x, int), "x doit être un entier"
-        #Code
-        self.x_pointeur = x
     
     def mut_mode_robot(self, valeur) :
         '''
@@ -745,39 +700,6 @@ class Attributs_Jeu() :
         : return (module_objets.Potion)
         '''
         return self.potions_bleues[self.potion_bleue_selectionnee].defiler()
-
-    def mut_sols_de_couleur(self, valeur) :
-        '''
-        Modifie l'attribut sols_de_couleur
-        : param valeur (boolean)
-        : pas de return, modifie l'attribut sols_de_couleur
-        '''
-        #Assertion :
-        assert isinstance(valeur, bool), 'Le paramètre doit être soit True, soit False !'
-        #Code :
-        self.sols_de_couleur = valeur
-        
-    def mut_deplacements_attaques(self, valeur) :
-        '''
-        Modifie l'attribut deplacements_attaques
-        : param valeur (boolean)
-        : pas de return, modifie l'attribut deplacements_attaques
-        '''
-        #Assertion :
-        assert isinstance(valeur, bool), 'Le paramètre doit être soit True, soit False !'
-        #Code :
-        self.deplacements_attaques = valeur
-        
-    def mut_option_console(self, valeur) :
-        '''
-        Modifie l'attribut option_console
-        : param valeur (boolean)
-        : pas de return, modifie l'attribut option_console
-        '''
-        #Assertion :
-        assert isinstance(valeur, bool), 'Le paramètre doit être soit True, soit False !'
-        #Code :
-        self.option_console = valeur
         
     def mut_continuer(self, valeur) :
         '''
